@@ -1,19 +1,18 @@
 import React from "react";
 import { useEffect, useMemo, useState } from "react";
 
-
 export type Role = "מרצה" | "מזכירות";
 
 export default class CareHandler {
-  /** מזהה גורם (חובה וייחודי, בפורמט H-XXXX) */
+  /** Handler identifier (required & unique; numeric) */
   handlerId: number;
-  /** שם (חובה) */
+  /** Name (required) */
   name: string;
-  /** תפקיד (חובה: "מרצה" | "מזכירות") */
+  /** Role (required: "מרצה" | "מזכירות") */
   role: Role;
-  /** דוא"ל (חובה ותקין) */
+  /** Email (required & valid) */
   email: string;
-  /** תחום אחריות (חובה) */
+  /** Responsibility area (required) */
   responsibility: string;
 
   constructor(
@@ -23,18 +22,25 @@ export default class CareHandler {
     email: string,
     responsibility: string
   ) {
-    this.handlerId = handlerId.trim();
+    this.handlerId = handlerId; // number (no trim)
     this.name = name.trim();
     this.role = role;
     this.email = email.trim();
     this.responsibility = responsibility.trim();
   }
 
-  /** בנאי־מפעל מאובייקט plain (לקריאה מ־localStorage) */
+  /** Factory constructor from a plain object (used when reading from localStorage) */
   static from(obj: unknown): CareHandler {
     const o = obj as Record<string, unknown>;
+    // Accept either "handlerId" or generic "id" from storage and coerce to number
+    const idNum = Number(
+      (o.handlerId as number | string | undefined) ??
+      (o.id as number | string | undefined) ??
+      0
+    );
+
     return new CareHandler(
-      String(o.handlerId ?? ""),
+      idNum,
       String(o.name ?? ""),
       (o.role as Role) ?? "מרצה",
       String(o.email ?? ""),
@@ -42,12 +48,12 @@ export default class CareHandler {
     );
   }
 
-  /** יצירת גורם אקראי (שומר על ייחודיות מול מזהים קיימים אם הועברו) */
-  static random(existingIds: Set<string> = new Set()): CareHandler {
-    // מזהה גורם H-XXXX
-    let handlerId: string;
+  /** Create a random handler (ensures uniqueness against existing numeric IDs if provided) */
+  static random(existingIds: Set<number> = new Set()): CareHandler {
+    // Numeric handlerId, 4 digits (1000–9999)
+    let handlerId: number;
     do {
-      handlerId = `H-${Math.floor(1000 + Math.random() * 9000)}`; // H-1000..H-9999
+      handlerId = Math.floor(1000 + Math.random() * 9000);
     } while (existingIds.has(handlerId));
 
     const names = [
@@ -66,13 +72,17 @@ export default class CareHandler {
     return new CareHandler(handlerId, name, role, email, responsibility);
   }
 
-  /** ולידציה עסקית לפי הדרישות */
+  /** Business validation according to requirements */
   validate(): string[] {
     const errors: string[] = [];
 
-    if (!this.handlerId) errors.push("מזהה גורם הוא שדה חובה");
-    if (this.handlerId && !/^H-\d{4}$/.test(this.handlerId)) {
-      errors.push("מזהה גורם חייב להיות בפורמט H-XXXX (ספרות)");
+    // handlerId must be a finite number, 4 digits (1000–9999)
+    if (!Number.isFinite(this.handlerId)) errors.push("מזהה גורם הוא שדה חובה");
+    if (Number.isFinite(this.handlerId)) {
+      const idStr = String(this.handlerId);
+      if (!/^\d{4}$/.test(idStr)) {
+        errors.push("מזהה גורם חייב להיות מספר בן 4 ספרות");
+      }
     }
 
     if (!this.name) errors.push("שם הוא שדה חובה");
@@ -91,6 +101,7 @@ export default class CareHandler {
   }
 }
 
+/* ===== helpers ===== */
 
 function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
