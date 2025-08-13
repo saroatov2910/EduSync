@@ -1,34 +1,76 @@
-import React, { useState } from 'react';
-import { CareHandler } from '../classes/carehandler';
-import '../cssRules/Body.css';
+import React, { useEffect, useMemo, useState } from "react";
+import CareHandler, { Role } from "../models/CareHandler";
+import "../cssRules/Body.css";
+
+const LS_HANDLERS = "care_handlers_v1";
 
 const CareHandlerTable: React.FC = () => {
-  const [careHandlers, setCareHandlers] = useState<CareHandler[]>([
-    new CareHandler(1, "יעל כהן", "050-1234567", "yael@example.com"),
-    new CareHandler(2, "דני לוי", "050-9876543", "dani@example.com")
-  ]);
+  const [handlers, setHandlers] = useState<CareHandler[]>([]);
+
+  // load once
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(LS_HANDLERS);
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) setHandlers(arr.map(CareHandler.from));
+      }
+    } catch (e) {
+      console.error("failed to load handlers", e);
+    }
+  }, []);
+
+  const existingIds = useMemo(() => new Set(handlers.map(h => h.handlerId)), [handlers]);
+
+  const addRandom = () => {
+    const h = CareHandler.random(existingIds);
+    const errs = h.validate();
+    if (errs.length) return alert("שגיאות:\n" + errs.join("\n"));
+    setHandlers(prev => [...prev, h]);
+  };
+
+  const save = () => {
+    try {
+      localStorage.setItem(LS_HANDLERS, JSON.stringify(handlers));
+      alert("נשמר ל-localStorage");
+    } catch {
+      alert("שגיאה בשמירה");
+    }
+  };
 
   return (
-    <table border={1}>
-      <thead>
-        <tr>
-          <th>id</th>
-          <th>name</th>
-          <th>phone</th>
-          <th>email</th>
-        </tr>
-      </thead>
-      <tbody>
-        {careHandlers.map(c => (
-          <tr key={c.id}>
-            <td>{c.id}</td>
-            <td>{c.name}</td>
-            <td>{c.phone}</td>
-            <td>{c.email}</td>
+    <>
+      <div className="actions">
+        <button onClick={addRandom}>הוסף גורם מטפל אקראי</button>
+        <button onClick={save}>שמור ל-localStorage</button>
+      </div>
+
+      <table border={1}>
+        <thead>
+          <tr>
+            <th>handlerId</th>
+            <th>name</th>
+            <th>role</th>
+            <th>email</th>
+            <th>responsibility</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {handlers.map(h => (
+            <tr key={h.handlerId}>
+              <td>{h.handlerId}</td>
+              <td>{h.name}</td>
+              <td>{h.role}</td>
+              <td>{h.email}</td>
+              <td>{h.responsibility}</td>
+            </tr>
+          ))}
+          {handlers.length === 0 && (
+            <tr><td colSpan={5}>אין נתונים</td></tr>
+          )}
+        </tbody>
+      </table>
+    </>
   );
 };
 
