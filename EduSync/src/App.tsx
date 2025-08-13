@@ -1,14 +1,14 @@
-import './App.css';
+import './cssRules/App.css';
 import Header from './components/Header';
 import Body from './components/Body';
 import Footer from './components/Footer';
 import React from 'react';
-import AppointmentTable from './components/AppointmentTable';
-import StudentTable from './components/StudentTable';
-import RequestTable from './components/RequestTable';
-import FeedbackTable from './components/FeedbackTable';
-import CareHandlerTable from './components/CareHandlerTable';
-import ContactMsgTable from './components/ContactMsgTable';
+import AppointmentTable from './components/Appointment';
+import StudentTable from './components/Student';
+import RequestTable from './components/Request';
+import FeedbackTable from './components/Feedback';
+import CareHandlerTable from './components/CareHandle';
+import ContactMsgTable from './components/ContactMsg';
 
 const App: React.FC = () => {
   return (
