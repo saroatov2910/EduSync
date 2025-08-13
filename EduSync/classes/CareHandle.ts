@@ -6,7 +6,7 @@ export type Role = "מרצה" | "מזכירות";
 
 export default class CareHandler {
   /** מזהה גורם (חובה וייחודי, בפורמט H-XXXX) */
-  handlerId: string;
+  handlerId: number;
   /** שם (חובה) */
   name: string;
   /** תפקיד (חובה: "מרצה" | "מזכירות") */
@@ -17,7 +17,7 @@ export default class CareHandler {
   responsibility: string;
 
   constructor(
-    handlerId: string,
+    handlerId: number,
     name: string,
     role: Role,
     email: string,
