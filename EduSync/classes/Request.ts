@@ -1,38 +1,33 @@
 // Request.ts
 import Student from './Student';
-// Utility functions
+
 export default class Request extends Student {
-  requestId: string;
+  requestId: number;       // או string אם אתה רוצה
   requestText: string;
-  requestDate: string;
+  requestDate: Date;
   reqStatus: string;
 
-// Constructor to initialize Request object
   constructor(
-    studentId: string,
-    firstName: string,
-    lastName: string,
-    email: string,
-    requestId: string,
+    studentId: number,
+    requestId: number,
     requestText: string,
-    requestDate: string,
+    requestDate: Date,
     reqStatus: string
   ) {
-    // Call the parent constructor
-    super(studentId, firstName, lastName, email); 
+  
+    super(studentId, '', '', '', '', '');
+
     this.requestId = requestId;
     this.requestText = requestText;
     this.requestDate = requestDate;
     this.reqStatus = reqStatus;
   }
-// Method to create a Request object from a plain object
+
   printInfo(): void {
     console.log(`Request ID: ${this.requestId}`);
     console.log(`Student ID: ${this.StudentId}`);
-    console.log(`Name: ${this.firstName} ${this.lastName}`);
-    console.log(`Email: ${this.email}`);
     console.log(`Request Text: ${this.requestText}`);
-    console.log(`Request Date: ${this.requestDate}`);
+    console.log(`Request Date: ${this.requestDate.toDateString()()}`);
     console.log(`Status: ${this.reqStatus}`);
   }
 }
