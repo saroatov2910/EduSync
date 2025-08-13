@@ -8,7 +8,40 @@
    
     
 }
-.ButtonMenuLinkCircle{
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+  }
+  
+  table, th, td {
+    border: 1px solid #ccc;
+  }
+  
+  th, td {
+    padding: 10px 12px;
+    text-align: left;
+  }
+  thead th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    color: #333;
+  }  
+  tbody tr:nth-child(even) {
+    background-color: #fafafa;
+  } 
+  tbody tr:hover {
+    background-color: #e6f7ff;
+    cursor: pointer;
+  }
+  td:first-child {
+    text-align: center;
+    font-weight: bold;
+  }
+  .ButtonMenuLinkCircle{
     height: 96px;
     width: 96px;
     background-color: aliceblue;
@@ -16,9 +49,9 @@
     justify-content: center;
     align-items: center;
     border-radius: 50%;
-}
-.rule{
+  }
+  .rule{
     display: flex;
     gap: 10px;
 
-}
+  }

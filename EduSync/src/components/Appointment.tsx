@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Appointment } from '../classes/appointment';
+import  Appointment  from '../../classes/appointment';
 import '../cssRules/Body.css';
 
 const AppointmentTable: React.FC = () => {
@@ -69,7 +69,6 @@ const AppointmentTable: React.FC = () => {
           {appointments.map(a => (
             <tr key={a.appointmentId}>
               <td>{a.appointmentId}</td>
-              <td>{a.requestId}</td>
               <td>{new Date(a.appointmentDate).toLocaleDateString()}</td>
               <td>{a.appointmentTime}</td>
               <td>{a.appointmentType}</td>

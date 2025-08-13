@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Request } from '../classes/request';
+import  Request from '../../classes/Request';
 import '../cssRules/Body.css';
 
 const RequestTable: React.FC = () => {
@@ -50,8 +50,7 @@ const RequestTable: React.FC = () => {
           {requests.map(r => (
             <tr key={r.requestId}>
               <td>{r.requestId}</td>
-              <td>{r.studentId}</td>
-              <td>{r.description}</td>
+              <td>{r.StudentId}</td>
             </tr>
           ))}
         </tbody>
