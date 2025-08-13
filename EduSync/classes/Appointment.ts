@@ -1,6 +1,7 @@
-class Appointment {
+import { Request } from "./Request";
+
+export default class Appointment extends Request {
     appointmentId: number;
-    requestId: number;
     appointmentDate: Date;
     appointmentTime: string;
     appointmentType: "זום" | "פרונטלי";
@@ -16,8 +17,8 @@ class Appointment {
         location: string,
         status: "מתוכננת" | "בוטלה" | "היתקיימה"
     ) { 
+        super(requestId); // ✅ call parent constructor first
         this.appointmentId = appointmentId;
-        this.requestId = requestId;
         this.appointmentDate = appointmentDate;
         this.appointmentTime = appointmentTime;
         this.appointmentType = appointmentType;
@@ -31,7 +32,7 @@ class Appointment {
         if (!this.appointmentId || this.appointmentId <= 0) {
             throw new Error("מזהה פגישה חייב להיות קיים וייחודי");
         }
-        if (!this.requestId || this.requestId <= 0) {
+        if (!this.requestId || this.requestId <= 0) { // inherited from Request
             throw new Error("מזהה הפנייה חייב להתאים לפנייה קיימת");
         }
         if (!(this.appointmentDate instanceof Date) || isNaN(this.appointmentDate.getTime())) {
