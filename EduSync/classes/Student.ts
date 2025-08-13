@@ -1,9 +1,7 @@
 // Student.ts
 
 export default class Student {
-    /** מספר סטודנט (חובה וייחודי) */
     StudentId: number;
-    /** שם פרטי */
     firstName: string;
     lastName: string;
     email: string;
