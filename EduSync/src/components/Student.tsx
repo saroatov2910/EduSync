@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import Student from "../models/Student";
+import Student from "../../classes/Student";
 import "../cssRules/Body.css";
 
 const LS_STUDENTS = "students_v1";
