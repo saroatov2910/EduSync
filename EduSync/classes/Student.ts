@@ -1,28 +1,22 @@
 // Student.ts
 
 export default class Student {
-    /** מספר סטודנט (חובה וייחודי) */
-    StudentId: string;
-    /** שם פרטי */
+    StudentId: number;
     firstName: string;
-    /** שם משפחה */
     lastName: string;
-    /** דוא"ל (חובה ותקין) */
     email: string;
-    /** טלפון נייד בפורמט ישראלי 05xxxxxxxx */
     mobile: string;
-    /** תואר/חוג לימודים (חובה) */
     major: string;
   
     constructor(
-      StudentId: string,
+      StudentId: number,
       firstName: string,
       lastName: string,
       email: string,
       mobile: string,
       major: string
     ) {
-      this.id = id.trim();
+      this.StudentId = StudentId.trim();
       this.firstName = firstName.trim();
       this.lastName = lastName.trim();
       this.email = email.trim();
