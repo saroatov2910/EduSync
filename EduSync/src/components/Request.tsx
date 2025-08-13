@@ -1,36 +1,62 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Request } from '../classes/request';
 import '../cssRules/Body.css';
 
 const RequestTable: React.FC = () => {
-  const [requests, setRequests] = useState<Request[]>([
-    new Request(1, 101, "בקשה ללימוד נוסף", "מתוכננת", new Date("2025-08-15")),
-    new Request(2, 102, "בקשה לייעוץ", "בוצעה", new Date("2025-08-16"))
-  ]);
+  const [requests, setRequests] = useState<Request[]>([]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('requests');
+    if (saved) {
+      const parsed = JSON.parse(saved).map((r: any) =>
+        new Request(r.requestId, r.studentId, r.description)
+      );
+      setRequests(parsed);
+    } else {
+      setRequests([
+        new Request(1, 101, "בקשה לדוגמה 1"),
+        new Request(2, 102, "בקשה לדוגמה 2")
+      ]);
+    }
+  }, []);
+
+  const addRandomRequest = () => {
+    const newRequest = new Request(
+      Math.floor(Math.random() * 1000),
+      Math.floor(Math.random() * 100),
+      "בקשה חדשה"
+    );
+    setRequests([...requests, newRequest]);
+  };
+
+  const saveToLocalStorage = () => {
+    localStorage.setItem('requests', JSON.stringify(requests));
+    alert("בקשות נשמרו!");
+  };
 
   return (
-    <table border={1}>
-      <thead>
-        <tr>
-          <th>id</th>
-          <th>studentId</th>
-          <th>type</th>
-          <th>status</th>
-          <th>date</th>
-        </tr>
-      </thead>
-      <tbody>
-        {requests.map(r => (
-          <tr key={r.id}>
-            <td>{r.id}</td>
-            <td>{r.studentId}</td>
-            <td>{r.type}</td>
-            <td>{r.status}</td>
-            <td>{r.date.toLocaleDateString()}</td>
+    <div>
+      <button onClick={addRandomRequest}>הוסף בקשה אקראית</button>
+      <button onClick={saveToLocalStorage}>שמור ב-localStorage</button>
+      <table border={1}>
+        <thead>
+          <tr>
+            <th>requestId</th>
+            <th>studentId</th>
+            <th>description</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {requests.map(r => (
+            <tr key={r.requestId}>
+              <td>{r.requestId}</td>
+              <td>{r.studentId}</td>
+              <td>{r.description}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
