@@ -1,36 +1,62 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ContactMsg } from '../classes/contactmsg';
 import '../cssRules/Body.css';
 
 const ContactMsgTable: React.FC = () => {
-  const [messages, setMessages] = useState<ContactMsg[]>([
-    new ContactMsg(1, "רונית", "ronit@example.com", "שלום, יש לי שאלה", new Date("2025-08-10")),
-    new ContactMsg(2, "משה", "moshe@example.com", "איך ליצור קשר?", new Date("2025-08-11"))
-  ]);
+  const [msgs, setMsgs] = useState<ContactMsg[]>([]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('msgs');
+    if (saved) {
+      const parsed = JSON.parse(saved).map((m: any) =>
+        new ContactMsg(m.msgId, m.name, m.message)
+      );
+      setMsgs(parsed);
+    } else {
+      setMsgs([
+        new ContactMsg(1, "דוד", "הודעה לדוגמה 1"),
+        new ContactMsg(2, "שרה", "הודעה לדוגמה 2")
+      ]);
+    }
+  }, []);
+
+  const addRandomMsg = () => {
+    const newMsg = new ContactMsg(
+      Math.floor(Math.random() * 1000),
+      "שם אקראי",
+      "הודעה חדשה"
+    );
+    setMsgs([...msgs, newMsg]);
+  };
+
+  const saveToLocalStorage = () => {
+    localStorage.setItem('msgs', JSON.stringify(msgs));
+    alert("הודעות נשמרו!");
+  };
 
   return (
-    <table border={1}>
-      <thead>
-        <tr>
-          <th>id</th>
-          <th>name</th>
-          <th>email</th>
-          <th>message</th>
-          <th>date</th>
-        </tr>
-      </thead>
-      <tbody>
-        {messages.map(m => (
-          <tr key={m.id}>
-            <td>{m.id}</td>
-            <td>{m.name}</td>
-            <td>{m.email}</td>
-            <td>{m.message}</td>
-            <td>{m.date.toLocaleDateString()}</td>
+    <div>
+      <button onClick={addRandomMsg}>הוסף הודעה אקראית</button>
+      <button onClick={saveToLocalStorage}>שמור ב-localStorage</button>
+      <table border={1}>
+        <thead>
+          <tr>
+            <th>msgId</th>
+            <th>name</th>
+            <th>message</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {msgs.map(m => (
+            <tr key={m.msgId}>
+              <td>{m.msgId}</td>
+              <td>{m.name}</td>
+              <td>{m.message}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
