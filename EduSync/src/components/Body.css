@@ -1,6 +1,24 @@
-.sudent{
-height: 50px;
-width: 100%;
-background-color:gray;
+.msButtonMenuFont{
+    height: 116px;
+    width: 116px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+     /* margin-top: 115px; */
+   
+    
+}
+.ButtonMenuLinkCircle{
+    height: 96px;
+    width: 96px;
+    background-color: aliceblue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+}
+.rule{
+    display: flex;
+    gap: 10px;
 
 }
