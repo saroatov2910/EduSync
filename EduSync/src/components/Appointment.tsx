@@ -1,8 +1,6 @@
-import React from 'react'
-import Appointment from './Appointment'
-import { useState } from 'react';
-import './cssRules/Body.css'
-
+import React, { useState } from 'react';
+import { Appointment } from '../classes/appointment';
+import '../cssRules/Body.css';
 
 const AppointmentTable: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([
