@@ -2,7 +2,7 @@
 
 export default class Student {
     /** מספר סטודנט (חובה וייחודי) */
-    StudentId: string;
+    StudentId: number;
     /** שם פרטי */
     firstName: string;
     /** שם משפחה */
@@ -15,7 +15,7 @@ export default class Student {
     major: string;
   
     constructor(
-      StudentId: string,
+      StudentId: number,
       firstName: string,
       lastName: string,
       email: string,
