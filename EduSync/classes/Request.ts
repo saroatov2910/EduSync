@@ -1,33 +1,33 @@
-import React from 'react';
+// Request.ts
+import Student from './Student';
 
-export default class Request {
-  requestId = '';
-  requestText = '';
-  requestDate = '';
-  reqStatus = '';
+export default class Request extends Student {
+  requestId: number;       // או string אם אתה רוצה
+  requestText: string;
+  requestDate: Date;
+  reqStatus: string;
 
-  constructor(requestId, requestText, requestDate, reqStatus) {
+  constructor(
+    studentId: number,
+    requestId: number,
+    requestText: string,
+    requestDate: Date,
+    reqStatus: string
+  ) {
+  
+    super(studentId, '', '', '', '', '');
+
     this.requestId = requestId;
     this.requestText = requestText;
     this.requestDate = requestDate;
     this.reqStatus = reqStatus;
   }
+
+  printInfo(): void {
+    console.log(`Request ID: ${this.requestId}`);
+    console.log(`Student ID: ${this.StudentId}`);
+    console.log(`Request Text: ${this.requestText}`);
+    console.log(`Request Date: ${this.requestDate.toDateString()()}`);
+    console.log(`Status: ${this.reqStatus}`);
+  }
 }
-
-// class Request extends React.Component{
-//     constructor(props) {
-//         super(props);
-//         this.state = {
-//             requestId: props.requestId,
-//             requestText: props.requestText,
-//             requestDate: props.requestDate,
-//             reqSstus: props.reqStatus,
-//             studentId. props.studentId,
-
-//         };
-
-//     }
-
-
-// }
- 
