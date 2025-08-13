@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+// import React, { Component } from 'react';
 
 
 
-class Msg extends Component{    
+// class Msg extends Component{    
 
 
     
 
-  }
+//   }
