@@ -1,8 +1,8 @@
-// src/models/Student.ts
+// Student.ts
 
 export default class Student {
     /** מספר סטודנט (חובה וייחודי) */
-    id: string;
+    StudentId: string;
     /** שם פרטי */
     firstName: string;
     /** שם משפחה */
@@ -15,7 +15,7 @@ export default class Student {
     major: string;
   
     constructor(
-      id: string,
+      StudentId: string,
       firstName: string,
       lastName: string,
       email: string,
