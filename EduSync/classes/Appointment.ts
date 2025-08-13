@@ -1,4 +1,4 @@
-import { Request } from "./Request";
+import Request from "./Request";
 
 export default class Appointment extends Request {
     appointmentId: number;
@@ -9,15 +9,19 @@ export default class Appointment extends Request {
     status: "מתוכננת" | "בוטלה" | "היתקיימה";
 
     constructor(
-        appointmentId: number,
+        studentId: number,
         requestId: number,
+        requestText: string,
+        requestDate: Date,
+        reqStatus: string,
+        appointmentId: number,
         appointmentDate: Date,
         appointmentTime: string,
         appointmentType: "זום" | "פרונטלי",
         location: string,
         status: "מתוכננת" | "בוטלה" | "היתקיימה"
-    ) { 
-        super(requestId); // ✅ call parent constructor first
+    ) {
+        super(studentId, requestId, requestText, requestDate, reqStatus);
         this.appointmentId = appointmentId;
         this.appointmentDate = appointmentDate;
         this.appointmentTime = appointmentTime;
@@ -28,11 +32,11 @@ export default class Appointment extends Request {
         this.validate();
     }
 
-    private validate() {
+    protected validate() {
         if (!this.appointmentId || this.appointmentId <= 0) {
             throw new Error("מזהה פגישה חייב להיות קיים וייחודי");
         }
-        if (!this.requestId || this.requestId <= 0) { // inherited from Request
+        if (!this.requestId || this.requestId <= 0) {
             throw new Error("מזהה הפנייה חייב להתאים לפנייה קיימת");
         }
         if (!(this.appointmentDate instanceof Date) || isNaN(this.appointmentDate.getTime())) {

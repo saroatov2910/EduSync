@@ -1,4 +1,4 @@
-import { Request } from './Request';
+import Request from './Request';
 
 export default class Feedback extends Request {
     feedbackId: number;
@@ -8,14 +8,18 @@ export default class Feedback extends Request {
     feedbackDate: Date;
 
     constructor(
-        feedbackId: number,
+        studentId: number,
         requestId: number,
+        requestText: string,
+        requestDate: Date,
+        reqStatus: string,
+        feedbackId: number,
         grade: number,
         comment: string,
         createdBy: "סטודנט" | "גורם מטפל",
         feedbackDate: Date
     ) {
-        super(requestId); // ✅ call parent constructor first
+        super(studentId, requestId, requestText, requestDate, reqStatus);
         this.feedbackId = feedbackId;
         this.grade = grade;
         this.comment = comment;
@@ -25,12 +29,12 @@ export default class Feedback extends Request {
         this.validate();
     }
 
-    private validate() {
+        protected validate() {
         if (!this.feedbackId || this.feedbackId <= 0) {
             throw new Error("מזהה משוב חייב להיות קיים וייחודי");
         }
 
-        if (!this.requestId || this.requestId <= 0) {
+        if (!this.requestId || this.requestId <= 0) { // inherited from Request
             throw new Error("מזהה הפנייה חייב להתאים לפנייה קיימת");
         }
 
