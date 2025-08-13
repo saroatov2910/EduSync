@@ -1,6 +1,7 @@
 // Request.ts
 import Student from './Student';
-import { isValidDate } from '../Functions/functions';
+import { isValidDate } from '../src/Functions/dateUtils';
+import{validateText} from '../src/Functions/dateUtils';
 
 export default class Request extends Student {
   requestId: number;
@@ -26,7 +27,16 @@ export default class Request extends Student {
     this.requestDate = requestDate;
 
     this.reqStatus = reqStatus;
+
+if (!this.validateText()) {
+  throw new Error('Request text is invalid');
+}
+
+
+
   }
+  
+  
 
   printInfo(): void {
     console.log(`Request ID: ${this.requestId}`);
