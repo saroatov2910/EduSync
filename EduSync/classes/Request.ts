@@ -2,19 +2,18 @@
 import Student from './Student';
 
 export default class Request extends Student {
-  requestId: number;       // או string אם אתה רוצה
+  requestId: number;
   requestText: string;
-  requestDate: Date;
+  requestDate: Date; 
   reqStatus: string;
 
   constructor(
     studentId: number,
     requestId: number,
     requestText: string,
-    requestDate: Date,
+    requestDate: Date, 
     reqStatus: string
   ) {
-  
     super(studentId, '', '', '', '', '');
 
     this.requestId = requestId;
@@ -23,11 +22,5 @@ export default class Request extends Student {
     this.reqStatus = reqStatus;
   }
 
-  printInfo(): void {
-    console.log(`Request ID: ${this.requestId}`);
-    console.log(`Student ID: ${this.StudentId}`);
-    console.log(`Request Text: ${this.requestText}`);
-    console.log(`Request Date: ${this.requestDate.toDateString()()}`);
-    console.log(`Status: ${this.reqStatus}`);
+
   }
-}
