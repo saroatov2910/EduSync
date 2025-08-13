@@ -1,13 +1,22 @@
-class Feedback {
+import { Request } from './Request';
+
+export default class Feedback extends Request {
     feedbackId: number;
-    requestId: number;
     grade: number;
     comment: string;
     createdBy: "סטודנט" | "גורם מטפל";
     feedbackDate: Date;
 
- constructor(feedbackId: number,requestId: number,grade: number,comment: string,createdBy: "סטודנט" | "גורם מטפל",feedbackDate: Date) { this.feedbackId = feedbackId;
-        this.requestId = requestId;
+    constructor(
+        feedbackId: number,
+        requestId: number,
+        grade: number,
+        comment: string,
+        createdBy: "סטודנט" | "גורם מטפל",
+        feedbackDate: Date
+    ) {
+        super(requestId); // ✅ call parent constructor first
+        this.feedbackId = feedbackId;
         this.grade = grade;
         this.comment = comment;
         this.createdBy = createdBy;
@@ -15,6 +24,7 @@ class Feedback {
 
         this.validate();
     }
+
     private validate() {
         if (!this.feedbackId || this.feedbackId <= 0) {
             throw new Error("מזהה משוב חייב להיות קיים וייחודי");
@@ -40,5 +50,4 @@ class Feedback {
             throw new Error("תאריך המשוב אינו תקין");
         }
     }
-
 }
