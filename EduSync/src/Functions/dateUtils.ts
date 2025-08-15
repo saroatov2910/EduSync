@@ -42,11 +42,32 @@ export function isValidEmail(email: unknown): { valid: boolean; error?: string }
 }
 
 
-
 export function isValidMobile(mobile: unknown): { valid: boolean; error?: string } {
-  // Check if the mobile number is a string of 10 digits starting with '05'
+  if (typeof mobile !== 'string' || mobile.trim() === '') {
+    return { valid: false, error: 'Mobile number must be a non-empty string' };
+  }
+
+  const trimmed = mobile.trim();
   const mobileRegex = /^05\d{8}$/;
-  return mobileRegex.test(mobile);
+
+  if (!mobileRegex.test(trimmed)) {
+    return { valid: false, error: 'Invalid Israeli mobile number format. Must start with 05 and be 10 digits long' };
+  }
+
+  return { valid: true };
+}
+
+export function isValidTime (timeStr: string ): boolean {
+    const timeRegex = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/; // Matches HH:MM format
+    if (!timeRegex.test(timeStr)) {
+        return false; // Invalid time format
+    }
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+        return false; // Hours must be 0-23 and minutes must be 0-59
+    }
+    return true; // Valid time format
+
 }
 
 

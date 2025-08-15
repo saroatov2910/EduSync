@@ -1,6 +1,6 @@
 import Request from "../classRequest/Request";
-export type AppointmentType = "זום" | "פרונטלי";
-export type AppointmentStatus = "מתוכננת" | "בוטלה" | "היתקיימה";
+import { isValidStudentId, validateText , isValidDate, isValidTime } from "../Functions/dateUtils";
+import type { RequestStatus ,AppointmentType} from "../RequestStatus";
 
 
 export default class Appointment extends Request {
@@ -9,20 +9,20 @@ export default class Appointment extends Request {
     appointmentTime: string;
     appointmentType: AppointmentType
     location: string;
-    status: AppointmentStatus
+    status: RequestStatus
 
     constructor(
         studentId: number,
         requestId: number,
         requestText: string,
         requestDate: Date,
-        reqStatus: string,
+        reqStatus: RequestStatus,
         appointmentId: number,
         appointmentDate: Date,
         appointmentTime: string,
-        appointmentType: "זום" | "פרונטלי",
+        appointmentType: AppointmentType,
         location: string,
-        status: "מתוכננת" | "בוטלה" | "היתקיימה"
+        status:RequestStatus
     ) {
         super(studentId, requestId, requestText, requestDate, reqStatus);
         this.appointmentId = appointmentId;
@@ -32,43 +32,16 @@ export default class Appointment extends Request {
         this.location = location;
         this.status = status;
 
-        this.validate();
+       
+    }
+    protected validate(){
+        isValidStudentId(this.StudentId);
+        isValidStudentId(this.requestId);
+        validateText(this.requestText);
+        isValidDate(this.requestDate);
+        isValidTime(this.appointmentTime);
+
+
     }
 
-    protected validate() {
-        if (!this.appointmentId || this.appointmentId <= 0) {
-            throw new Error("מזהה פגישה חייב להיות קיים וייחודי");
-        }
-        if (!this.requestId || this.requestId <= 0) {
-            throw new Error("מזהה הפנייה חייב להתאים לפנייה קיימת");
-        }
-        if (!(this.appointmentDate instanceof Date) || isNaN(this.appointmentDate.getTime())) {
-            throw new Error("תאריך הפגישה אינו תקין");
-        }
-        if (this.appointmentDate.getTime() < Date.now()) {
-            throw new Error("תאריך הפגישה חייב להיות עתידי");
-        }
-
-        if (!this.appointmentTime || !/^\d{2}:\d{2}$/.test(this.appointmentTime)) {
-            throw new Error("שעת הפגישה חייבת להיות בפורמט HH:MM");
-        }
-        const [hours, minutes] = this.appointmentTime.split(":").map(Number);
-        if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
-            throw new Error("שעת הפגישה אינה תקינה");
-        }
-
-        if (this.appointmentType !== "זום" && this.appointmentType !== "פרונטלי") {
-            throw new Error('סוג הפגישה חייב להיות "זום" או "פרונטלי"');
-        }
-
-        const zoomRegex = /^https?:\/\/(www\.)?zoom\.us\/j\/\d+(\?pwd=.*)?$/;
-        const classroomRegex = /^\d{3}$/;
-        if (!this.location || (!zoomRegex.test(this.location) && !classroomRegex.test(this.location))) {
-            throw new Error("מיקום הפגישה חייב להיות לינק זום תקין או מספר כיתה בעל 3 ספרות");
-        }
-
-        if (this.status !== "מתוכננת" && this.status !== "בוטלה" && this.status !== "היתקיימה") {
-            throw new Error('סטטוס הפגישה חייב להיות "מתוכננת", "בוטלה" או "היתקיימה"');    
-        }
-    }
 }

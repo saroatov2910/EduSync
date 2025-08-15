@@ -9,6 +9,7 @@ import RequestTable from './components/Request';
 import FeedbackTable from './classFeedback/Feedback';
 import CareHandlerTable from './components/CareHandle';
 import ContactMsgTable from './components/ContactMsg';
+import StudentTable from './components/Student';
 
 const App: React.FC = () => {
   return (
