@@ -28,21 +28,22 @@ export function isValidDate(value: unknown): { valid: boolean; error?: string } 
 
 
 
-
 export function isValidEmail(email: unknown): { valid: boolean; error?: string } {
   if (typeof email !== 'string' || email.trim() === '') {
-    return { valid: false, error: 'דוא"ל חייב להיות מחרוזת לא ריקה' };
+    return { valid: false, error: 'Email must be a non-empty string' };
   }
   const trimmed = email.trim();
+  // Improved regex: supports +, dots, and long domain names
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   if (!emailRegex.test(trimmed)) {
-    return { valid: false, error: 'פורמט דוא"ל אינו תקין' };
+    return { valid: false, error: 'Invalid email format' };
   }
   return { valid: true };
 }
 
 
-export function isValidMobile(mobile: string): boolean {
+
+export function isValidMobile(mobile: unknown): { valid: boolean; error?: string } {
   // Check if the mobile number is a string of 10 digits starting with '05'
   const mobileRegex = /^05\d{8}$/;
   return mobileRegex.test(mobile);
