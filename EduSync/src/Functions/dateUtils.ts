@@ -9,33 +9,38 @@ export function validateText(value: unknown, maxLength: number = 500): { valid: 
   return { valid: true };
 }
 
-
-
-
-
-export function isValidDate(value: unknown): {valid: boolean; error?: string} {
+export function isValidDate(value: unknown): { valid: boolean; error?: string } {
     let date: Date;
+
     if (typeof value === 'string') {
-         date = new Date(value);
+        date = new Date(value);
     } else if (value instanceof Date) {
         date = value;
-   return { valid: false, error: 'The value must be a string or Date object' };
+    } else {
+        return { valid: false, error: 'The value must be a string or Date object' };
+    }
+
+    if (isNaN(date.getTime())) {
+        return { valid: false, error: 'Invalid date format' };
+    }
+    return { valid: true };
+}
+
+
+
+
+export function isValidEmail(email: unknown): { valid: boolean; error?: string } {
+  if (typeof email !== 'string' || email.trim() === '') {
+    return { valid: false, error: 'דוא"ל חייב להיות מחרוזת לא ריקה' };
   }
-  if (isNaN(date.getTime())) {
-    return { valid: false, error: 'Invalid date format' };
+  const trimmed = email.trim();
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(trimmed)) {
+    return { valid: false, error: 'פורמט דוא"ל אינו תקין' };
   }
-  // Optional: additional check, like if date is in the past
-  // if (date > new Date()) return { valid: false, error: 'Date cannot be in the future' };
   return { valid: true };
 }
 
-
-export function isValidEmail(email: string): boolean {
-  // Basic email validation regex
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-  
-}
 
 export function isValidMobile(mobile: string): boolean {
   // Check if the mobile number is a string of 10 digits starting with '05'
