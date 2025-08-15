@@ -1,13 +1,15 @@
 import Request from "../classRequest/Request";
-import { isValidDate } from "../Functions/dateUtils";
+export type AppointmentType = "זום" | "פרונטלי";
+export type AppointmentStatus = "מתוכננת" | "בוטלה" | "היתקיימה";
+
 
 export default class Appointment extends Request {
     appointmentId: number;
     appointmentDate: Date;
     appointmentTime: string;
-    appointmentType: "זום" | "פרונטלי";
+    appointmentType: AppointmentType
     location: string;
-    status: "מתוכננת" | "בוטלה" | "היתקיימה";
+    status: AppointmentStatus
 
     constructor(
         studentId: number,
