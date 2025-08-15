@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import  Request from '../../classes/Request';
+import  Request from '../classes/Request';
 import '../cssRules/Body.css';
 
 const RequestTable: React.FC = () => {
