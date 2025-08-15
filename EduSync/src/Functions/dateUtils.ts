@@ -39,7 +39,16 @@ export function isValidStudentId(studentId: number): boolean {
   // Check if the student ID is a number between 100000 and 9999999999
   return Number.isInteger(studentId) && studentId >= 100000 && studentId <= 9999999999;
 }
+
 export function isValidNumber(value: number): boolean {
   // Check if the value is a finite number
   return Number.isFinite(value);
 }
+export function trim(str:string ): string {
+    // Check if the value is a string and not just whitespace.
+    if (typeof str !== 'string') {
+        return '';
+    }
+    // Use the built-in trim() method for reliable whitespace removal.
+}
+
