@@ -1,4 +1,5 @@
 // src/models/Student.ts
+
 export default class Student {
   StudentId: number;
   firstName: string;
