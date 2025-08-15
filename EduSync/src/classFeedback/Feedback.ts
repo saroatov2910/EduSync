@@ -1,10 +1,12 @@
 import Request from '../classRequest/Request';
+import type { createdBy ,grade  } from '../RequestStatus';
+import { isValidNumber, validateText } from '../Functions/dateUtils';
 
 export default class Feedback extends Request {
     feedbackId: number;
-    grade: number;
+    grade: grade;
     comment: string;
-    createdBy: "סטודנט" | "גורם מטפל";
+    createdBy: createdBy
     feedbackDate: Date;
 
     constructor(
@@ -14,9 +16,9 @@ export default class Feedback extends Request {
         requestDate: Date,
         reqStatus: string,
         feedbackId: number,
-        grade: number,
+        grade: grade,
         comment: string,
-        createdBy: "סטודנט" | "גורם מטפל",
+        createdBy: createdBy
         feedbackDate: Date
     ) {
         super(studentId, requestId, requestText, requestDate, reqStatus);
@@ -30,28 +32,12 @@ export default class Feedback extends Request {
     }
 
         protected validate() {
-        if (!this.feedbackId || this.feedbackId <= 0) {
-            throw new Error("מזהה משוב חייב להיות קיים וייחודי");
-        }
+            isValidNumber(this.feedbackId);
+            isValidNumber(this.grade);
+            validateText(this.comment);
+            isValidDate(this.feedbackDate);
 
-        if (!this.requestId || this.requestId <= 0) { // inherited from Request
-            throw new Error("מזהה הפנייה חייב להתאים לפנייה קיימת");
-        }
 
-        if (this.grade < 1 || this.grade > 5) {
-            throw new Error("הציון חייב להיות בין 1 ל-5");
         }
-
-        if (this.comment.length > 300) {
-            throw new Error("התגובה החופשית לא יכולה להיות ארוכה מ-300 תווים");
-        }
-
-        if (this.createdBy !== "סטודנט" && this.createdBy !== "גורם מטפל") {
-            throw new Error('שדה "ניתן על ידי" חייב להיות "סטודנט" או "גורם מטפל"');
-        }
-
-        if (!(this.feedbackDate instanceof Date) || isNaN(this.feedbackDate.getTime())) {
-            throw new Error("תאריך המשוב אינו תקין");
-        }
-    }
+  
 }
