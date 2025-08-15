@@ -1,4 +1,4 @@
-import Request from './Request';
+import Request from '../classRequest/Request';
 
 export default class ContactMsg extends Request {
   msgContent: string;

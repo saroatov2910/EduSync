@@ -1,5 +1,5 @@
-import Request from "./Request";
-import { isValidDate } from "../src/Functions/dateUtils";
+import Request from "../classRequest/Request";
+import { isValidDate } from "../Functions/dateUtils";
 
 export default class Appointment extends Request {
     appointmentId: number;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import  Appointment  from '../../classes/appointment';
+import  Appointment  from '../classAppointment/Appointment';
 import '../cssRules/Body.css';
 
 const AppointmentTable: React.FC = () => {

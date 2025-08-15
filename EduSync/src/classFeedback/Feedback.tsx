@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Feedback } from '../classes/feedback';
+import { Feedback } from './Feedback';
 import '../cssRules/Body.css';
 
 const FeedbackTable: React.FC = () => {

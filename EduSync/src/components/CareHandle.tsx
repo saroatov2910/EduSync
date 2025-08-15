@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import CareHandler,  {type Role}  from "../../classes/CareHandle";
+import CareHandler,  {type Role}  from "../classCareHandler /CareHandle";
 import "../cssRules/Body.css";
 
 const LS_HANDLERS = "care_handlers_v1";

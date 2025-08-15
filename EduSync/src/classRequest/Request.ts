@@ -1,6 +1,6 @@
 // Request.ts
-import Student from './Student';
-import { isValidDate, validateText } from '../src/Functions/dateUtils';
+import Student from '../classStudent/Student';
+import { isValidDate, validateText } from '../Functions/dateUtils';
 
 export default class Request extends Student {
   requestId: number;

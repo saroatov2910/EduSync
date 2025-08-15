@@ -1,4 +1,4 @@
-import Request from './Request';
+import Request from '../classRequest/Request';
 
 export default class Feedback extends Request {
     feedbackId: number;

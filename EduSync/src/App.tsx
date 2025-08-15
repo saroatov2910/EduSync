@@ -6,7 +6,7 @@ import React from 'react';
 import AppointmentTable from './components/Appointment';
 import StudentTable from './components/Student';
 import RequestTable from './components/Request';
-import FeedbackTable from './components/Feedback';
+import FeedbackTable from './classFeedback/Feedback';
 import CareHandlerTable from './components/CareHandle';
 import ContactMsgTable from './components/ContactMsg';
 

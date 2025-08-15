@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ContactMsg } from '../classes/contactmsg';
+import { ContactMsg } from '../classContactMsg/ContactMsg';
 import '../cssRules/Body.css';
 
 const ContactMsgTable: React.FC = () => {
