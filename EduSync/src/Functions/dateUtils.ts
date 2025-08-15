@@ -1,25 +1,34 @@
-export function validateText(value: string): boolean {
-  // Check if the value is a string and not just whitespace.
+export function validateText(value: unknown, maxLength: number = 500): { valid: boolean; error?: string } {
+    // Check if the value is a string and not empty, and if it exceeds the maximum length
   if (typeof value !== 'string' || value.trim() === '') {
-    return false;
+    return { valid: false, error: 'The field must be a non-empty string' };
   }
-  const MAX_LENGTH = 500;
-  if (value.length > MAX_LENGTH) {
-    return false;
+  if (value.length > maxLength) {
+    return { valid: false, error: `The field exceeds the limit of ${maxLength} characters` };
   }
-  
-  return true;
+  return { valid: true };
 }
 
-export function isValidDate(value: string | Date): boolean {
+
+
+
+
+export function isValidDate(value: unknown): {valid: boolean; error?: string} {
+    let date: Date;
     if (typeof value === 'string') {
-        const date = new Date(value);
-        return !isNaN(date.getTime());
+         date = new Date(value);
     } else if (value instanceof Date) {
-        return !isNaN(value.getTime());
-    }
-    return false;
+        date = value;
+   return { valid: false, error: 'The value must be a string or Date object' };
+  }
+  if (isNaN(date.getTime())) {
+    return { valid: false, error: 'Invalid date format' };
+  }
+  // Optional: additional check, like if date is in the past
+  // if (date > new Date()) return { valid: false, error: 'Date cannot be in the future' };
+  return { valid: true };
 }
+
 
 export function isValidEmail(email: string): boolean {
   // Basic email validation regex
@@ -44,11 +53,13 @@ export function isValidNumber(value: number): boolean {
   // Check if the value is a finite number
   return Number.isFinite(value);
 }
-export function trim(str:string ): string {
-    // Check if the value is a string and not just whitespace.
+
+export function trim(str: string): string {
+    // Return an empty string if the input isn't a string to prevent errors.
     if (typeof str !== 'string') {
         return '';
     }
     // Use the built-in trim() method for reliable whitespace removal.
+    return str.trim();
 }
 
