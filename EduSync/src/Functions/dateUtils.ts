@@ -21,3 +21,23 @@ export function isValidDate(value: string | Date): boolean {
     return false;
 }
 
+export function isValidEmail(email: string): boolean {
+  // Basic email validation regex
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+  
+}
+
+
+export function isValidMobile(mobile: string): boolean {
+  // Check if the mobile number is a string of 10 digits starting with '05'
+  const mobileRegex = /^05\d{8}$/;
+  return mobileRegex.test(mobile);
+}
+
+
+
+export function isValidStudentId(studentId: number): boolean {
+  // Check if the student ID is a number between 100000 and 9999999999
+  return Number.isInteger(studentId) && studentId >= 100000 && studentId <= 9999999999;
+}

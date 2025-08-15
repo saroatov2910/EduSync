@@ -1,15 +1,23 @@
-import React, { Component } from 'react'; 
+import Request from './Request';
 
-class Msg extends Component {
-    constructor(props) {
-        super(props);
-        this.state={
-            msgId : props.msgId,
-            msgText : props.msgText,
-            msgDate : props.msgDate,
-            msgSender : props.msgSender,
-        }
+export default class ContactMsg extends Request {
+  msgContent: string;
+  date: Date;
+  time: string;
 
-    }
-
+  constructor(
+  
+    requestId: number,
+    msgContent: string,
+    date: Date,
+    time: string
+  ) {
+    // Call the constructor of the parent class (Request)
+    super(0,requestId, msgContent, date, 'Pending'); 
+    
+    // Assign additional properties specific to ContactMsg
+    this.msgContent = msgContent;
+    this.date = date;
+    this.time = time;
+  }
 }
