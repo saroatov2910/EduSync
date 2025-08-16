@@ -1,20 +1,21 @@
-// import React from 'react';
+import React from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import StudentTable from "./components/Student";
 
-
-const App = () => {
+function App() {
   return (
     <div>
       <Header />
       <main>
-        {/* כאן יתווסף התוכן הראשי של האפליקציה */}
-        <h2>תוכן ראשי</h2>
-        <p>ברוכים הבאים לאפליקציה.</p>
+        <h1>טבלת סטודנטים</h1>
+        <StudentTable />
       </main>
       <Footer />
     </div>
   );
-};
+}
 
 export default App;
+
+
