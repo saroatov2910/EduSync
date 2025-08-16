@@ -1,28 +1,40 @@
+// Student.ts
+import { isValidStudentId, validateText, isValidEmail, isValidMobile } from '../Functions/dateUtils';
+
+export interface StudentProps {
+  studentId: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  mobile: string;
+  major: string;
+}
 
 export default class Student {
-  StudentId: number;
+  studentId: number;
   firstName: string;
   lastName: string;
   email: string;
   mobile: string;
   major: string;
 
-  cconstructor(
-    StudentId: number,
-    firstName: string,
-    lastName: string,
-    email: string,
-    mobile: string,
-    major: string
-  ) {
-    this.StudentId = StudentId;
-    this.firstName = firstName.trim();
-    this.lastName = lastName.trim();
-    this.email = email.trim();
-    this.mobile = mobile.trim();
-    this.major = major.trim();
+  constructor(props: StudentProps) {
+    this.studentId = props.studentId;
+    this.firstName = props.firstName.trim();
+    this.lastName = props.lastName.trim();
+    this.email = props.email.trim();
+    this.mobile = props.mobile.trim();
+    this.major = props.major.trim();
+
+    this.validate();
   }
 
-
-
+  protected validate(): void {
+    isValidStudentId(this.studentId);
+    validateText(this.firstName);
+    validateText(this.lastName);
+    isValidEmail(this.email);
+    isValidMobile(this.mobile);
+    validateText(this.major);
+  }
 }
