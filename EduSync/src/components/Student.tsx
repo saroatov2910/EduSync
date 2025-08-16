@@ -7,18 +7,17 @@ const LS_STUDENTS = "students_v1";
 const StudentTable: React.FC = () => {
   const [students, setStudents] = useState<Student[]>([]);
 
-  // load once
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(LS_STUDENTS);
-      if (raw) {
-        const arr = JSON.parse(raw);
-        if (Array.isArray(arr)) setStudents(arr.map(Student.from));
-      }
+      const raw = localStorage.getItem("students_v1");
+      if (!raw) return;
+      const arr = JSON.parse(raw);
+      if (Array.isArray(arr)) setStudents(arr.map(Student.from));
     } catch (e) {
       console.error("failed to load students", e);
     }
   }, []);
+  
 
   const existingIds = useMemo(() => new Set(students.map(s => s.StudentId)), [students]);
 
