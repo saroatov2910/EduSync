@@ -1,23 +1,37 @@
-import Request from '../classRequest/Request';
+// ContactMsg.ts
+import type { createdBy} from '../RequestStatus';
+import { validateText, isValidDate ,isValidNumber} from '../Functions/dateUtils';
 
-export default class ContactMsg extends Request {
-  msgContent: string;
-  date: Date;
-  time: string;
 
-  constructor(
-  
-    requestId: number,
-    msgContent: string,
-    date: Date,
-    time: string
-  ) {
-    // Call the constructor of the parent class (Request)
-    super(0,requestId, msgContent, date, 'Pending'); 
-    
-    // Assign additional properties specific to ContactMsg
-    this.msgContent = msgContent;
-    this.date = date;
-    this.time = time;
+export interface ContactMsgProps {
+  msgId: number;
+  createdBy: createdBy;
+  requestId: number;
+  requestText: string;
+  requestDate: Date;
+}
+
+export default class ContactMsg {
+  msgId: number;
+  createdBy: createdBy;
+  requestId: number;
+  requestText: string;
+  requestDate: Date;
+
+  constructor(props: ContactMsgProps) {
+    this.msgId = props.msgId;
+    this.createdBy = props.createdBy;
+    this.requestId = props.requestId;
+    this.requestText = props.requestText;
+    this.requestDate = props.requestDate;
+
+    this.validate();
+  }
+
+protected validate(): void {
+    isValidNumber(this.msgId);
+    validateText(this.requestText);
+    isValidDate(this.requestDate);
+    isValidNumber(this.requestId);
   }
 }
