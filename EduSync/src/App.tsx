@@ -1,42 +1,17 @@
-import './cssRules/App.css';
+// import React from 'react';
 import Header from './components/Header';
-import Body from './components/Body';
 import Footer from './components/Footer';
-import React from 'react';
-import AppointmentTable from './components/Appointment';
-import StudentTable from './components/Student';
-import RequestTable from './components/Request';
-import FeedbackTable from './classFeedback/Feedback';
-import CareHandlerTable from './components/CareHandle';
-import ContactMsgTable from './components/ContactMsg';
-import StudentTable from './components/Student';
 
-const App: React.FC = () => {
+
+const App = () => {
   return (
     <div>
       <Header />
-      <Body />
-
-      <h1>מערכת ניהול</h1>
-
-      <h2>פגישות</h2>
-      <AppointmentTable />
-
-      <h2>סטודנטים</h2>
-      <StudentTable />
-
-      <h2>בקשות</h2>
-      <RequestTable />
-
-      <h2>משוב</h2>
-      <FeedbackTable />
-
-      <h2>מטפלים</h2>
-      <CareHandlerTable />
-
-      <h2>הודעות קשר</h2>
-      <ContactMsgTable />
-
+      <main>
+        {/* כאן יתווסף התוכן הראשי של האפליקציה */}
+        <h2>תוכן ראשי</h2>
+        <p>ברוכים הבאים לאפליקציה.</p>
+      </main>
       <Footer />
     </div>
   );
