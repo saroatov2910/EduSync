@@ -4,6 +4,7 @@ import HeaderRoot from './components/layout/HeaderRoot';
 import Footer from './components/layout/Footer';
 
 // Pages
+import HomePage from './components/Home';
 import AppointmentTable from './components/Appointment';
 import CareHandleTable from './components/CareHandle';
 import ContactMsgTable from './components/ContactMsg';
@@ -18,6 +19,7 @@ function App() {
       <HeaderRoot />
       <main style={{ padding: '20px' }}>
         <Routes>
+          <Route path="/" element={<HomePage />} /> {/* default Home page */}
           <Route path="/appointment" element={<AppointmentTable />} />
           <Route path="/carehandle" element={<CareHandleTable />} />
           <Route path="/contactmsg" element={<ContactMsgTable />} />
@@ -25,7 +27,6 @@ function App() {
           <Route path="/student" element={<StudentTable />} />
           <Route path="/help" element={<HelpPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />
-          <Route path="/" element={<StudentTable />} /> {/* default route */}
         </Routes>
       </main>
       <Footer />
