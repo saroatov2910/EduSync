@@ -1,3 +1,7 @@
+import Feedback from "../classFeedback/Feedback";
+
+
+
 export function validateText(value: unknown, maxLength: number = 500): { valid: boolean; error?: string } {
     // Check if the value is a string and not empty, and if it exceeds the maximum length
   if (typeof value !== 'string' || value.trim() === '') {
@@ -75,7 +79,6 @@ export function isValidStudentId(StudentId: number): boolean {
   // Check if the student ID is a number between 100000 and 9999999999
   return Number.isInteger(StudentId) && StudentId >= 100000 && StudentId <= 9999999999;
 }
-
 export function isValidNumber(value: number): boolean {
   // Check if the value is a finite number
   return Number.isFinite(value);

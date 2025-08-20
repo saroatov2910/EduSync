@@ -1,6 +1,6 @@
 // ContactMsg.ts
 import type { createdBy} from '../RequestStatus';
-import { validateText, isValidDate ,isValidNumber} from '../Functions/dateUtils';
+import { validateText, isValidDate ,isValidNumber} from '../Functions/Utils';
 
 
 export interface ContactMsgProps {

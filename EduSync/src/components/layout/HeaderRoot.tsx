@@ -41,8 +41,7 @@ export default function Header() {
     <Box
       role="presentation"
       onClick={toggleDrawer}
-      sx={{ width: 280, textAlign: 'right', direction: 'rtl' }}
-    >
+      sx={{ width: 280, textAlign: 'right', direction: 'rtl' }} >
       <Typography variant="h6" sx={{ p: 2 }}>
         EduSync
       </Typography>
@@ -108,9 +107,9 @@ export default function Header() {
         </Toolbar>
       </AppBar>
 
-      {/* Drawer למובייל */}
+      {/* Drawer for mobile */}
       <Drawer
-        anchor="right"             // נוח ל‑RTL
+        anchor="right"             
         open={mobileOpen}
         onClose={toggleDrawer}
         sx={{ display: { xs: 'block', sm: 'none' } }}
