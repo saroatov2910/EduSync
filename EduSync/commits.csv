@@ -1,0 +1,73 @@
+ca4a531,2025-08-17,gallib28,gallibenson123@gmail.com,last commit for class targil in 17/8 assignment
+7110950,2025-08-17,gallib28,gallibenson123@gmail.com,fixing student.ts + .tsx and changing app to test student table
+1489a2d,2025-08-16,saroatov2910,98228992+saroatov2910@users.noreply.github.com,check the app
+5a994b5,2025-08-16,saroatov2910,98228992+saroatov2910@users.noreply.github.com, fiexied the class
+c060666,2025-08-16,saroatov2910,98228992+saroatov2910@users.noreply.github.com, add the constructor
+c870899,2025-08-16,saroatov2910,98228992+saroatov2910@users.noreply.github.com, add the constructor
+3f97619,2025-08-16,saroatov2910,98228992+saroatov2910@users.noreply.github.com,add createdBy
+80e0f77,2025-08-16,saroatov2910,98228992+saroatov2910@users.noreply.github.com,creat the Studentprops
+7733a28,2025-08-15,saroatov2910,98228992+saroatov2910@users.noreply.github.com,Fix variable name in isValidStudentId
+18450bb,2025-08-15,saroatov2910,98228992+saroatov2910@users.noreply.github.com,fiexd the class
+cedac89,2025-08-15,saroatov2910,98228992+saroatov2910@users.noreply.github.com,protected validate()- the function
+931c837,2025-08-15,saroatov2910,98228992+saroatov2910@users.noreply.github.com,creat a new status
+4632e5a,2025-08-15,saroatov2910,98228992+saroatov2910@users.noreply.github.com,all file
+d3c1520,2025-08-15,saroatov2910,98228992+saroatov2910@users.noreply.github.com,new file status
+478c311,2025-08-15,saroatov2910,98228992+saroatov2910@users.noreply.github.com,Update Appointment class - added types AppointmentType and AppointmentStatus to class variables
+9271424,2025-08-15,saroatov2910,98228992+saroatov2910@users.noreply.github.com,Created separate directories for classes to organize
+7688c19,2025-08-15,saroatov2910,98228992+saroatov2910@users.noreply.github.com,isValidMobile
+fb6e0d9,2025-08-15,saroatov2910,98228992+saroatov2910@users.noreply.github.com,isValidEmail
+5a929a8,2025-08-15,saroatov2910,98228992+saroatov2910@users.noreply.github.com, validateText and isValidDate
+c3ec20c,2025-08-15,saroatov2910,98228992+saroatov2910@users.noreply.github.com,validateText - fiexed
+3763a91,2025-08-15,saroatov2910,98228992+saroatov2910@users.noreply.github.com,trim -check the space
+e770fcc,2025-08-15,saroatov2910,98228992+saroatov2910@users.noreply.github.com,isvalidNumber -check finiti number
+1dc8d45,2025-08-15,saroatov2910,98228992+saroatov2910@users.noreply.github.com,isValidEmail - check the email
+eb40124,2025-08-13,gallib28,gallibenson123@gmail.com,Merge branch 'main' of https://github.com/saroatov2910/EduSync
+e472654,2025-08-13,Tams03,tami.lieberman12@gmail.com,Merge branch 'main' of https://github.com/saroatov2910/EduSync
+647a75c,2025-08-13,gallib28,gallibenson123@gmail.com,fixing run bugs
+d589f6f,2025-08-13,Tams03,tami.lieberman12@gmail.com,fix extension of request
+dc8abef,2025-08-13,saroatov2910,98228992+saroatov2910@users.noreply.github.com,Merge branch 'main' of https://github.com/saroatov2910/EduSync
+80c666c,2025-08-13,saroatov2910,98228992+saroatov2910@users.noreply.github.com,Add validateText function for request text validation
+093d4fb,2025-08-13,gallib28,gallibenson123@gmail.com,Merge branch 'main' of https://github.com/saroatov2910/EduSync
+47d1b81,2025-08-13,gallib28,gallibenson123@gmail.com,fixing imports
+200e026,2025-08-13,Tams03,tami.lieberman12@gmail.com,Merge branch 'main' of https://github.com/saroatov2910/EduSync
+bab04b7,2025-08-13,Tams03,tami.lieberman12@gmail.com,add extension of classes
+c7aeccf,2025-08-13,saroatov2910,98228992+saroatov2910@users.noreply.github.com,Created fetch file ./src/func file
+064c616,2025-08-13,saroatov2910,98228992+saroatov2910@users.noreply.github.com,Merge branch 'main' of https://github.com/saroatov2910/EduSync
+bb6ff0b,2025-08-13,saroatov2910,98228992+saroatov2910@users.noreply.github.com,function isValidDate
+fb3bce1,2025-08-13,gallib28,gallibenson123@gmail.com,Merge branch 'main' of https://github.com/saroatov2910/EduSync
+ae8efcd,2025-08-13,gallib28,gallibenson123@gmail.com,fixing student and carehandle classes and tsx files
+daed4f4,2025-08-13,Tams03,tami.lieberman12@gmail.com,Merge branch 'main' of https://github.com/saroatov2910/EduSync
+252e4c7,2025-08-13,Tams03,tami.lieberman12@gmail.com,updating compunents
+d0a1cd3,2025-08-13,saroatov2910,98228992+saroatov2910@users.noreply.github.com,Fix date formatting icon
+ade5079,2025-08-13,Tams03,tami.lieberman12@gmail.com,קריאה לטבלאות
+82636c8,2025-08-13,saroatov2910,98228992+saroatov2910@users.noreply.github.com,Add inheritance from Student
+d2699de,2025-08-13,Tams03,tami.lieberman12@gmail.com,Merge branch 'main' of https://github.com/saroatov2910/EduSync
+acf8bea,2025-08-13,Tams03,tami.lieberman12@gmail.com,creating all tables
+b7f572e,2025-08-13,gallib28,gallibenson123@gmail.com,Merge branch 'main' of https://github.com/saroatov2910/EduSync
+4850fc0,2025-08-13,gallib28,gallibenson123@gmail.com,fixing carehandle
+a0d306f,2025-08-13,Tams03,tami.lieberman12@gmail.com,Merge branch 'main' of https://github.com/saroatov2910/EduSync
+e77faa7,2025-08-13,Tams03,tami.lieberman12@gmail.com,.
+4b8a713,2025-08-13,gallib28,gallibenson123@gmail.com,Merge branch 'main' of https://github.com/saroatov2910/EduSync
+e11ff13,2025-08-13,gallib28,gallibenson123@gmail.com,fixing studnt id errors
+e0b0e98,2025-08-13,Tams03,tami.lieberman12@gmail.com,creating tables
+30f96ad,2025-08-13,Tams03,tami.lieberman12@gmail.com,Merge branch 'main' of https://github.com/saroatov2910/EduSync
+28550b2,2025-08-13,Tams03,tami.lieberman12@gmail.com,creating components for all classes
+0cebce2,2025-08-13,saroatov2910,98228992+saroatov2910@users.noreply.github.com,Merge branch 'main' of https://github.com/saroatov2910/EduSync
+b4844e6,2025-08-13,saroatov2910,98228992+saroatov2910@users.noreply.github.com,Creat Request class
+33d5218,2025-08-13,gallib28,gallibenson123@gmail.com,fixing Student
+5151208,2025-08-13,gallib28,gallibenson123@gmail.com,Merge branch 'main' of https://github.com/saroatov2910/EduSync
+d8b33fb,2025-08-13,gallib28,gallibenson123@gmail.com,changing id to StudentId
+0ead39c,2025-08-13,Tams03,tami.lieberman12@gmail.com,change handlerid to number
+4f473d9,2025-08-13,Tams03,tami.lieberman12@gmail.com,schang studentid to number
+1759b59,2025-08-13,gallib28,gallibenson123@gmail.com,fixing studentid
+79863d6,2025-08-13,gallib28,gallibenson123@gmail.com,Merge branch 'main' of https://github.com/saroatov2910/EduSync
+1cfcee9,2025-08-13,gallib28,gallibenson123@gmail.com,fixing imports in student and carehandler
+7fac3ed,2025-08-13,Tams03,tami.lieberman12@gmail.com,update appointment class
+6212ab0,2025-08-13,Tams03,tami.lieberman12@gmail.com,update feedback class
+4411ed8,2025-08-13,gallib28,gallibenson123@gmail.com,Merge branch 'main' of https://github.com/saroatov2910/EduSync
+038e17d,2025-08-13,gallib28,gallibenson123@gmail.com,adding student class and carehandler
+cf96a30,2025-08-13,saroatov2910,98228992+saroatov2910@users.noreply.github.com,Refactor: renamed Msg to ContactMsg
+f28b913,2025-08-13,saroatov2910,98228992+saroatov2910@users.noreply.github.com,Refactor: renamed Msg to ContactMsg
+a27945b,2025-08-13,gallib28,gallibenson123@gmail.com,adding classes folder and files
+f704d0f,2025-08-08,saroatov2910,98228992+saroatov2910@users.noreply.github.com, header footer body
+576f3f2,2025-08-08,saroatov2910,98228992+saroatov2910@users.noreply.github.com, new
