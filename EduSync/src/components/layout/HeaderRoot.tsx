@@ -94,7 +94,13 @@ export default function HeaderRoot() {
         </Toolbar>
       </AppBar>
 
-      <Drawer anchor="right" open={mobileOpen} onClose={toggleDrawer}>
+      {/* Drawer for mobile */}
+      <Drawer
+        anchor="right"             
+        open={mobileOpen}
+        onClose={toggleDrawer}
+        sx={{ display: { xs: 'block', sm: 'none' } }}
+      >
         {drawer}
       </Drawer>
     </Box>

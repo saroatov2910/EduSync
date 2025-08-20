@@ -1,7 +1,7 @@
 // Request.ts
 import Student from '../classStudent/Student';
 import type { RequestTopic, RequestStatus } from '../RequestStatus';
-import { isValidStudentId, validateText, isValidDate } from '../Functions/dateUtils';
+import { isValidStudentId,validateText, isValidDate } from '../Functions/Utils';
 
 export interface RequestProps {
   studentId: number;
@@ -10,16 +10,15 @@ export interface RequestProps {
   email: string;
   mobile: string;
   major: string;
+
   requestId: number;
   requestTopic: RequestTopic;
   requestText: string;
   requestDate: Date;
   reqStatus: RequestStatus;
-  
 
   handlerId: number;
 }
-
 
 export default class Request extends Student {
   requestId: number;
@@ -27,11 +26,11 @@ export default class Request extends Student {
   requestText: string;
   requestDate: Date;
   reqStatus: RequestStatus;
-  handlerId: number; 
+  handlerId: number;
 
   constructor(props: RequestProps) {
     super({
-      studentId: props.studentId,
+      StudentId: props.studentId,
       firstName: props.firstName,
       lastName: props.lastName,
       email: props.email,
@@ -44,15 +43,18 @@ export default class Request extends Student {
     this.requestText = props.requestText;
     this.requestDate = props.requestDate;
     this.reqStatus = props.reqStatus;
-    
     this.handlerId = props.handlerId;
-    
-    this.validate();
+
+    this.validate(); // אפשר גם להשתמש בתוצאה אם תרצה לזרוק חריגה
   }
 
-  protected validate() {
-    isValidStudentId(this.studentId);
-    validateText(this.requestText);
-    isValidDate(this.requestDate);
+  public validate(): string[] {
+    const errs = super.validate();
+  
+    try { isValidStudentId(this.StudentId); } catch (e:any) { errs.push(e?.message ?? "StudentId לא תקין"); }
+    try { validateText(this.requestText); }  catch { errs.push("טקסט בקשה לא תקין"); }
+    try { isValidDate(this.requestDate); }   catch { errs.push("תאריך בקשה לא תקין"); }
+  
+    return errs;
   }
-}
+  }
