@@ -1,6 +1,5 @@
-// src/components/layout/Header.tsx
 import * as React from 'react';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -9,7 +8,6 @@ import Button from '@mui/material/Button';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
@@ -17,46 +15,44 @@ import Box from '@mui/material/Box';
 
 type NavItem = { label: string; to: string };
 
-// כאן תתאים את הרשימה למסכים שלך
 const navItems: NavItem[] = [
   { label: 'בית', to: '/' },
-  { label: 'סטודנטים', to: '/students' },        // Student.tsx
-  { label: 'תורים', to: '/appointments' },        // Appointment.tsx
-  { label: 'בקשות', to: '/requests' },            // Request.tsx
-  { label: 'טיפול פניות', to: '/care' },          // CareHandle.tsx
-  { label: 'צור קשר', to: '/contact' },           // ContactMsg.tsx
-  { label: 'עזרה', to: '/help' },                 // Help page (אם יש)
-  // תוכל להוסיף כאן Management / Forms לפי התכנון
+  { label: 'סטודנטים', to: '/student' },
+  { label: 'תורים', to: '/appointment' },
+  { label: 'בקשות', to: '/request' },
+  { label: 'טיפול פניות', to: '/carehandle' },
+  { label: 'צור קשר', to: '/contactmsg' },
+  { label: 'עזרה', to: '/help' },
+  { label: 'פידבק', to: '/feedback' },
 ];
 
-export default function Header() {
+export default function HeaderRoot() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const navigate = useNavigate();
   const location = useLocation();
 
-  const toggleDrawer = () => setMobileOpen((prev) => !prev);
+  const toggleDrawer = () => setMobileOpen(prev => !prev);
   const isActive = (to: string) => location.pathname === to;
 
-  // Drawer למובייל
+  const handleNavigation = (url: string) => {
+    navigate(url);
+    setMobileOpen(false);
+  };
+
   const drawer = (
-    <Box
-      role="presentation"
-      onClick={toggleDrawer}
-      sx={{ width: 280, textAlign: 'right', direction: 'rtl' }} >
+    <Box role="presentation" sx={{ width: 250, textAlign: 'right', direction: 'rtl' }}>
       <Typography variant="h6" sx={{ p: 2 }}>
         EduSync
       </Typography>
       <Divider />
       <List>
-        {navItems.map((item) => (
+        {navItems.map(item => (
           <ListItem key={item.to} disablePadding>
-            <ListItemButton
-              component={RouterLink}
-              to={item.to}
-              selected={isActive(item.to)}
-              sx={{ textAlign: 'right' }}
-            >
-              <ListItemText primary={item.label} />
-            </ListItemButton>
+            <ListItemText
+              primary={item.label}
+              onClick={() => handleNavigation(item.to)}
+              sx={{ textAlign: 'right', p: 2, cursor: 'pointer', color: isActive(item.to) ? 'primary.main' : 'text.primary' }}
+            />
           </ListItem>
         ))}
       </List>
@@ -65,14 +61,8 @@ export default function Header() {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <AppBar
-        position="static"
-        color="default"
-        elevation={0}
-        sx={{ borderBottom: 1, borderColor: 'divider' }}
-      >
+      <AppBar position="static" color="default" elevation={0} sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Toolbar sx={{ gap: 1, direction: 'rtl' }}>
-          {/* המבורגר למובייל */}
           <IconButton
             color="inherit"
             edge="start"
@@ -83,18 +73,15 @@ export default function Header() {
             <MenuIcon />
           </IconButton>
 
-          {/* לוגו/כותרת */}
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             EduSync
           </Typography>
 
-          {/* קישורי טופ-בר לדסקטופ */}
           <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 0.5, flexWrap: 'wrap' }}>
-            {navItems.map((item) => (
+            {navItems.map(item => (
               <Button
                 key={item.to}
-                component={RouterLink}
-                to={item.to}
+                onClick={() => navigate(item.to)}
                 sx={{
                   fontSize: 16,
                   color: isActive(item.to) ? 'primary.main' : 'text.primary',
