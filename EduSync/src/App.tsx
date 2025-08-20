@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from './components/layout/HeaderRoot';
+import HeaderRoot from './components/layout/HeaderRoot';
 import Footer from './components/layout/Footer';
 import StudentTable from "./components/Student";
 
