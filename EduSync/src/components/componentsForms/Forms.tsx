@@ -1,59 +1,34 @@
-import { useFormState } from "react-dom";
-import { useState } from "react";
+// src/components/componentsForms/Forms.tsx
+import React from 'react';
+import { Container, Typography, Button } from '@mui/material';
+import { Link } from 'react-router-dom';
 
- export default function Forms() {
-    const [formState, setFormState] = useFormState({
-        studentId: "",
-        firstName: "",
-        lastName: "",
-        email: "",
-        mobile: "",
-        major: "",
-        requestId: 0,
-        requestTopic: "",
-        requestText: "",
-        requestDate: new Date(),
-        reqStatus: "",
-        handlerId: 0
-    });
-    
-    const [errors, setErrors] = useState<string[]>([]);
-    
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        
-        // Validate form data
-        const validationErrors = validateForm(formState);
-        
-        if (validationErrors.length > 0) {
-        setErrors(validationErrors);
-        return;
-        }
-    
-        // Submit form data
-        console.log("Form submitted successfully", formState);
-    };
-    
-    const validateForm = (data) => {
-        const errors = [];
-        
-        if (!data.studentId) errors.push("Student ID is required.");
-        if (!data.firstName) errors.push("First name is required.");
-        if (!data.lastName) errors.push("Last name is required.");
-        
-        // Add more validation as needed
-    
-        return errors;
-    };
-    
-    return (
-        <form onSubmit={handleSubmit}>
-        {/* Form fields go here */}
-        <button type="submit">Submit</button>
-        {errors.length > 0 && <div className="error">{errors.join(", ")}</div>}
-        </form>
-    );
+const Forms: React.FC = () => {
+  return (
+    <Container sx={{ direction: 'rtl', padding: '20px' }}>
+      <Typography variant="h4" gutterBottom>
+        טפסים
+      </Typography>
+      <Button component={Link} to="/forms/student" variant="contained" sx={{ m: 1 }}>
+        הוספת/עדכון סטודנט
+      </Button>
+      <Button component={Link} to="/forms/request" variant="contained" sx={{ m: 1 }}>
+        יצירת פנייה
+      </Button>
+      <Button component={Link} to="/forms/carehandler" variant="contained" sx={{ m: 1 }}>
+        הוספת/עדכון גורם מטפל
+      </Button>
+      <Button component={Link} to="/forms/appointment" variant="contained" sx={{ m: 1 }}>
+        קביעת פגישה
+      </Button>
+      <Button component={Link} to="/forms/feedback" variant="contained" sx={{ m: 1 }}>
+        הוספת משוב
+      </Button>
+      <Button component={Link} to="/forms/contactmsg" variant="contained" sx={{ m: 1 }}>
+        שליחת הודעה
+      </Button>
+    </Container>
+  );
+};
 
-
- }
-    
+export default Forms;
