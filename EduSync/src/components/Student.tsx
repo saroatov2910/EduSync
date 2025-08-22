@@ -1,30 +1,49 @@
-// src/components/Student.tsx
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from "react";
 import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
-import Student from '../classStudent/Student';
-import { students } from '../classStudent/studentsData';
-import '../cssRules/index.css';
+import Student from "../classStudent/Student";
+import "../cssRules/index.css";
+
+const LS_STUDENTS = "students_v1";
 
 const StudentTable: React.FC = () => {
-  const [data, setData] = useState<Student[]>(students);
+  const [students, setStudents] = useState<Student[]>([]);
 
   useEffect(() => {
-    const raw = localStorage.getItem('students_v1');
-    if (raw) {
-      const arr = JSON.parse(raw);
-      if (Array.isArray(arr)) setData(arr.map(Student.from));
+    try {
+      const raw = localStorage.getItem(LS_STUDENTS);
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) setStudents(arr.map(Student.from));
+      }
+    } catch (e) {
+      console.error("failed to load students", e);
     }
   }, []);
 
-  const existingIds = useMemo(() => new Set(data.map(s => s.StudentId)), [data]);
+  const existingIds = useMemo(() => new Set(students.map(s => s.StudentId)), [students]);
 
   const addRandom = () => {
     const s = Student.random(existingIds);
     const errs = s.validate();
-    if (errs.length) return alert('שגיאות:\n' + errs.join('\n'));
-    setData(prev => [...prev, s]);
-    localStorage.setItem('students_v1', JSON.stringify([...data, s]));
+    if (errs.length) return alert("שגיאות:\n" + errs.join("\n"));
+    setStudents(prev => [...prev, s]);
+  };
+
+  const save = () => {
+    try {
+      localStorage.setItem(LS_STUDENTS, JSON.stringify(students));
+      alert("נשמר ל-localStorage");
+    } catch {
+      alert("שגיאה בשמירה");
+    }
+  };
+
+  const handleDelete = (id: number) => {
+    const updated = students.filter(s => s.StudentId !== id);
+    setStudents(updated);
+    localStorage.setItem(LS_STUDENTS, JSON.stringify(updated));
+    alert("סטודנט נמחק!");
   };
 
   return (
@@ -32,23 +51,26 @@ const StudentTable: React.FC = () => {
       <Typography variant="h4" gutterBottom>
         ניהול סטודנטים
       </Typography>
-      <Button onClick={addRandom} variant="contained" sx={{ mb: 2 }}>
+      <Button onClick={addRandom} variant="contained" sx={{ mr: 2 }}>
         הוסף סטודנט אקראי
+      </Button>
+      <Button onClick={save} variant="contained">
+        שמור ל-localStorage
       </Button>
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>מספר סטודנט</TableCell>
-            <TableCell>שם פרטי</TableCell>
-            <TableCell>שם משפחה</TableCell>
-            <TableCell>דוא״ל</TableCell>
-            <TableCell>נייד</TableCell>
-            <TableCell>תואר/חוג</TableCell>
+            <TableCell>StudentId</TableCell>
+            <TableCell>firstName</TableCell>
+            <TableCell>lastName</TableCell>
+            <TableCell>email</TableCell>
+            <TableCell>mobile</TableCell>
+            <TableCell>major</TableCell>
             <TableCell>פעולות</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map(s => (
+          {students.map(s => (
             <TableRow key={s.StudentId}>
               <TableCell>{s.StudentId}</TableCell>
               <TableCell>{s.firstName}</TableCell>
@@ -57,13 +79,16 @@ const StudentTable: React.FC = () => {
               <TableCell>{s.mobile}</TableCell>
               <TableCell>{s.major}</TableCell>
               <TableCell>
-                <Button component={Link} to={`/forms/student/${s.StudentId}`}>
+                <Button component={Link} to={`/forms/student/${s.StudentId}`} sx={{ mr: 1 }}>
                   ערוך
+                </Button>
+                <Button color="error" onClick={() => handleDelete(s.StudentId)}>
+                  מחק
                 </Button>
               </TableCell>
             </TableRow>
           ))}
-          {data.length === 0 && (
+          {students.length === 0 && (
             <TableRow><TableCell colSpan={7}>אין נתונים</TableCell></TableRow>
           )}
         </TableBody>

@@ -1,22 +1,23 @@
-// src/components/CareHandle.tsx
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from "react";
 import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
-import CareHandler from '../classCareHandler/CareHandle';
-import '../cssRules/index.css';
+import CareHandler from "../classCareHandler/CareHandle";
+import "../cssRules/index.css";
+
+const LS_HANDLERS = "care_handlers_v1";
 
 const CareHandlerTable: React.FC = () => {
   const [handlers, setHandlers] = useState<CareHandler[]>([]);
 
   useEffect(() => {
     try {
-      const raw = localStorage.getItem('care_handlers_v1');
+      const raw = localStorage.getItem(LS_HANDLERS);
       if (raw) {
         const arr = JSON.parse(raw);
         if (Array.isArray(arr)) setHandlers(arr.map(CareHandler.from));
       }
     } catch (e) {
-      console.error('failed to load handlers', e);
+      console.error("failed to load handlers", e);
     }
   }, []);
 
@@ -25,9 +26,24 @@ const CareHandlerTable: React.FC = () => {
   const addRandom = () => {
     const h = CareHandler.random(existingIds);
     const errs = h.validate();
-    if (errs.length) return alert('שגיאות:\n' + errs.join('\n'));
+    if (errs.length) return alert("שגיאות:\n" + errs.join("\n"));
     setHandlers(prev => [...prev, h]);
-    localStorage.setItem('care_handlers_v1', JSON.stringify([...handlers, h]));
+  };
+
+  const save = () => {
+    try {
+      localStorage.setItem(LS_HANDLERS, JSON.stringify(handlers));
+      alert("נשמר ל-localStorage");
+    } catch {
+      alert("שגיאה בשמירה");
+    }
+  };
+
+  const handleDelete = (id: number) => {
+    const updated = handlers.filter(h => h.handlerId !== id);
+    setHandlers(updated);
+    localStorage.setItem(LS_HANDLERS, JSON.stringify(updated));
+    alert("גורם מטפל נמחק!");
   };
 
   return (
@@ -35,17 +51,20 @@ const CareHandlerTable: React.FC = () => {
       <Typography variant="h4" gutterBottom>
         ניהול גורמים מטפלים
       </Typography>
-      <Button onClick={addRandom} variant="contained" sx={{ mb: 2 }}>
+      <Button onClick={addRandom} variant="contained" sx={{ mr: 2 }}>
         הוסף גורם מטפל אקראי
+      </Button>
+      <Button onClick={save} variant="contained">
+        שמור ל-localStorage
       </Button>
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>מזהה גורם</TableCell>
-            <TableCell>שם</TableCell>
-            <TableCell>תפקיד</TableCell>
-            <TableCell>דוא״ל</TableCell>
-            <TableCell>תחום אחריות</TableCell>
+            <TableCell>handlerId</TableCell>
+            <TableCell>name</TableCell>
+            <TableCell>role</TableCell>
+            <TableCell>email</TableCell>
+            <TableCell>responsibility</TableCell>
             <TableCell>פעולות</TableCell>
           </TableRow>
         </TableHead>
@@ -58,8 +77,11 @@ const CareHandlerTable: React.FC = () => {
               <TableCell>{h.email}</TableCell>
               <TableCell>{h.responsibility}</TableCell>
               <TableCell>
-                <Button component={Link} to={`/forms/carehandler/${h.handlerId}`}>
+                <Button component={Link} to={`/forms/carehandler/${h.handlerId}` } sx={{ mr: 1 }}>
                   ערוך
+                </Button>
+                <Button color="error" onClick={() => handleDelete(h.handlerId)}>
+                  מחק
                 </Button>
               </TableCell>
             </TableRow>

@@ -1,4 +1,3 @@
-// src/components/Request.tsx
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
@@ -39,10 +38,24 @@ const RequestTable: React.FC = () => {
           mobile: '0521234567',
           major: 'מדעי המחשב',
           requestTopic: 'רישום לקורס',
-          requestText: 'בקשה לדוגמה',
+          requestText: 'בקשה לדוגמה 1',
           requestDate: new Date(),
           reqStatus: 'פתוחה',
           handlerId: 1,
+        }),
+        new Request({
+          requestId: 2,
+          studentId: 102,
+          firstName: 'מיה',
+          lastName: 'לוי',
+          email: 'mia.levi@uni.ac.il',
+          mobile: '0549876543',
+          major: 'כלכלה',
+          requestTopic: 'ייעוץ אקדמי',
+          requestText: 'בקשה לדוגמה 2',
+          requestDate: new Date(),
+          reqStatus: 'בטיפול',
+          handlerId: 2,
         }),
       ]);
     }
@@ -51,7 +64,7 @@ const RequestTable: React.FC = () => {
   const addRandomRequest = () => {
     const newRequest = new Request({
       requestId: Math.floor(Math.random() * 1000),
-      studentId: 100 + Math.floor(Math.random() * 100),
+      studentId: Math.floor(Math.random() * 100),
       firstName: 'Demo',
       lastName: 'Student',
       email: 'demo@example.com',
@@ -63,10 +76,15 @@ const RequestTable: React.FC = () => {
       reqStatus: 'פתוחה',
       handlerId: 1,
     });
-    const errs = newRequest.validate();
-    if (errs.length) return alert('שגיאות:\n' + errs.join('\n'));
     setRequests([...requests, newRequest]);
     localStorage.setItem('requests', JSON.stringify([...requests, newRequest]));
+  };
+
+  const handleDelete = (id: number) => {
+    const updated = requests.filter(r => r.requestId !== id);
+    setRequests(updated);
+    localStorage.setItem('requests', JSON.stringify(updated));
+    alert("בקשה נמחקה!");
   };
 
   return (
@@ -80,11 +98,9 @@ const RequestTable: React.FC = () => {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>מזהה בקשה</TableCell>
-            <TableCell>מספר סטודנט</TableCell>
-            <TableCell>נושא</TableCell>
-            <TableCell>תיאור</TableCell>
-            <TableCell>סטטוס</TableCell>
+            <TableCell>requestId</TableCell>
+            <TableCell>studentId</TableCell>
+            <TableCell>description</TableCell>
             <TableCell>פעולות</TableCell>
           </TableRow>
         </TableHead>
@@ -93,19 +109,17 @@ const RequestTable: React.FC = () => {
             <TableRow key={r.requestId}>
               <TableCell>{r.requestId}</TableCell>
               <TableCell>{r.StudentId}</TableCell>
-              <TableCell>{r.requestTopic}</TableCell>
-              <TableCell>{r.requestText}</TableCell>
-              <TableCell>{r.reqStatus}</TableCell>
+              <TableCell>{r.requestText}</TableCell> // Updated from 'description' to 'requestText' to match class
               <TableCell>
-                <Button component={Link} to={`/forms/request/${r.requestId}`}>
+                <Button component={Link} to={`/forms/request/${r.requestId}`} sx={{ mr: 1 }}>
                   ערוך
+                </Button>
+                <Button color="error" onClick={() => handleDelete(r.requestId)}>
+                  מחק
                 </Button>
               </TableCell>
             </TableRow>
           ))}
-          {requests.length === 0 && (
-            <TableRow><TableCell colSpan={6}>אין נתונים</TableCell></TableRow>
-          )}
         </TableBody>
       </Table>
     </Container>

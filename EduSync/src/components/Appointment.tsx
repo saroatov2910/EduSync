@@ -1,8 +1,7 @@
-// src/components/Appointment.tsx
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { Appointment } from '../classAppointment/Appointment';
+import  Appointment  from '../classAppointment/Appointment';
 import '../cssRules/index.css';
 
 const AppointmentTable: React.FC = () => {
@@ -19,7 +18,8 @@ const AppointmentTable: React.FC = () => {
           a.appointmentTime,
           a.appointmentType,
           a.location,
-          a.status
+          a.status,
+          a.appointmentId
         )
       );
       setAppointments(parsed);
@@ -41,16 +41,21 @@ const AppointmentTable: React.FC = () => {
       Math.random() > 0.5 ? "https://zoom.us/j/987654321" : "103",
       "מתוכננת"
     );
-    const errs = newAppointment.validate();
-    if (errs.length) return alert('שגיאות:\n' + errs.join('\n'));
     setAppointments([...appointments, newAppointment]);
     localStorage.setItem('appointments', JSON.stringify([...appointments, newAppointment]));
+  };
+
+  const handleDelete = (id: number) => {
+    const updated = appointments.filter(a => a.appointmentId !== id);
+    setAppointments(updated);
+    localStorage.setItem('appointments', JSON.stringify(updated));
+    alert("פגישה נמחקה!");
   };
 
   return (
     <Container sx={{ direction: 'rtl', padding: '20px' }}>
       <Typography variant="h4" gutterBottom>
-        ניהול פגישות
+        פגישות
       </Typography>
       <Button onClick={addRandomAppointment} variant="contained" sx={{ mb: 2 }}>
         הוסף פגישה אקראית
@@ -58,20 +63,20 @@ const AppointmentTable: React.FC = () => {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>מזהה סטודנט</TableCell>
-            <TableCell>מזהה בקשה</TableCell>
-            <TableCell>תאריך</TableCell>
-            <TableCell>שעה</TableCell>
-            <TableCell>סוג</TableCell>
-            <TableCell>מיקום</TableCell>
-            <TableCell>סטטוס</TableCell>
-            <TableCell>פעולות</TableCell>
+            <th>appointmentId</th>
+            <th>requestId</th>
+            <th>appointmentDate</th>
+            <th>appointmentTime</th>
+            <th>appointmentType</th>
+            <th>location</th>
+            <th>status</th>
+            <th>פעולות</th>
           </TableRow>
         </TableHead>
         <TableBody>
           {appointments.map(a => (
             <TableRow key={a.appointmentId}>
-              <TableCell>{a.StudentId}</TableCell>
+              <TableCell>{a.appointmentId}</TableCell>
               <TableCell>{a.requestId}</TableCell>
               <TableCell>{new Date(a.appointmentDate).toLocaleDateString()}</TableCell>
               <TableCell>{a.appointmentTime}</TableCell>
@@ -79,15 +84,15 @@ const AppointmentTable: React.FC = () => {
               <TableCell>{a.location}</TableCell>
               <TableCell>{a.status}</TableCell>
               <TableCell>
-                <Button component={Link} to={`/forms/appointment/${a.appointmentId}`}>
+                <Button component={Link} to={`/forms/appointment/${a.appointmentId}`} sx={{ mr: 1 }}>
                   ערוך
+                </Button>
+                <Button color="error" onClick={() => handleDelete(a.appointmentId)}>
+                  מחק
                 </Button>
               </TableCell>
             </TableRow>
           ))}
-          {appointments.length === 0 && (
-            <TableRow><TableCell colSpan={8}>אין נתונים</TableCell></TableRow>
-          )}
         </TableBody>
       </Table>
     </Container>

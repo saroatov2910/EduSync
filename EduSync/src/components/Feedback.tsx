@@ -1,9 +1,8 @@
-// src/components/Feedback.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
-import Feedback, { FeedbackProps } from '../classFeedback/Feedback';
-import '../cssRules/index.css';
+import Feedback, { FeedbackProps } from "../classFeedback/Feedback";
+import "../cssRules/index.css";
 
 function makeFeedbackProps(input: { feedbackId: number; studentId: number; comment: string }): FeedbackProps {
   const now = new Date();
@@ -39,8 +38,8 @@ const FeedbackTable: React.FC = () => {
       setFeedbacks(rebuilt);
     } else {
       setFeedbacks([
-        new Feedback(makeFeedbackProps({ feedbackId: 1, studentId: 101, comment: 'Sample feedback 1' })),
-        new Feedback(makeFeedbackProps({ feedbackId: 2, studentId: 102, comment: 'Sample feedback 2' })),
+        new Feedback(makeFeedbackProps({ feedbackId: 1, studentId: 101, comment: "Sample feedback 1" })),
+        new Feedback(makeFeedbackProps({ feedbackId: 2, studentId: 102, comment: "Sample feedback 2" })),
       ]);
     }
   }, []);
@@ -53,8 +52,6 @@ const FeedbackTable: React.FC = () => {
         comment: 'New feedback',
       })
     );
-    const errs = newF.validate();
-    if (errs.length) return alert('שגיאות:\n' + errs.join('\n'));
     setFeedbacks((prev) => [...prev, newF]);
     localStorage.setItem('feedbacks', JSON.stringify([...feedbacks, {
       feedbackId: newF.feedbackId,
@@ -63,10 +60,17 @@ const FeedbackTable: React.FC = () => {
     }]));
   };
 
+  const handleDelete = (id: number) => {
+    const updated = feedbacks.filter(f => f.feedbackId !== id);
+    setFeedbacks(updated);
+    localStorage.setItem('feedbacks', JSON.stringify(updated));
+    alert("משוב נמחק!");
+  };
+
   return (
     <Container sx={{ direction: 'rtl', padding: '20px' }}>
       <Typography variant="h4" gutterBottom>
-        ניהול משובים
+        פידבק
       </Typography>
       <Button onClick={addRandomFeedback} variant="contained" sx={{ mb: 2 }}>
         הוסף משוב אקראי
@@ -74,11 +78,9 @@ const FeedbackTable: React.FC = () => {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>מזהה משוב</TableCell>
-            <TableCell>מספר סטודנט</TableCell>
-            <TableCell>הערה</TableCell>
-            <TableCell>ציון</TableCell>
-            <TableCell>תאריך</TableCell>
+            <TableCell>feedbackId</TableCell>
+            <TableCell>studentId</TableCell>
+            <TableCell>comment</TableCell>
             <TableCell>פעולות</TableCell>
           </TableRow>
         </TableHead>
@@ -88,18 +90,16 @@ const FeedbackTable: React.FC = () => {
               <TableCell>{f.feedbackId}</TableCell>
               <TableCell>{f.StudentId}</TableCell>
               <TableCell>{f.comment}</TableCell>
-              <TableCell>{f.grade}</TableCell>
-              <TableCell>{f.feedbackDate.toLocaleDateString()}</TableCell>
               <TableCell>
-                <Button component={Link} to={`/forms/feedback/${f.feedbackId}`}>
+                <Button component={Link} to={`/forms/feedback/${f.feedbackId}`} sx={{ mr: 1 }}>
                   ערוך
+                </Button>
+                <Button color="error" onClick={() => handleDelete(f.feedbackId)}>
+                  מחק
                 </Button>
               </TableCell>
             </TableRow>
           ))}
-          {feedbacks.length === 0 && (
-            <TableRow><TableCell colSpan={6}>אין נתונים</TableCell></TableRow>
-          )}
         </TableBody>
       </Table>
     </Container>
