@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+// src/components/componentsForms/StudentForm.tsx
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Container, Typography, TextField, Button, Box } from '@mui/material';
-import { Student, StudentProps } from '../classStudent/Student';
-import { students } from '../classStudent/studentsData';
+import { Student, StudentProps } from '../../classStudent/Student';
+import { students } from '../../classStudent/studentsData';
+import '../../cssRules/index.css';
 
 const StudentForm: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const [formData, setFormData] = useState<StudentProps>({
     StudentId: 0,
     firstName: '',
@@ -13,6 +17,26 @@ const StudentForm: React.FC = () => {
     major: '',
   });
   const [errors, setErrors] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (id) {
+      const saved = localStorage.getItem('students_v1');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const student = parsed.find((s: any) => s.StudentId === Number(id));
+        if (student) {
+          setFormData({
+            StudentId: student.StudentId,
+            firstName: student.firstName,
+            lastName: student.lastName,
+            email: student.email,
+            mobile: student.mobile,
+            major: student.major,
+          });
+        }
+      }
+    }
+  }, [id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -25,8 +49,16 @@ const StudentForm: React.FC = () => {
       setErrors(validationErrors);
       return;
     }
-    students.push(student);
-    localStorage.setItem('students_v1', JSON.stringify(students));
+    const saved = localStorage.getItem('students_v1');
+    let updatedStudents = saved ? JSON.parse(saved) : students;
+    if (id) {
+      updatedStudents = updatedStudents.map((s: any) =>
+        s.StudentId === Number(id) ? formData : s
+      );
+    } else {
+      updatedStudents.push(formData);
+    }
+    localStorage.setItem('students_v1', JSON.stringify(updatedStudents));
     setErrors([]);
     alert('סטודנט נשמר!');
   };
@@ -34,7 +66,7 @@ const StudentForm: React.FC = () => {
   return (
     <Container sx={{ direction: 'rtl', padding: '20px' }}>
       <Typography variant="h5" gutterBottom>
-        הוספת/עדכון סטודנט
+        {id ? 'עדכון סטודנט' : 'הוספת סטודנט'}
       </Typography>
       <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <TextField
@@ -44,6 +76,7 @@ const StudentForm: React.FC = () => {
           value={formData.StudentId}
           onChange={handleChange}
           fullWidth
+          disabled={!!id}
         />
         <TextField label="שם פרטי" name="firstName" value={formData.firstName} onChange={handleChange} fullWidth />
         <TextField label="שם משפחה" name="lastName" value={formData.lastName} onChange={handleChange} fullWidth />

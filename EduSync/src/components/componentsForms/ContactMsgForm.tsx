@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+// src/components/componentsForms/ContactMsgForm.tsx
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Container, Typography, TextField, Button, Box, MenuItem } from '@mui/material';
-import { ContactMsg, ContactMsgProps } from '../classContactMsg/ContactMsg';
-import { createdBy } from '../RequestStatus';
+import { ContactMsg, ContactMsgProps } from '../../classContactMsg/ContactMsg';
+import { createdBy } from '../../RequestStatus';
+import '../../cssRules/index.css';
 
 const ContactMsgForm: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const [formData, setFormData] = useState<ContactMsgProps>({
     msgId: 0,
     createdBy: 'Student' as createdBy,
@@ -13,6 +17,25 @@ const ContactMsgForm: React.FC = () => {
   });
   const [errors, setErrors] = useState<string[]>([]);
 
+  useEffect(() => {
+    if (id) {
+      const saved = localStorage.getItem('msgs');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const msg = parsed.find((m: any) => m.msgId === Number(id));
+        if (msg) {
+          setFormData({
+            msgId: msg.msgId,
+            createdBy: msg.createdBy || 'Student',
+            requestId: msg.requestId,
+            requestText: msg.requestText,
+            requestDate: new Date(msg.requestDate),
+          });
+        }
+      }
+    }
+  }, [id]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -21,7 +44,16 @@ const ContactMsgForm: React.FC = () => {
     const msg = new ContactMsg(formData);
     try {
       msg.validate();
-      localStorage.setItem('msgs', JSON.stringify([...JSON.parse(localStorage.getItem('msgs') || '[]'), formData]));
+      const saved = localStorage.getItem('msgs');
+      let updatedMsgs = saved ? JSON.parse(saved) : [];
+      if (id) {
+        updatedMsgs = updatedMsgs.map((m: any) =>
+          m.msgId === Number(id) ? formData : m
+        );
+      } else {
+        updatedMsgs.push(formData);
+      }
+      localStorage.setItem('msgs', JSON.stringify(updatedMsgs));
       setErrors([]);
       alert('הודעה נשמרה!');
     } catch (e: any) {
@@ -32,7 +64,7 @@ const ContactMsgForm: React.FC = () => {
   return (
     <Container sx={{ direction: 'rtl', padding: '20px' }}>
       <Typography variant="h5" gutterBottom>
-        שליחת הודעה
+        {id ? 'עדכון הודעה' : 'שליחת הודעה'}
       </Typography>
       <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <TextField
@@ -42,6 +74,7 @@ const ContactMsgForm: React.FC = () => {
           value={formData.msgId}
           onChange={handleChange}
           fullWidth
+          disabled={!!id}
         />
         <TextField
           label="נוצר על ידי"

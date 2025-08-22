@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+// src/components/componentsForms/AppointmentForm.tsx
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Container, Typography, TextField, Button, Box, MenuItem } from '@mui/material';
-import { Appointment } from '../classAppointment/Appointment';
-import { RequestStatus, AppointmentType } from '../RequestStatus';
+import { Appointment } from '../../classAppointment/Appointment';
+import { RequestStatus, AppointmentType } from '../../RequestStatus';
+import '../../cssRules/index.css';
 
 const AppointmentForm: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const [formData, setFormData] = useState({
     studentId: 0,
     requestId: 0,
@@ -15,6 +19,28 @@ const AppointmentForm: React.FC = () => {
     status: 'מתוכננת' as RequestStatus,
   });
   const [errors, setErrors] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (id) {
+      const saved = localStorage.getItem('appointments');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const appointment = parsed.find((a: any) => a.appointmentId === Number(id));
+        if (appointment) {
+          setFormData({
+            studentId: appointment.studentId,
+            requestId: appointment.requestId,
+            appointmentId: appointment.appointmentId,
+            appointmentDate: new Date(appointment.appointmentDate).toISOString().slice(0, 10),
+            appointmentTime: appointment.appointmentTime,
+            appointmentType: appointment.appointmentType,
+            location: appointment.location,
+            status: appointment.status,
+          });
+        }
+      }
+    }
+  }, [id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -36,7 +62,16 @@ const AppointmentForm: React.FC = () => {
         setErrors(validationErrors);
         return;
       }
-      localStorage.setItem('appointments', JSON.stringify([...JSON.parse(localStorage.getItem('appointments') || '[]'), formData]));
+      const saved = localStorage.getItem('appointments');
+      let updatedAppointments = saved ? JSON.parse(saved) : [];
+      if (id) {
+        updatedAppointments = updatedAppointments.map((a: any) =>
+          a.appointmentId === Number(id) ? formData : a
+        );
+      } else {
+        updatedAppointments.push(formData);
+      }
+      localStorage.setItem('appointments', JSON.stringify(updatedAppointments));
       setErrors([]);
       alert('פגישה נשמרה!');
     } catch (e: any) {
@@ -47,7 +82,7 @@ const AppointmentForm: React.FC = () => {
   return (
     <Container sx={{ direction: 'rtl', padding: '20px' }}>
       <Typography variant="h5" gutterBottom>
-        קביעת פגישה
+        {id ? 'עדכון פגישה' : 'קביעת פגישה'}
       </Typography>
       <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <TextField
@@ -73,6 +108,7 @@ const AppointmentForm: React.FC = () => {
           value={formData.appointmentId}
           onChange={handleChange}
           fullWidth
+          disabled={!!id}
         />
         <TextField
           label="תאריך פגישה"
