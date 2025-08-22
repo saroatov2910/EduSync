@@ -1,166 +1,136 @@
-import * as React from "react";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  Box,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Grid, // If you're not on MUI v6, replace with: import Grid from "@mui/material/Grid";
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from "@mui/material";
+// src/components/HomePage.tsx
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Box, Button, Card, CardActions, CardContent, Grid, Typography, Table, TableBody, TableCell, TableHead, TableRow, TableContainer, Paper } from '@mui/material';
+import { Request } from '../classRequest/Request';
+import '../cssRules/index.css';
 
-// ---- Types ----
-// English comment: a minimal row type for the home table (adapt to your real entity).
-interface Row {
-  id: number | string;
-  title: string;
-  date?: string;
-}
-
-export default function Home() {
+const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const [rows, setRows] = useState<Row[]>([]);
+  const [requests, setRequests] = useState<Request[]>([]);
 
-  // English comment: Load initial data from localStorage or fall back to demo rows.
   useEffect(() => {
-    // Try "feedbacks" first; if not found, try "students"; otherwise use demo rows.
-    const fromFeedbacks = safeParse(localStorage.getItem("feedbacks")) as
-      | Array<{ feedbackId?: number; comment?: string; feedbackDate?: string }>
-      | null;
-
-    if (fromFeedbacks?.length) {
-      setRows(
-        fromFeedbacks.slice(0, 10).map((f, i) => ({
-          id: f.feedbackId ?? i + 1,
-          title: f.comment ?? "Feedback",
-          date: f.feedbackDate ?? "",
-        })),
+    const saved = localStorage.getItem('requests');
+    if (saved) {
+      const parsed = JSON.parse(saved).map((r: any) =>
+        new Request({
+          requestId: r.requestId,
+          studentId: r.studentId,
+          firstName: r.firstName || 'Demo',
+          lastName: r.lastName || 'Student',
+          email: r.email || 'demo@example.com',
+          mobile: r.mobile || '0501234567',
+          major: r.major || 'General',
+          requestTopic: r.requestTopic || 'General',
+          requestText: r.requestText,
+          requestDate: new Date(r.requestDate),
+          reqStatus: r.reqStatus || 'פתוחה',
+          handlerId: r.handlerId || 1,
+        })
       );
-      return;
+      setRequests(parsed);
+    } else {
+      setRequests([
+        new Request({
+          requestId: 1,
+          studentId: 101,
+          firstName: 'דניאל',
+          lastName: 'כהן',
+          email: 'daniel.cohen@uni.ac.il',
+          mobile: '0521234567',
+          major: 'מדעי המחשב',
+          requestTopic: 'רישום לקורס',
+          requestText: 'בקשה לדוגמה',
+          requestDate: new Date(),
+          reqStatus: 'פתוחה',
+          handlerId: 1,
+        }),
+      ]);
     }
-
-    const fromStudents = safeParse(localStorage.getItem("students")) as
-      | Array<{ id?: number | string; fullName?: string }>
-      | null;
-
-    if (fromStudents?.length) {
-      setRows(
-        fromStudents.slice(0, 10).map((s, i) => ({
-          id: s.id ?? i + 1,
-          title: s.fullName ?? "Student",
-        })),
-      );
-      return;
-    }
-
-    // English comment: Demo fallback if localStorage has no data yet.
-    setRows([
-      { id: 1, title: "Welcome to EduSync", date: new Date().toISOString().slice(0, 10) },
-      { id: 2, title: "Use the buttons to navigate" },
-      { id: 3, title: "Load data appears here" },
-    ]);
   }, []);
 
-  // English comment: Safer JSON.parse wrapper.
-  function safeParse(value: string | null) {
-    try {
-      return value ? JSON.parse(value) : null;
-    } catch {
-      return null;
-    }
-  }
-
   return (
-    <Box component="main" sx={{ p: 2 }}>
-      {/* English comment: Page title */}
+    <Box component="main" sx={{ p: 2, direction: 'rtl' }}>
       <Typography variant="h4" sx={{ mb: 2 }}>
         דף הבית
       </Typography>
-
-      {/* English comment: Quick navigation cards */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid item xs={12} sm={6} md={4}>
           <Card>
             <CardContent>
-              <Typography variant="h6">Forms</Typography>
+              <Typography variant="h6">טפסים</Typography>
               <Typography variant="body2" color="text.secondary">
                 מעבר למסכי הטפסים שהגדרתם בתכנון.
               </Typography>
             </CardContent>
             <CardActions>
-              <Button onClick={() => navigate("/forms")} variant="contained">
-                Go to Forms
+              <Button onClick={() => navigate('/forms')} variant="contained">
+                עבור לטפסים
               </Button>
             </CardActions>
           </Card>
         </Grid>
-
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid item xs={12} sm={6} md={4}>
           <Card>
             <CardContent>
-              <Typography variant="h6">Management</Typography>
+              <Typography variant="h6">ניהול</Typography>
               <Typography variant="body2" color="text.secondary">
                 ניווט למסכי הניהול (טבלאות/CRUD).
               </Typography>
             </CardContent>
             <CardActions>
-              <Button onClick={() => navigate("/management")} variant="contained">
-                Go to Management
+              <Button onClick={() => navigate('/management')} variant="contained">
+                עבור לניהול
               </Button>
             </CardActions>
           </Card>
         </Grid>
-
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid item xs={12} sm={6} md={4}>
           <Card>
             <CardContent>
-              <Typography variant="h6">Help</Typography>
+              <Typography variant="h6">עזרה</Typography>
               <Typography variant="body2" color="text.secondary">
                 קישורים ומידע מסייע למשתמשים.
               </Typography>
             </CardContent>
             <CardActions>
-              <Button onClick={() => navigate("/help")} color="secondary" variant="outlined">
-                Open Help
+              <Button onClick={() => navigate('/help')} color="secondary" variant="outlined">
+                פתח עזרה
               </Button>
             </CardActions>
           </Card>
         </Grid>
       </Grid>
-
-      {/* English comment: A small table on the home page (demo or localStorage data). */}
       <Typography variant="h6" sx={{ mb: 1 }}>
-        עדכונים אחרונים
+        פניות אחרונות
       </Typography>
       <TableContainer component={Paper}>
-        <Table size="small" aria-label="home table">
+        <Table size="small" aria-label="requests table">
           <TableHead>
             <TableRow>
-              <TableCell>Id</TableCell>
-              <TableCell>Title</TableCell>
-              <TableCell>Date</TableCell>
+              <TableCell>מזהה פנייה</TableCell>
+              <TableCell>נושא</TableCell>
+              <TableCell>סטטוס</TableCell>
+              <TableCell>תאריך</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((r) => (
-              <TableRow key={r.id}>
-                <TableCell>{r.id}</TableCell>
-                <TableCell>{r.title}</TableCell>
-                <TableCell>{r.date ?? "-"}</TableCell>
+            {requests.map((r) => (
+              <TableRow key={r.requestId}>
+                <TableCell>{r.requestId}</TableCell>
+                <TableCell>{r.requestTopic}</TableCell>
+                <TableCell>{r.reqStatus}</TableCell>
+                <TableCell>{r.requestDate.toLocaleDateString()}</TableCell>
               </TableRow>
             ))}
+            {requests.length === 0 && (
+              <TableRow><TableCell colSpan={4}>אין פניות</TableCell></TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
     </Box>
   );
-}
+};
+
+export default HomePage;

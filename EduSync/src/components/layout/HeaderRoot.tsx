@@ -1,17 +1,9 @@
+// src/components/layout/HeaderRoot.tsx
 import * as React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
+import { AppBar, Toolbar, IconButton, Button, Drawer, List, ListItem, ListItemText, Divider, Typography, Box } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import Button from '@mui/material/Button';
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import Divider from '@mui/material/Divider';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
+import '../../cssRules/Header.css';
 
 type NavItem = { label: string; to: string };
 
@@ -24,6 +16,11 @@ const navItems: NavItem[] = [
   { label: 'צור קשר', to: '/contactmsg' },
   { label: 'עזרה', to: '/help' },
   { label: 'פידבק', to: '/feedback' },
+  { label: 'טפסים', to: '/forms' },
+  { label: 'ניהול', to: '/management' },
+  { label: 'תורים שלי', to: '/user/appointments' },
+  { label: 'בקשות שלי', to: '/user/requests' },
+  { label: 'משובים שלי', to: '/user/feedback' },
 ];
 
 export default function HeaderRoot() {
@@ -72,20 +69,15 @@ export default function HeaderRoot() {
           >
             <MenuIcon />
           </IconButton>
-
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             EduSync
           </Typography>
-
           <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 0.5, flexWrap: 'wrap' }}>
             {navItems.map(item => (
               <Button
                 key={item.to}
                 onClick={() => navigate(item.to)}
-                sx={{
-                  fontSize: 16,
-                  color: isActive(item.to) ? 'primary.main' : 'text.primary',
-                }}
+                sx={{ fontSize: 16, color: isActive(item.to) ? 'primary.main' : 'text.primary' }}
               >
                 {item.label}
               </Button>
@@ -93,10 +85,8 @@ export default function HeaderRoot() {
           </Box>
         </Toolbar>
       </AppBar>
-
-      {/* Drawer for mobile */}
       <Drawer
-        anchor="right"             
+        anchor="right"
         open={mobileOpen}
         onClose={toggleDrawer}
         sx={{ display: { xs: 'block', sm: 'none' } }}

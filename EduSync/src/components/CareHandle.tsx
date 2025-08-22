@@ -1,13 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
-import CareHandler,  {type Role}  from "../classCareHandler/CareHandle";
-import "../cssRules/Body.css";
+import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Button } from '@mui/material';
+import { Link } from 'react-router-dom';
+import CareHandler from "../classCareHandler/CareHandle";
+import "../cssRules/index.css";
 
 const LS_HANDLERS = "care_handlers_v1";
 
 const CareHandlerTable: React.FC = () => {
   const [handlers, setHandlers] = useState<CareHandler[]>([]);
 
-  // load once
   useEffect(() => {
     try {
       const raw = localStorage.getItem(LS_HANDLERS);
@@ -38,39 +39,59 @@ const CareHandlerTable: React.FC = () => {
     }
   };
 
-  return (
-    <>
-      <div className="actions">
-        <button onClick={addRandom}>הוסף גורם מטפל אקראי</button>
-        <button onClick={save}>שמור ל-localStorage</button>
-      </div>
+  const handleDelete = (id: number) => {
+    const updated = handlers.filter(h => h.handlerId !== id);
+    setHandlers(updated);
+    localStorage.setItem(LS_HANDLERS, JSON.stringify(updated));
+    alert("גורם מטפל נמחק!");
+  };
 
-      <table border={1}>
-        <thead>
-          <tr>
-            <th>handlerId</th>
-            <th>name</th>
-            <th>role</th>
-            <th>email</th>
-            <th>responsibility</th>
-          </tr>
-        </thead>
-        <tbody>
+  return (
+    <Container sx={{ direction: 'rtl', padding: '20px' }}>
+      <Typography variant="h4" gutterBottom>
+        ניהול גורמים מטפלים
+      </Typography>
+      <Button onClick={addRandom} variant="contained" sx={{ mr: 2 }}>
+        הוסף גורם מטפל אקראי
+      </Button>
+      <Button onClick={save} variant="contained">
+        שמור ל-localStorage
+      </Button>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>handlerId</TableCell>
+            <TableCell>name</TableCell>
+            <TableCell>role</TableCell>
+            <TableCell>email</TableCell>
+            <TableCell>responsibility</TableCell>
+            <TableCell>פעולות</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
           {handlers.map(h => (
-            <tr key={h.handlerId}>
-              <td>{h.handlerId}</td>
-              <td>{h.name}</td>
-              <td>{h.role}</td>
-              <td>{h.email}</td>
-              <td>{h.responsibility}</td>
-            </tr>
+            <TableRow key={h.handlerId}>
+              <TableCell>{h.handlerId}</TableCell>
+              <TableCell>{h.name}</TableCell>
+              <TableCell>{h.role}</TableCell>
+              <TableCell>{h.email}</TableCell>
+              <TableCell>{h.responsibility}</TableCell>
+              <TableCell>
+                <Button component={Link} to={`/forms/carehandler/${h.handlerId}` } sx={{ mr: 1 }}>
+                  ערוך
+                </Button>
+                <Button color="error" onClick={() => handleDelete(h.handlerId)}>
+                  מחק
+                </Button>
+              </TableCell>
+            </TableRow>
           ))}
           {handlers.length === 0 && (
-            <tr><td colSpan={5}>אין נתונים</td></tr>
+            <TableRow><TableCell colSpan={6}>אין נתונים</TableCell></TableRow>
           )}
-        </tbody>
-      </table>
-    </>
+        </TableBody>
+      </Table>
+    </Container>
   );
 };
 
