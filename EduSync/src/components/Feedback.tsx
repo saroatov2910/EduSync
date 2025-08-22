@@ -1,118 +1,108 @@
-import React, { useEffect, useState } from "react";
-import Feedback, { type FeedbackProps } from "../classFeedback/Feedback";
-import "../cssRules/Body.css";
+// src/components/Feedback.tsx
+import React, { useEffect, useState } from 'react';
+import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Button } from '@mui/material';
+import { Link } from 'react-router-dom';
+import Feedback, { FeedbackProps } from '../classFeedback/Feedback';
+import '../cssRules/index.css';
 
-/** Factory to build a valid FeedbackProps object from a minimal input.
- *  This shields the component from all required fields of Student/Request/Feedback models.
- */
-function makeFeedbackProps(input: {
-  feedbackId: number;
-  studentId: number;
-  comment: string;
-}): FeedbackProps {
+function makeFeedbackProps(input: { feedbackId: number; studentId: number; comment: string }): FeedbackProps {
   const now = new Date();
-
   return {
-    // --- Student (base class) ---
     studentId: input.studentId,
-    firstName: "Demo",
-    lastName: "Student",
-    email: "demo.student@example.com",
-    mobile: "0501234567",
-    major: "Computer Science",
-
-    // --- Request (parent class of Feedback) ---
+    firstName: 'Demo',
+    lastName: 'Student',
+    email: 'demo.student@example.com',
+    mobile: '0501234567',
+    major: 'Computer Science',
     requestId: 1000 + Math.floor(Math.random() * 9000),
-    requestTopic: "General" as any, // TODO: replace with a real RequestTopic value if you have an enum
+    requestTopic: 'General' as any,
     requestText: input.comment,
     requestDate: now,
-    reqStatus: "Open" as any,        // TODO: replace with a real RequestStatus value if you have an enum
+    reqStatus: 'Open' as any,
     handlerId: 1,
-
-    // --- Feedback (current class) ---
     feedbackId: input.feedbackId,
-    grade: 100 as any,               // TODO: replace with a real `grade` value if you have an enum/range
+    grade: 100 as any,
     comment: input.comment,
-    createdBy: "Teacher" as any,     // TODO: replace with a real `createdBy` value if you have an enum
+    createdBy: 'Teacher' as any,
     feedbackDate: now,
   };
 }
-
-/** Minimal shape persisted to localStorage to avoid deep class serialization. */
-type PersistedFeedbackLite = {
-  feedbackId: number;
-  studentId: number;
-  comment: string;
-};
-
-const STORAGE_KEY = "feedbacks";
-
 
 const FeedbackTable: React.FC = () => {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
 
   useEffect(() => {
-    // Load from localStorage (lite format) and rebuild class instances
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved = localStorage.getItem('feedbacks');
     if (saved) {
-      const parsed: PersistedFeedbackLite[] = JSON.parse(saved);
-      const rebuilt = parsed.map((f) => new Feedback(makeFeedbackProps(f)));
+      const parsed = JSON.parse(saved);
+      const rebuilt = parsed.map((f: any) => new Feedback(makeFeedbackProps(f)));
       setFeedbacks(rebuilt);
     } else {
       setFeedbacks([
-        new Feedback(makeFeedbackProps({ feedbackId: 1, studentId: 101, comment: "Sample feedback 1" })),
-        new Feedback(makeFeedbackProps({ feedbackId: 2, studentId: 102, comment: "Sample feedback 2" })),
+        new Feedback(makeFeedbackProps({ feedbackId: 1, studentId: 101, comment: 'Sample feedback 1' })),
+        new Feedback(makeFeedbackProps({ feedbackId: 2, studentId: 102, comment: 'Sample feedback 2' })),
       ]);
     }
   }, []);
 
-  /** Add a new random feedback for demo purposes. */
   const addRandomFeedback = () => {
     const newF = new Feedback(
       makeFeedbackProps({
         feedbackId: Math.floor(Math.random() * 1000),
         studentId: 100 + Math.floor(Math.random() * 100),
-        comment: "New feedback",
+        comment: 'New feedback',
       })
     );
+    const errs = newF.validate();
+    if (errs.length) return alert('שגיאות:\n' + errs.join('\n'));
     setFeedbacks((prev) => [...prev, newF]);
-  };
-
-  /** Save a lite version to localStorage (id, studentId, comment). */
-  const saveToLocalStorage = () => {
-    const lite: PersistedFeedbackLite[] = feedbacks.map((f) => ({
-      feedbackId: f.feedbackId,
-      studentId: f.StudentId, // comes from the Student base class (note the capital S)
-      comment: f.comment,
-    }));
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(lite));
-    alert("Feedbacks saved!");
+    localStorage.setItem('feedbacks', JSON.stringify([...feedbacks, {
+      feedbackId: newF.feedbackId,
+      studentId: newF.StudentId,
+      comment: newF.comment,
+    }]));
   };
 
   return (
-    <div>
-      <button onClick={addRandomFeedback}>Add random feedback</button>
-      <button onClick={saveToLocalStorage}>Save to localStorage</button>
-
-      <table border={1}>
-        <thead>
-          <tr>
-            <th>feedbackId</th>
-            <th>studentId</th>
-            <th>comment</th>
-          </tr>
-        </thead>
-        <tbody>
+    <Container sx={{ direction: 'rtl', padding: '20px' }}>
+      <Typography variant="h4" gutterBottom>
+        ניהול משובים
+      </Typography>
+      <Button onClick={addRandomFeedback} variant="contained" sx={{ mb: 2 }}>
+        הוסף משוב אקראי
+      </Button>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>מזהה משוב</TableCell>
+            <TableCell>מספר סטודנט</TableCell>
+            <TableCell>הערה</TableCell>
+            <TableCell>ציון</TableCell>
+            <TableCell>תאריך</TableCell>
+            <TableCell>פעולות</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
           {feedbacks.map((f) => (
-            <tr key={f.feedbackId}>
-              <td>{f.feedbackId}</td>
-              <td>{f.StudentId}</td>
-              <td>{f.comment}</td> {/* use `comment`, not `message` */}
-            </tr>
+            <TableRow key={f.feedbackId}>
+              <TableCell>{f.feedbackId}</TableCell>
+              <TableCell>{f.StudentId}</TableCell>
+              <TableCell>{f.comment}</TableCell>
+              <TableCell>{f.grade}</TableCell>
+              <TableCell>{f.feedbackDate.toLocaleDateString()}</TableCell>
+              <TableCell>
+                <Button component={Link} to={`/forms/feedback/${f.feedbackId}`}>
+                  ערוך
+                </Button>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
-    </div>
+          {feedbacks.length === 0 && (
+            <TableRow><TableCell colSpan={6}>אין נתונים</TableCell></TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </Container>
   );
 };
 

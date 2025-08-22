@@ -1,77 +1,74 @@
-import React, { useEffect, useState, useMemo } from "react";
-import Student from "../classStudent/Student";
-import "../cssRules/Body.css";
-
-const LS_STUDENTS = "students_v1";
+// src/components/Student.tsx
+import React, { useEffect, useState, useMemo } from 'react';
+import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Button } from '@mui/material';
+import { Link } from 'react-router-dom';
+import Student from '../classStudent/Student';
+import { students } from '../classStudent/studentsData';
+import '../cssRules/index.css';
 
 const StudentTable: React.FC = () => {
-  const [students, setStudents] = useState<Student[]>([]);
+  const [data, setData] = useState<Student[]>(students);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem("students_v1");
-      if (!raw) return;
+    const raw = localStorage.getItem('students_v1');
+    if (raw) {
       const arr = JSON.parse(raw);
-      if (Array.isArray(arr)) setStudents(arr.map(Student.from));
-    } catch (e) {
-      console.error("failed to load students", e);
+      if (Array.isArray(arr)) setData(arr.map(Student.from));
     }
   }, []);
-  
 
-  const existingIds = useMemo(() => new Set(students.map(s => s.StudentId)), [students]);
+  const existingIds = useMemo(() => new Set(data.map(s => s.StudentId)), [data]);
 
   const addRandom = () => {
     const s = Student.random(existingIds);
     const errs = s.validate();
-    if (errs.length) return alert("שגיאות:\n" + errs.join("\n"));
-    setStudents(prev => [...prev, s]);
-  };
-
-  const save = () => {
-    try {
-      localStorage.setItem(LS_STUDENTS, JSON.stringify(students));
-      alert("נשמר ל-localStorage");
-    } catch {
-      alert("שגיאה בשמירה");
-    }
+    if (errs.length) return alert('שגיאות:\n' + errs.join('\n'));
+    setData(prev => [...prev, s]);
+    localStorage.setItem('students_v1', JSON.stringify([...data, s]));
   };
 
   return (
-    <>
-      <div className="actions">
-        <button onClick={addRandom}>הוסף סטודנט אקראי</button>
-        <button onClick={save}>שמור ל-localStorage</button>
-      </div>
-
-      <table border={1}>
-        <thead>
-          <tr>
-            <th>StudentId</th>
-            <th>firstName</th>
-            <th>lastName</th>
-            <th>email</th>
-            <th>mobile</th>
-            <th>major</th>
-          </tr>
-        </thead>
-        <tbody>
-          {students.map(s => (
-            <tr key={s.StudentId}>
-              <td>{s.StudentId}</td>
-              <td>{s.firstName}</td>
-              <td>{s.lastName}</td>
-              <td>{s.email}</td>
-              <td>{s.mobile}</td>
-              <td>{s.major}</td>
-            </tr>
+    <Container sx={{ direction: 'rtl', padding: '20px' }}>
+      <Typography variant="h4" gutterBottom>
+        ניהול סטודנטים
+      </Typography>
+      <Button onClick={addRandom} variant="contained" sx={{ mb: 2 }}>
+        הוסף סטודנט אקראי
+      </Button>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>מספר סטודנט</TableCell>
+            <TableCell>שם פרטי</TableCell>
+            <TableCell>שם משפחה</TableCell>
+            <TableCell>דוא״ל</TableCell>
+            <TableCell>נייד</TableCell>
+            <TableCell>תואר/חוג</TableCell>
+            <TableCell>פעולות</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {data.map(s => (
+            <TableRow key={s.StudentId}>
+              <TableCell>{s.StudentId}</TableCell>
+              <TableCell>{s.firstName}</TableCell>
+              <TableCell>{s.lastName}</TableCell>
+              <TableCell>{s.email}</TableCell>
+              <TableCell>{s.mobile}</TableCell>
+              <TableCell>{s.major}</TableCell>
+              <TableCell>
+                <Button component={Link} to={`/forms/student/${s.StudentId}`}>
+                  ערוך
+                </Button>
+              </TableCell>
+            </TableRow>
           ))}
-          {students.length === 0 && (
-            <tr><td colSpan={6}>אין נתונים</td></tr>
+          {data.length === 0 && (
+            <TableRow><TableCell colSpan={7}>אין נתונים</TableCell></TableRow>
           )}
-        </tbody>
-      </table>
-    </>
+        </TableBody>
+      </Table>
+    </Container>
   );
 };
 

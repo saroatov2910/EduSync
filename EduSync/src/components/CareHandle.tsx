@@ -1,22 +1,22 @@
-import React, { useEffect, useMemo, useState } from "react";
-import CareHandler,  {type Role}  from "../classCareHandler/CareHandle";
-import "../cssRules/Body.css";
-
-const LS_HANDLERS = "care_handlers_v1";
+// src/components/CareHandle.tsx
+import React, { useEffect, useMemo, useState } from 'react';
+import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Button } from '@mui/material';
+import { Link } from 'react-router-dom';
+import CareHandler from '../classCareHandler/CareHandle';
+import '../cssRules/index.css';
 
 const CareHandlerTable: React.FC = () => {
   const [handlers, setHandlers] = useState<CareHandler[]>([]);
 
-  // load once
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(LS_HANDLERS);
+      const raw = localStorage.getItem('care_handlers_v1');
       if (raw) {
         const arr = JSON.parse(raw);
         if (Array.isArray(arr)) setHandlers(arr.map(CareHandler.from));
       }
     } catch (e) {
-      console.error("failed to load handlers", e);
+      console.error('failed to load handlers', e);
     }
   }, []);
 
@@ -25,52 +25,51 @@ const CareHandlerTable: React.FC = () => {
   const addRandom = () => {
     const h = CareHandler.random(existingIds);
     const errs = h.validate();
-    if (errs.length) return alert("שגיאות:\n" + errs.join("\n"));
+    if (errs.length) return alert('שגיאות:\n' + errs.join('\n'));
     setHandlers(prev => [...prev, h]);
-  };
-
-  const save = () => {
-    try {
-      localStorage.setItem(LS_HANDLERS, JSON.stringify(handlers));
-      alert("נשמר ל-localStorage");
-    } catch {
-      alert("שגיאה בשמירה");
-    }
+    localStorage.setItem('care_handlers_v1', JSON.stringify([...handlers, h]));
   };
 
   return (
-    <>
-      <div className="actions">
-        <button onClick={addRandom}>הוסף גורם מטפל אקראי</button>
-        <button onClick={save}>שמור ל-localStorage</button>
-      </div>
-
-      <table border={1}>
-        <thead>
-          <tr>
-            <th>handlerId</th>
-            <th>name</th>
-            <th>role</th>
-            <th>email</th>
-            <th>responsibility</th>
-          </tr>
-        </thead>
-        <tbody>
+    <Container sx={{ direction: 'rtl', padding: '20px' }}>
+      <Typography variant="h4" gutterBottom>
+        ניהול גורמים מטפלים
+      </Typography>
+      <Button onClick={addRandom} variant="contained" sx={{ mb: 2 }}>
+        הוסף גורם מטפל אקראי
+      </Button>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>מזהה גורם</TableCell>
+            <TableCell>שם</TableCell>
+            <TableCell>תפקיד</TableCell>
+            <TableCell>דוא״ל</TableCell>
+            <TableCell>תחום אחריות</TableCell>
+            <TableCell>פעולות</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
           {handlers.map(h => (
-            <tr key={h.handlerId}>
-              <td>{h.handlerId}</td>
-              <td>{h.name}</td>
-              <td>{h.role}</td>
-              <td>{h.email}</td>
-              <td>{h.responsibility}</td>
-            </tr>
+            <TableRow key={h.handlerId}>
+              <TableCell>{h.handlerId}</TableCell>
+              <TableCell>{h.name}</TableCell>
+              <TableCell>{h.role}</TableCell>
+              <TableCell>{h.email}</TableCell>
+              <TableCell>{h.responsibility}</TableCell>
+              <TableCell>
+                <Button component={Link} to={`/forms/carehandler/${h.handlerId}`}>
+                  ערוך
+                </Button>
+              </TableCell>
+            </TableRow>
           ))}
           {handlers.length === 0 && (
-            <tr><td colSpan={5}>אין נתונים</td></tr>
+            <TableRow><TableCell colSpan={6}>אין נתונים</TableCell></TableRow>
           )}
-        </tbody>
-      </table>
-    </>
+        </TableBody>
+      </Table>
+    </Container>
   );
 };
 
