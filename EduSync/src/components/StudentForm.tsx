@@ -27,7 +27,8 @@ export default function StudentForm() {
 
 
         <label>Email:</label>
-        <input type="email" name="email" required />
+        <input type="email" name="email" value={email}
+        onChange={(e) => setEmail(e.target.value)} required />
 
         <label>Mobile:</label>
         <input type="tel" name="mobile" required />
