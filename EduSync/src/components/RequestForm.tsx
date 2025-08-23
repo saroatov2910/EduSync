@@ -16,7 +16,9 @@ export default function RequestForm() {
         <input type="text" name="studentId" value={studentId}
         onChange={(e) => setStudentId(e.target.value)} required />
 
-        
+        <label>Description:</label>
+        <input type="text" name="description" value={description}  
+        onChange={(e) => setDescription(e.target.value)} required />
 
         <button type="submit">Submit</button>
       </form>
