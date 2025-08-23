@@ -22,7 +22,9 @@ export default function StudentForm() {
         onChange={(e) => setFirstName(e.target.value)} required />
 
         <label>Last Name:</label>
-        <input type="text" name="lastName" required />
+        <input type="text" name="lastName"  value={lastName} 
+        onChange={(e) => setLastName(e.target.value)}required />
+
 
         <label>Email:</label>
         <input type="email" name="email" required />
