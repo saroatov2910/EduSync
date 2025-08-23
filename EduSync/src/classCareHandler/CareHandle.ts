@@ -1,5 +1,10 @@
+
 // src/models/CareHandler.ts
+/** Model for a Care Handler entity */
+
 export type Role = "מרצה" | "מזכירות";
+import {createdBy} from '../Functions/Recv';
+
 
 export default class CareHandler {
   /** Handler identifier (required & unique; numeric) */
