@@ -1,11 +1,13 @@
 import React from 'react';
 import { Container, Typography, Button, Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
-import StudentForm from './componentsForms/StudentForm';
-import RequestForm from './componentsForms/RequestForm';
-import AppointmentForm from './componentsForms/AppointmentForm';
-import FeedbackForm from './componentsForms/FeedbackForm';
-import CareHandlerForm from './componentsForms/CareHandlerForm';
+
+// ✅ Correct relative paths (this file sits in components/componentsForms/)
+import StudentForm from './StudentForm';
+import RequestForm from './RequestForm';
+import AppointmentForm from './AppointmentForm';
+import FeedbackForm from './FeedbackForm';
+import CareHandlerForm from './CareHandlerForm';
 
 export default function Forms() {
   return (
@@ -13,36 +15,45 @@ export default function Forms() {
       <Typography variant="h4" gutterBottom>
         טפסים
       </Typography>
+
       <Typography variant="body1" sx={{ mb: 3 }}>
         בחר טופס להוספה או עריכה של נתונים:
       </Typography>
+
+      {/* Classic Grid API (requires MUI v5) */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={12} sm={6} md={4}>
           <Button component={Link} to="#student-form" variant="contained" fullWidth>
             טופס סטודנט
           </Button>
         </Grid>
+
         <Grid item xs={12} sm={6} md={4}>
           <Button component={Link} to="#request-form" variant="contained" fullWidth>
             טופס בקשה
           </Button>
         </Grid>
+
         <Grid item xs={12} sm={6} md={4}>
           <Button component={Link} to="#appointment-form" variant="contained" fullWidth>
             טופס פגישה
           </Button>
         </Grid>
+
         <Grid item xs={12} sm={6} md={4}>
           <Button component={Link} to="#feedback-form" variant="contained" fullWidth>
             טופס משוב
           </Button>
         </Grid>
+
         <Grid item xs={12} sm={6} md={4}>
           <Button component={Link} to="#carehandler-form" variant="contained" fullWidth>
             טופס גורם מטפל
           </Button>
         </Grid>
       </Grid>
+
+      {/* Anchor targets */}
       <div id="student-form">
         <StudentForm />
       </div>
