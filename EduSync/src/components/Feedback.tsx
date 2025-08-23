@@ -1,118 +1,167 @@
-import React, { useEffect, useState } from "react";
-import Feedback, { type FeedbackProps } from "../classFeedback/Feedback";
-import "../cssRules/Body.css";
+import React, { useState, useEffect } from 'react';
+import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Button } from '@mui/material';
+import { Link } from 'react-router-dom';
+import Feedback, { FeedbackProps } from '../classFeedback/Feedback';
+import '../cssRules/Body.css';
 
-/** Factory to build a valid FeedbackProps object from a minimal input.
- *  This shields the component from all required fields of Student/Request/Feedback models.
- */
-function makeFeedbackProps(input: {
-  feedbackId: number;
-  studentId: number;
-  comment: string;
-}): FeedbackProps {
-  const now = new Date();
-
-  return {
-    // --- Student (base class) ---
-    studentId: input.studentId,
-    firstName: "Demo",
-    lastName: "Student",
-    email: "demo.student@example.com",
-    mobile: "0501234567",
-    major: "Computer Science",
-
-    // --- Request (parent class of Feedback) ---
-    requestId: 1000 + Math.floor(Math.random() * 9000),
-    requestTopic: "General" as any, // TODO: replace with a real RequestTopic value if you have an enum
-    requestText: input.comment,
-    requestDate: now,
-    reqStatus: "Open" as any,        // TODO: replace with a real RequestStatus value if you have an enum
-    handlerId: 1,
-
-    // --- Feedback (current class) ---
-    feedbackId: input.feedbackId,
-    grade: 100 as any,               // TODO: replace with a real `grade` value if you have an enum/range
-    comment: input.comment,
-    createdBy: "Teacher" as any,     // TODO: replace with a real `createdBy` value if you have an enum
-    feedbackDate: now,
-  };
-}
-
-/** Minimal shape persisted to localStorage to avoid deep class serialization. */
-type PersistedFeedbackLite = {
-  feedbackId: number;
-  studentId: number;
-  comment: string;
-};
-
-const STORAGE_KEY = "feedbacks";
-
+const STORAGE_KEY = 'feedbacks';
 
 const FeedbackTable: React.FC = () => {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
 
   useEffect(() => {
-    // Load from localStorage (lite format) and rebuild class instances
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
-      const parsed: PersistedFeedbackLite[] = JSON.parse(saved);
-      const rebuilt = parsed.map((f) => new Feedback(makeFeedbackProps(f)));
-      setFeedbacks(rebuilt);
+      const parsed = JSON.parse(saved).map((f: any) => new Feedback({
+        studentId: f.studentId,
+        firstName: f.firstName || '',
+        lastName: f.lastName || '',
+        email: f.email || '',
+        mobile: f.mobile || '',
+        major: f.major || '',
+        requestId: f.requestId || Math.floor(Math.random() * 1000),
+        requestTopic: f.requestTopic || 'General',
+        requestText: f.requestText || f.comment,
+        requestDate: new Date(f.requestDate || Date.now()),
+        reqStatus: f.reqStatus || 'Open',
+        handlerId: f.handlerId || 1,
+        feedbackId: f.feedbackId,
+        grade: f.grade || 1,
+        comment: f.comment,
+        createdBy: f.createdBy || 'Student',
+        feedbackDate: new Date(f.feedbackDate || Date.now())
+      }));
+      setFeedbacks(parsed);
     } else {
       setFeedbacks([
-        new Feedback(makeFeedbackProps({ feedbackId: 1, studentId: 101, comment: "Sample feedback 1" })),
-        new Feedback(makeFeedbackProps({ feedbackId: 2, studentId: 102, comment: "Sample feedback 2" })),
+        new Feedback({
+          studentId: 101,
+          firstName: '',
+          lastName: '',
+          email: '',
+          mobile: '',
+          major: '',
+          requestId: 1001,
+          requestTopic: 'General',
+          requestText: 'Sample feedback 1',
+          requestDate: new Date(),
+          reqStatus: 'Open',
+          handlerId: 1,
+          feedbackId: 1,
+          grade: 4,
+          comment: 'Sample feedback 1',
+          createdBy: 'Student',
+          feedbackDate: new Date()
+        }),
+        new Feedback({
+          studentId: 102,
+          firstName: '',
+          lastName: '',
+          email: '',
+          mobile: '',
+          major: '',
+          requestId: 1002,
+          requestTopic: 'Academic',
+          requestText: 'Sample feedback 2',
+          requestDate: new Date(),
+          reqStatus: 'Open',
+          handlerId: 1,
+          feedbackId: 2,
+          grade: 5,
+          comment: 'Sample feedback 2',
+          createdBy: 'Student',
+          feedbackDate: new Date()
+        })
       ]);
     }
   }, []);
 
-  /** Add a new random feedback for demo purposes. */
   const addRandomFeedback = () => {
-    const newF = new Feedback(
-      makeFeedbackProps({
-        feedbackId: Math.floor(Math.random() * 1000),
-        studentId: 100 + Math.floor(Math.random() * 100),
-        comment: "New feedback",
-      })
-    );
-    setFeedbacks((prev) => [...prev, newF]);
+    const newFeedback = new Feedback({
+      studentId: 100 + Math.floor(Math.random() * 100),
+      firstName: '',
+      lastName: '',
+      email: '',
+      mobile: '',
+      major: '',
+      requestId: Math.floor(Math.random() * 1000),
+      requestTopic: 'General',
+      requestText: 'New feedback',
+      requestDate: new Date(),
+      reqStatus: 'Open',
+      handlerId: 1,
+      feedbackId: Math.floor(Math.random() * 1000),
+      grade: Math.floor(Math.random() * 5) + 1,
+      comment: 'New feedback',
+      createdBy: 'Student',
+      feedbackDate: new Date()
+    });
+    const validationErrors = newFeedback.validate();
+    if (validationErrors.length) {
+      alert('שגיאות:\n' + validationErrors.join('\n'));
+      return;
+    }
+    setFeedbacks((prev) => [...prev, newFeedback]);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([...prev, newFeedback]));
   };
 
-  /** Save a lite version to localStorage (id, studentId, comment). */
+  const handleDelete = (id: number) => {
+    const updated = feedbacks.filter(f => f.feedbackId !== id);
+    setFeedbacks(updated);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    alert('משוב נמחק!');
+  };
+
   const saveToLocalStorage = () => {
-    const lite: PersistedFeedbackLite[] = feedbacks.map((f) => ({
-      feedbackId: f.feedbackId,
-      studentId: f.StudentId, // comes from the Student base class (note the capital S)
-      comment: f.comment,
-    }));
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(lite));
-    alert("Feedbacks saved!");
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(feedbacks));
+    alert('משובים נשמרו!');
   };
 
   return (
-    <div>
-      <button onClick={addRandomFeedback}>Add random feedback</button>
-      <button onClick={saveToLocalStorage}>Save to localStorage</button>
-
-      <table border={1}>
-        <thead>
-          <tr>
-            <th>feedbackId</th>
-            <th>studentId</th>
-            <th>comment</th>
-          </tr>
-        </thead>
-        <tbody>
-          {feedbacks.map((f) => (
-            <tr key={f.feedbackId}>
-              <td>{f.feedbackId}</td>
-              <td>{f.StudentId}</td>
-              <td>{f.comment}</td> {/* use `comment`, not `message` */}
-            </tr>
+    <Container sx={{ direction: 'rtl', padding: '20px' }}>
+      <Typography variant="h4" gutterBottom>
+        משובים
+      </Typography>
+      <Button onClick={addRandomFeedback} variant="contained" sx={{ mb: 2, mr: 1 }}>
+        הוסף משוב אקראי
+      </Button>
+      <Button onClick={saveToLocalStorage} variant="contained" sx={{ mb: 2 }}>
+        שמור ב-localStorage
+      </Button>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>מספר משוב</TableCell>
+            <TableCell>מספר סטודנט</TableCell>
+            <TableCell>ציון</TableCell>
+            <TableCell>הערות</TableCell>
+            <TableCell>נוצר על ידי</TableCell>
+            <TableCell>תאריך</TableCell>
+            <TableCell>פעולות</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {feedbacks.map(f => (
+            <TableRow key={f.feedbackId}>
+              <TableCell>{f.feedbackId}</TableCell>
+              <TableCell>{f.StudentId}</TableCell>
+              <TableCell>{f.grade}</TableCell>
+              <TableCell>{f.comment}</TableCell>
+              <TableCell>{f.createdBy}</TableCell>
+              <TableCell>{new Date(f.feedbackDate).toLocaleDateString()}</TableCell>
+              <TableCell>
+                <Button component={Link} to={`/forms/feedback/${f.feedbackId}`} sx={{ mr: 1 }}>
+                  ערוך
+                </Button>
+                <Button color="error" onClick={() => handleDelete(f.feedbackId)}>
+                  מחק
+                </Button>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
-    </div>
+        </TableBody>
+      </Table>
+    </Container>
   );
 };
 

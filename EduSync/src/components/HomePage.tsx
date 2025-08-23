@@ -1,13 +1,13 @@
-import * as React from "react";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import * as React from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
   Card,
   CardActions,
   CardContent,
-  Grid, // If you're not on MUI v6, replace with: import Grid from "@mui/material/Grid";
+  Grid,
   Typography,
   Table,
   TableBody,
@@ -16,10 +16,8 @@ import {
   TableHead,
   TableRow,
   Paper,
-} from "@mui/material";
+} from '@mui/material';
 
-// ---- Types ----
-// English comment: a minimal row type for the home table (adapt to your real entity).
 interface Row {
   id: number | string;
   title: string;
@@ -30,10 +28,8 @@ export default function Home() {
   const navigate = useNavigate();
   const [rows, setRows] = useState<Row[]>([]);
 
-  // English comment: Load initial data from localStorage or fall back to demo rows.
   useEffect(() => {
-    // Try "feedbacks" first; if not found, try "students"; otherwise use demo rows.
-    const fromFeedbacks = safeParse(localStorage.getItem("feedbacks")) as
+    const fromFeedbacks = safeParse(localStorage.getItem('feedbacks')) as
       | Array<{ feedbackId?: number; comment?: string; feedbackDate?: string }>
       | null;
 
@@ -41,14 +37,14 @@ export default function Home() {
       setRows(
         fromFeedbacks.slice(0, 10).map((f, i) => ({
           id: f.feedbackId ?? i + 1,
-          title: f.comment ?? "Feedback",
-          date: f.feedbackDate ?? "",
+          title: f.comment ?? 'Feedback',
+          date: f.feedbackDate ?? '',
         })),
       );
       return;
     }
 
-    const fromStudents = safeParse(localStorage.getItem("students")) as
+    const fromStudents = safeParse(localStorage.getItem('students_v1')) as
       | Array<{ id?: number | string; fullName?: string }>
       | null;
 
@@ -56,21 +52,19 @@ export default function Home() {
       setRows(
         fromStudents.slice(0, 10).map((s, i) => ({
           id: s.id ?? i + 1,
-          title: s.fullName ?? "Student",
+          title: s.fullName ?? 'Student',
         })),
       );
       return;
     }
 
-    // English comment: Demo fallback if localStorage has no data yet.
     setRows([
-      { id: 1, title: "Welcome to EduSync", date: new Date().toISOString().slice(0, 10) },
-      { id: 2, title: "Use the buttons to navigate" },
-      { id: 3, title: "Load data appears here" },
+      { id: 1, title: 'Welcome to EduSync', date: new Date().toISOString().slice(0, 10) },
+      { id: 2, title: 'Use the buttons to navigate' },
+      { id: 3, title: 'Load data appears here' },
     ]);
   }, []);
 
-  // English comment: Safer JSON.parse wrapper.
   function safeParse(value: string | null) {
     try {
       return value ? JSON.parse(value) : null;
@@ -80,64 +74,57 @@ export default function Home() {
   }
 
   return (
-    <Box component="main" sx={{ p: 2 }}>
-      {/* English comment: Page title */}
+    <Box component="main" sx={{ p: 2, direction: 'rtl' }}>
       <Typography variant="h4" sx={{ mb: 2 }}>
         דף הבית
       </Typography>
-
-      {/* English comment: Quick navigation cards */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid item xs={12} sm={6} md={4}>
           <Card>
             <CardContent>
-              <Typography variant="h6">Forms</Typography>
+              <Typography variant="h6">טפסים</Typography>
               <Typography variant="body2" color="text.secondary">
                 מעבר למסכי הטפסים שהגדרתם בתכנון.
               </Typography>
             </CardContent>
             <CardActions>
-              <Button onClick={() => navigate("/forms")} variant="contained">
-                Go to Forms
+              <Button onClick={() => navigate('/forms')} variant="contained">
+                מעבר לטפסים
               </Button>
             </CardActions>
           </Card>
         </Grid>
-
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid item xs={12} sm={6} md={4}>
           <Card>
             <CardContent>
-              <Typography variant="h6">Management</Typography>
+              <Typography variant="h6">ניהול</Typography>
               <Typography variant="body2" color="text.secondary">
                 ניווט למסכי הניהול (טבלאות/CRUD).
               </Typography>
             </CardContent>
             <CardActions>
-              <Button onClick={() => navigate("/management")} variant="contained">
-                Go to Management
+              <Button onClick={() => navigate('/management')} variant="contained">
+                מעבר לניהול
               </Button>
             </CardActions>
           </Card>
         </Grid>
-
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid item xs={12} sm={6} md={4}>
           <Card>
             <CardContent>
-              <Typography variant="h6">Help</Typography>
+              <Typography variant="h6">עזרה</Typography>
               <Typography variant="body2" color="text.secondary">
                 קישורים ומידע מסייע למשתמשים.
               </Typography>
             </CardContent>
             <CardActions>
-              <Button onClick={() => navigate("/help")} color="secondary" variant="outlined">
-                Open Help
+              <Button onClick={() => navigate('/help')} color="secondary" variant="outlined">
+                פתח עזרה
               </Button>
             </CardActions>
           </Card>
         </Grid>
       </Grid>
-
-      {/* English comment: A small table on the home page (demo or localStorage data). */}
       <Typography variant="h6" sx={{ mb: 1 }}>
         עדכונים אחרונים
       </Typography>
@@ -145,9 +132,9 @@ export default function Home() {
         <Table size="small" aria-label="home table">
           <TableHead>
             <TableRow>
-              <TableCell>Id</TableCell>
-              <TableCell>Title</TableCell>
-              <TableCell>Date</TableCell>
+              <TableCell>מזהה</TableCell>
+              <TableCell>כותרת</TableCell>
+              <TableCell>תאריך</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -155,7 +142,7 @@ export default function Home() {
               <TableRow key={r.id}>
                 <TableCell>{r.id}</TableCell>
                 <TableCell>{r.title}</TableCell>
-                <TableCell>{r.date ?? "-"}</TableCell>
+                <TableCell>{r.date ?? '-'}</TableCell>
               </TableRow>
             ))}
           </TableBody>
