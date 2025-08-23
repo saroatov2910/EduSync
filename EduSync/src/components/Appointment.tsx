@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { Appointment } from '../classAppointment/Appointment';
+import  Appointment  from '../classAppointment/Appointment';
 import '../cssRules/index.css';
 
 const AppointmentTable: React.FC = () => {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import CareHandler from '../classCareHandler/CareHandle';
+import CareHandler from '../../classCareHandler/CareHandle';
 
 export default function CareHandlerForm() {
   const [formData, setFormData] = useState({

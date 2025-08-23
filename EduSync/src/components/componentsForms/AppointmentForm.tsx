@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { TextField, Button, Box, Typography, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import Appointment from '../classAppointment/Appointment';
+import Appointment from '../../classAppointment/Appointment';
 
 export default function AppointmentForm() {
   const { id } = useParams<{ id: string }>();

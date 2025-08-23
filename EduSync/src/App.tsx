@@ -4,7 +4,7 @@ import HeaderRoot from './components/layout/HeaderRoot';
 import Footer from './components/layout/Footer';
 import Forms from './components/componentsForms/Forms';
 import Management from './components/Management';
-import AppointmentForm from './componentsForms/AppointmentForm';
+import AppointmentForm from './components/componentsForms/AppointmentForm';
 import UserRequests from './components/UserRequests';
 
 // Pages
