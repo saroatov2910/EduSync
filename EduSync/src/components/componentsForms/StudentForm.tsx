@@ -1,13 +1,12 @@
 //טופס להוספה / עריכה של סטודנט (firstName, lastName, email, mobile, major)
-
 import React, { useState } from "react";
 
 export default function StudentForm() {
-  const [firstName, setFirstName] = React.useState("");
-  const [lastName, setLastName] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [mobile, setMobile] = React.useState("");
-  const [major, setMajor] = React.useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [major, setMajor] = useState("");
 
   const handleAddStutent = (e: React.FormEvent) => {
     e.preventDefault();
