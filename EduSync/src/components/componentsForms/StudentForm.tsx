@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 //טופס להוספה / עריכה של סטודנט (firstName, lastName, email, mobile, major)
 import React, { useState } from "react";
 
@@ -7,38 +8,117 @@ export default function StudentForm() {
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [major, setMajor] = useState("");
+=======
+import React, { useState } from 'react';
+import { TextField, Button, Box, Typography } from '@mui/material';
+import Student from '../classStudent/Student';
 
-  const handleAddStutent = (e: React.FormEvent) => {
+export default function StudentForm() {
+  const [formData, setFormData] = useState({
+    studentId: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    mobile: '',
+    major: ''
+  });
+  const [errors, setErrors] = useState<string[]>([]);
+>>>>>>> origin/main
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Logic to handle form submission
+    const student = new Student({
+      StudentId: Number(formData.studentId),
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      mobile: formData.mobile,
+      major: formData.major
+    });
+    const validationErrors = student.validate();
+    if (validationErrors.length) {
+      setErrors(validationErrors);
+      return;
+    }
+    const students = JSON.parse(localStorage.getItem('students_v1') || '[]');
+    localStorage.setItem('students_v1', JSON.stringify([...students, student]));
+    alert('סטודנט נוסף בהצלחה!');
+    setFormData({ studentId: '', firstName: '', lastName: '', email: '', mobile: '', major: '' });
+    setErrors([]);
   };
 
   return (
-    <div>
-      <form className="student-form" onSubmit={handleAddStutent}>
-        <label>First Name:</label>
-        <input type="text" name="firstName" value={firstName}
-        onChange={(e) => setFirstName(e.target.value)} required />
-
-        <label>Last Name:</label>
-        <input type="text" name="lastName"  value={lastName} 
-        onChange={(e) => setLastName(e.target.value)}required />
-
-
-        <label>Email:</label>
-        <input type="email" name="email" value={email}
-        onChange={(e) => setEmail(e.target.value)} required />
-
-        <label>Mobile:</label>
-        <input type="tel" name="mobile" value={mobile} 
-        onChange={(e) => setMobile(e.target.value)} required />
-
-        <label>Major:</label>
-        <input type="text" name="major" value={major}  
-        onChange={(e) => setMajor(e.target.value)} required />
-
-        <button type="submit">Submit</button>
+    <Box sx={{ direction: 'rtl', p: 2 }}>
+      <Typography variant="h5">טופס סטודנט</Typography>
+      <form onSubmit={handleSubmit}>
+        <TextField
+          label="מספר סטודנט"
+          name="studentId"
+          value={formData.studentId}
+          onChange={handleChange}
+          required
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="שם פרטי"
+          name="firstName"
+          value={formData.firstName}
+          onChange={handleChange}
+          required
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="שם משפחה"
+          name="lastName"
+          value={formData.lastName}
+          onChange={handleChange}
+          required
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="דוא״ל"
+          name="email"
+          type="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="נייד"
+          name="mobile"
+          value={formData.mobile}
+          onChange={handleChange}
+          required
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="חוג"
+          name="major"
+          value={formData.major}
+          onChange={handleChange}
+          required
+          fullWidth
+          margin="normal"
+        />
+        <Button type="submit" variant="contained" sx={{ mt: 2 }}>
+          שלח
+        </Button>
+        {errors.length > 0 && (
+          <Typography color="error" sx={{ mt: 2 }}>
+            {errors.join(', ')}
+          </Typography>
+        )}
       </form>
-    </div>
+    </Box>
   );
 }

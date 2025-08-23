@@ -2,9 +2,13 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import HeaderRoot from './components/layout/HeaderRoot';
 import Footer from './components/layout/Footer';
+import Forms from './components/componentsForms/Forms';
+import Management from './components/Management';
+import AppointmentForm from './componentsForms/AppointmentForm';
+import UserRequests from './components/UserRequests';
 
 // Pages
-import HomePage from './components/Home';
+import HomePage from './components/HomePage';
 import AppointmentTable from './components/Appointment';
 import CareHandleTable from './components/CareHandle';
 import ContactMsgTable from './components/ContactMsg';
@@ -19,7 +23,7 @@ function App() {
       <HeaderRoot />
       <main style={{ padding: '20px' }}>
         <Routes>
-          <Route path="/" element={<HomePage />} /> {/* default Home page */}
+          <Route path="/" element={<HomePage />} />
           <Route path="/appointment" element={<AppointmentTable />} />
           <Route path="/carehandle" element={<CareHandleTable />} />
           <Route path="/contactmsg" element={<ContactMsgTable />} />
@@ -27,6 +31,10 @@ function App() {
           <Route path="/student" element={<StudentTable />} />
           <Route path="/help" element={<HelpPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />
+          <Route path="/forms" element={<Forms />} />
+          <Route path="/management" element={<Management />} />
+          <Route path="/forms/appointment/:id" element={<AppointmentForm />} />
+          <Route path="/user/requests" element={<UserRequests />} />
         </Routes>
       </main>
       <Footer />

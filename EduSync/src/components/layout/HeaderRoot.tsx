@@ -21,7 +21,7 @@ const navItems: NavItem[] = [
   { label: 'תורים', to: '/appointment' },
   { label: 'בקשות', to: '/request' },
   { label: 'טיפול פניות', to: '/carehandle' },
-  { label: 'צור קשר', to: '/contactmsg' },
+  { label: 'פניות משתמש', to: '/user/requests' },
   { label: 'עזרה', to: '/help' },
   { label: 'פידבק', to: '/feedback' },
 ];
@@ -94,9 +94,8 @@ export default function HeaderRoot() {
         </Toolbar>
       </AppBar>
 
-      {/* Drawer for mobile */}
       <Drawer
-        anchor="right"             
+        anchor="right"
         open={mobileOpen}
         onClose={toggleDrawer}
         sx={{ display: { xs: 'block', sm: 'none' } }}

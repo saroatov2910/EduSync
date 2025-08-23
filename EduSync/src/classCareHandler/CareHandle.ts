@@ -2,8 +2,8 @@
 // src/models/CareHandler.ts
 /** Model for a Care Handler entity */
 
-export type Role = "מרצה" | "מזכירות";
-import {createdBy} from '../Functions/Recv';
+// export type Role = "מרצה" | "מזכירות";
+import type { createdBy } from "../RequestStatus";
 
 
 export default class CareHandler {
@@ -12,13 +12,13 @@ export default class CareHandler {
   /** Name (required) */
   name: string;
   /** Role (required: "מרצה" | "מזכירות") */
-  role: Role;
+  role: createdBy;
   /** Email (required & valid) */
   email: string;
   /** Responsibility area (required) */
   responsibility: string;
 
-  constructor(handlerId: number, name: string, role: Role, email: string, responsibility: string) {
+  constructor(handlerId: number, name: string, role: createdBy, email: string, responsibility: string) {
     this.handlerId = handlerId;
     this.name = name.trim();
     this.role = role;
@@ -33,7 +33,7 @@ export default class CareHandler {
     return new CareHandler(
       idNum,
       String(o.name ?? ""),
-      (o.role as Role) ?? "מרצה",
+      (o.role as createdBy) ?? "מרצה",
       String(o.email ?? ""),
       String(o.responsibility ?? "")
     );
@@ -44,7 +44,7 @@ export default class CareHandler {
     let handlerId: number;
     do { handlerId = Math.floor(1000 + Math.random() * 9000); } while (existingIds.has(handlerId));
     const names = ['ד"ר יעל בר', "אורן כהן", "טליה ממן", "רונית אזולאי", "יונתן פרידמן", "שירה לוין"];
-    const roles: Role[] = ["מרצה", "מזכירות"];
+    const roles: createdBy[] = ["מרצה", "מזכירות"]; 
     const responsibilities = ["בדיקת עבודות", "רישום תלמידים", "תיאום מערכת שעות", "פניות סטודנטים", "ניהול קורסים"];
     const name = pick(names);
     const role = pick(roles);

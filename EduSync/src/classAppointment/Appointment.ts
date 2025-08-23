@@ -1,7 +1,7 @@
 import Request from "../classRequest/Request";
 import { isValidStudentId, validateText , isValidDate, isValidTime } from "../Functions/Utils";
 import type { RequestStatus ,AppointmentType} from "../RequestStatus";
-
+ 
 
 export default class Appointment extends Request {
     appointmentId: number;
