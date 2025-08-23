@@ -35,7 +35,8 @@ export default function StudentForm() {
         onChange={(e) => setMobile(e.target.value)} required />
 
         <label>Major:</label>
-        <input type="text" name="major" required />
+        <input type="text" name="major" value={major}  
+        onChange={(e) => setMajor(e.target.value)} required />
 
         <button type="submit">Submit</button>
       </form>
