@@ -22,6 +22,10 @@ export default function FeedbackForm() {
         <input type="text" name="comment" value={comment}  
         onChange={(e) => setComment(e.target.value)} required />
 
+        <label>Grade:</label>
+        <input type="text" name="grade" value={grade}  
+        onChange={(e) => setGrade(e.target.value)} required />
+
         <button type="submit">Submit</button>
       </form>
     </div>
