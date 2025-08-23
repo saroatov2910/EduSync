@@ -45,16 +45,15 @@ export default class Request extends Student {
     this.reqStatus = props.reqStatus;
     this.handlerId = props.handlerId;
 
-    this.validate(); // אפשר גם להשתמש בתוצאה אם תרצה לזרוק חריגה
-  }
+    }
 
   public validate(): string[] {
     const errs = super.validate();
-  
+
     try { isValidStudentId(this.StudentId); } catch (e:any) { errs.push(e?.message ?? "StudentId לא תקין"); }
     try { validateText(this.requestText); }  catch { errs.push("טקסט בקשה לא תקין"); }
     try { isValidDate(this.requestDate); }   catch { errs.push("תאריך בקשה לא תקין"); }
-  
+
     return errs;
   }
-  }
+}
