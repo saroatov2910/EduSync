@@ -1,7 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Button } from '@mui/material';
+// src/components/Feedback.tsx
+// Notes:
+// - Comments are in English
+// - Types are imported with type-only import
+// - We rely on your RequestStatus module for the shared enums/types
+
+import React, { useEffect, useState } from 'react';
+import {
+  Container,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Button,
+} from '@mui/material';
 import { Link } from 'react-router-dom';
-import Feedback, { FeedbackProps } from '../classFeedback/Feedback';
+import Feedback from '../classFeedback/Feedback';
+// Types-only (to satisfy `verbatimModuleSyntax`)
+import type { RequestTopic, RequestStatus, createdBy, grade } from '../RequestStatus';
 import '../cssRules/Body.css';
 
 const STORAGE_KEY = 'feedbacks';
@@ -12,27 +29,32 @@ const FeedbackTable: React.FC = () => {
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
-      const parsed = JSON.parse(saved).map((f: any) => new Feedback({
-        studentId: f.studentId,
-        firstName: f.firstName || '',
-        lastName: f.lastName || '',
-        email: f.email || '',
-        mobile: f.mobile || '',
-        major: f.major || '',
-        requestId: f.requestId || Math.floor(Math.random() * 1000),
-        requestTopic: f.requestTopic || 'General',
-        requestText: f.requestText || f.comment,
-        requestDate: new Date(f.requestDate || Date.now()),
-        reqStatus: f.reqStatus || 'Open',
-        handlerId: f.handlerId || 1,
-        feedbackId: f.feedbackId,
-        grade: f.grade || 1,
-        comment: f.comment,
-        createdBy: f.createdBy || 'Student',
-        feedbackDate: new Date(f.feedbackDate || Date.now())
-      }));
+      // Revive plain objects into Feedback instances and ensure Date fields are Date objects
+      const parsed = (JSON.parse(saved) as any[]).map(
+        (f) =>
+          new Feedback({
+            studentId: Number(f.studentId),
+            firstName: f.firstName ?? '',
+            lastName: f.lastName ?? '',
+            email: f.email ?? '',
+            mobile: f.mobile ?? '',
+            major: f.major ?? '',
+            requestId: Number(f.requestId ?? Math.floor(Math.random() * 1000)),
+            requestTopic: (f.requestTopic ?? 'General') as RequestTopic,
+            requestText: f.requestText ?? f.comment ?? '',
+            requestDate: new Date(f.requestDate ?? Date.now()),
+            reqStatus: (f.reqStatus ?? 'Open') as RequestStatus,
+            handlerId: Number(f.handlerId ?? 1),
+            feedbackId: Number(f.feedbackId ?? Math.floor(Math.random() * 1000)),
+            grade: Number(f.grade ?? 1) as grade,
+            comment: f.comment ?? '',
+            createdBy: (f.createdBy ?? 'Student') as createdBy,
+            feedbackDate: new Date(f.feedbackDate ?? Date.now()),
+          })
+      );
       setFeedbacks(parsed);
     } else {
+      // Seed with two examples (types aligned with your class)
       setFeedbacks([
         new Feedback({
           studentId: 101,
@@ -42,16 +64,16 @@ const FeedbackTable: React.FC = () => {
           mobile: '',
           major: '',
           requestId: 1001,
-          requestTopic: 'General',
+          requestTopic: 'General' as RequestTopic,
           requestText: 'Sample feedback 1',
           requestDate: new Date(),
-          reqStatus: 'Open',
+          reqStatus: 'Open' as RequestStatus,
           handlerId: 1,
           feedbackId: 1,
-          grade: 4,
+          grade: 4 as grade,
           comment: 'Sample feedback 1',
-          createdBy: 'Student',
-          feedbackDate: new Date()
+          createdBy: 'Student' as createdBy,
+          feedbackDate: new Date(),
         }),
         new Feedback({
           studentId: 102,
@@ -61,17 +83,17 @@ const FeedbackTable: React.FC = () => {
           mobile: '',
           major: '',
           requestId: 1002,
-          requestTopic: 'Academic',
+          requestTopic: 'Academic' as RequestTopic,
           requestText: 'Sample feedback 2',
           requestDate: new Date(),
-          reqStatus: 'Open',
+          reqStatus: 'Open' as RequestStatus,
           handlerId: 1,
           feedbackId: 2,
-          grade: 5,
+          grade: 5 as grade,
           comment: 'Sample feedback 2',
-          createdBy: 'Student',
-          feedbackDate: new Date()
-        })
+          createdBy: 'Student' as createdBy,
+          feedbackDate: new Date(),
+        }),
       ]);
     }
   }, []);
@@ -85,30 +107,38 @@ const FeedbackTable: React.FC = () => {
       mobile: '',
       major: '',
       requestId: Math.floor(Math.random() * 1000),
-      requestTopic: 'General',
+      requestTopic: 'General' as RequestTopic,
       requestText: 'New feedback',
       requestDate: new Date(),
-      reqStatus: 'Open',
+      reqStatus: 'Open' as RequestStatus,
       handlerId: 1,
       feedbackId: Math.floor(Math.random() * 1000),
-      grade: Math.floor(Math.random() * 5) + 1,
+      grade: (Math.floor(Math.random() * 5) + 1) as grade,
       comment: 'New feedback',
-      createdBy: 'Student',
-      feedbackDate: new Date()
+      createdBy: 'Student' as createdBy,
+      feedbackDate: new Date(),
     });
+
     const validationErrors = newFeedback.validate();
     if (validationErrors.length) {
       alert('שגיאות:\n' + validationErrors.join('\n'));
       return;
     }
-    setFeedbacks((prev) => [...prev, newFeedback]);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify([...prev, newFeedback]));
+
+    // Use functional update and persist the resulting array
+    setFeedbacks((prev) => {
+      const next = [...prev, newFeedback];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      return next;
+    });
   };
 
   const handleDelete = (id: number) => {
-    const updated = feedbacks.filter(f => f.feedbackId !== id);
-    setFeedbacks(updated);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    setFeedbacks((prev) => {
+      const updated = prev.filter((f) => f.feedbackId !== id);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      return updated;
+    });
     alert('משוב נמחק!');
   };
 
@@ -141,7 +171,7 @@ const FeedbackTable: React.FC = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {feedbacks.map(f => (
+          {feedbacks.map((f) => (
             <TableRow key={f.feedbackId}>
               <TableCell>{f.feedbackId}</TableCell>
               <TableCell>{f.StudentId}</TableCell>

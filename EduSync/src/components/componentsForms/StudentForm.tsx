@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography } from '@mui/material';
-import Student from '../classStudent/Student';
+import Student from '../../classStudent/Student';
 
 export default function StudentForm() {
   const [formData, setFormData] = useState({
