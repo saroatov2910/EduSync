@@ -1,25 +1,51 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import Feedback, { FeedbackProps } from '../classFeedback/Feedback';
+import {
+  TextField,
+  Button,
+  Box,
+  Typography,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from '@mui/material';
+import type { SelectChangeEvent } from '@mui/material/Select';
+
+import Feedback from '../../classFeedback/Feedback';
+import type { FeedbackProps } from '../../classFeedback/Feedback';
 
 export default function FeedbackForm() {
   const [formData, setFormData] = useState({
     studentId: '',
     comment: '',
-    grade: 1
+    grade: 1, // keep as number
   });
+
   const [errors, setErrors] = useState<string[]>([]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | { name?: string; value: unknown }>) => {
-    setFormData({ ...formData, [e.target.name as string]: e.target.value });
+  // Handle text inputs (studentId, comment)
+  const handleTextChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Handle grade select (MUI SelectChangeEvent<number>)
+  const handleGradeChange = (e: SelectChangeEvent<number>) => {
+    const value = Number(e.target.value);
+    setFormData(prev => ({ ...prev, grade: value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     if (formData.comment.length > 300) {
       setErrors(['הערות חייבות להיות עד 300 תווים']);
       return;
     }
+
+    // Build props for Feedback class (keep fields aligned with your model)
     const feedbackProps: FeedbackProps = {
       studentId: Number(formData.studentId),
       firstName: '',
@@ -34,17 +60,19 @@ export default function FeedbackForm() {
       reqStatus: 'Open' as any,
       handlerId: 1,
       feedbackId: Math.floor(Math.random() * 1000),
-      grade: formData.grade as any,
+      grade: formData.grade as any, // keep as any if your model expects a different enum/type
       comment: formData.comment,
       createdBy: 'Student' as any,
-      feedbackDate: new Date()
+      feedbackDate: new Date(),
     };
+
     const feedback = new Feedback(feedbackProps);
-    const validationErrors = feedback.validate();
+    const validationErrors = (feedback as any).validate?.() ?? [];
     if (validationErrors.length) {
       setErrors(validationErrors);
       return;
     }
+
     const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
     localStorage.setItem('feedbacks', JSON.stringify([...feedbacks, feedbackProps]));
     alert('משוב נוסף בהצלחה!');
@@ -60,7 +88,7 @@ export default function FeedbackForm() {
           label="מספר סטודנט"
           name="studentId"
           value={formData.studentId}
-          onChange={handleChange}
+          onChange={handleTextChange}
           required
           fullWidth
           margin="normal"
@@ -69,7 +97,7 @@ export default function FeedbackForm() {
           label="הערות"
           name="comment"
           value={formData.comment}
-          onChange={handleChange}
+          onChange={handleTextChange}
           required
           fullWidth
           multiline
@@ -78,14 +106,17 @@ export default function FeedbackForm() {
         />
         <FormControl fullWidth margin="normal">
           <InputLabel>ציון</InputLabel>
-          <Select
+          <Select<number>
             name="grade"
             value={formData.grade}
-            onChange={handleChange}
+            onChange={handleGradeChange}
             required
+            label="ציון"
           >
             {[1, 2, 3, 4, 5].map(g => (
-              <MenuItem key={g} value={g}>{g}</MenuItem>
+              <MenuItem key={g} value={g}>
+                {g}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>

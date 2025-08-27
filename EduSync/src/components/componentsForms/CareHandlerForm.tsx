@@ -1,23 +1,54 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import CareHandler from '../classCareHandler/CareHandle';
+import {
+  TextField,
+  Button,
+  Box,
+  Typography,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from '@mui/material';
+import type { SelectChangeEvent } from '@mui/material/Select';
+import CareHandler from '../../classCareHandler/CareHandle';
+
+type Role = 'מרצה' | 'מזכירות';
+
+interface FormState {
+  handlerId: string;
+  name: string;
+  role: Role;
+  email: string;
+  responsibility: string;
+}
 
 export default function CareHandlerForm() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormState>({
     handlerId: '',
     name: '',
-    role: 'מרצה' as 'מרצה' | 'מזכירות',
+    role: 'מרצה',
     email: '',
-    responsibility: ''
+    responsibility: '',
   });
   const [errors, setErrors] = useState<string[]>([]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | { name?: string; value: unknown }>) => {
-    setFormData({ ...formData, [e.target.name as string]: e.target.value });
+  // Handles TextField / textarea changes
+  const handleTextChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Handles MUI <Select> changes
+  const handleSelectChange = (e: SelectChangeEvent<Role>) => {
+    const { name, value } = e.target; // value is string
+    setFormData((prev) => ({ ...prev, [name as keyof FormState]: value as Role }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     const careHandler = new CareHandler(
       Number(formData.handlerId),
       formData.name,
@@ -25,13 +56,17 @@ export default function CareHandlerForm() {
       formData.email,
       formData.responsibility
     );
-    const validationErrors = careHandler.validate();
+
+    const validationErrors = careHandler.validate?.() ?? [];
     if (validationErrors.length) {
       setErrors(validationErrors);
       return;
     }
-    const handlers = JSON.parse(localStorage.getItem('care_handlers_v1') || '[]');
-    localStorage.setItem('care_handlers_v1', JSON.stringify([...handlers, careHandler]));
+
+    const key = 'care_handlers_v1';
+    const handlers = JSON.parse(localStorage.getItem(key) || '[]');
+    localStorage.setItem(key, JSON.stringify([...handlers, careHandler]));
+
     alert('גורם מטפל נוסף בהצלחה!');
     setFormData({ handlerId: '', name: '', role: 'מרצה', email: '', responsibility: '' });
     setErrors([]);
@@ -40,59 +75,69 @@ export default function CareHandlerForm() {
   return (
     <Box sx={{ direction: 'rtl', p: 2 }}>
       <Typography variant="h5">טופס גורם מטפל</Typography>
+
       <form onSubmit={handleSubmit}>
         <TextField
           label="מספר מזהה"
           name="handlerId"
           value={formData.handlerId}
-          onChange={handleChange}
+          onChange={handleTextChange}
           required
           fullWidth
           margin="normal"
         />
+
         <TextField
           label="שם"
           name="name"
           value={formData.name}
-          onChange={handleChange}
+          onChange={handleTextChange}
           required
           fullWidth
           margin="normal"
         />
+
         <FormControl fullWidth margin="normal">
-          <InputLabel>תפקיד</InputLabel>
-          <Select
+          <InputLabel id="role-label">תפקיד</InputLabel>
+          <Select<Role>
+            labelId="role-label"
+            id="role"
             name="role"
+            label="תפקיד"
             value={formData.role}
-            onChange={handleChange}
+            onChange={handleSelectChange}
             required
           >
             <MenuItem value="מרצה">מרצה</MenuItem>
             <MenuItem value="מזכירות">מזכירות</MenuItem>
           </Select>
         </FormControl>
+
         <TextField
           label="דוא״ל"
           name="email"
           type="email"
           value={formData.email}
-          onChange={handleChange}
+          onChange={handleTextChange}
           required
           fullWidth
           margin="normal"
         />
+
         <TextField
           label="תחום אחריות"
           name="responsibility"
           value={formData.responsibility}
-          onChange={handleChange}
+          onChange={handleTextChange}
           required
           fullWidth
           margin="normal"
         />
+
         <Button type="submit" variant="contained" sx={{ mt: 2 }}>
           שלח
         </Button>
+
         {errors.length > 0 && (
           <Typography color="error" sx={{ mt: 2 }}>
             {errors.join(', ')}

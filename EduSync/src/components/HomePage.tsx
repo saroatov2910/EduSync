@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'; // Adjusted React import for conciseness
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -7,7 +6,7 @@ import {
   Card,
   CardActions,
   CardContent,
-  Grid,
+  Grid, // This now refers to the modern Grid component (previously Grid2 in v6)
   Typography,
   Table,
   TableBody,
@@ -79,7 +78,9 @@ export default function Home() {
         דף הבית
       </Typography>
       <Grid container spacing={2} sx={{ mb: 3 }}>
-        <Grid item xs={12} sm={6} md={4}>
+        {/* Updated Grid usage for modern MUI versions (v6/v7+). */}
+        {/* Child Grids automatically act as items. Use 'size' prop for breakpoints. */}
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <Card>
             <CardContent>
               <Typography variant="h6">טפסים</Typography>
@@ -94,7 +95,7 @@ export default function Home() {
             </CardActions>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <Card>
             <CardContent>
               <Typography variant="h6">ניהול</Typography>
@@ -109,7 +110,7 @@ export default function Home() {
             </CardActions>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <Card>
             <CardContent>
               <Typography variant="h6">עזרה</Typography>

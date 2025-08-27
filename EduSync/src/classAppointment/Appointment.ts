@@ -1,50 +1,76 @@
-import Request from "../classRequest/Request";
-import { isValidStudentId, validateText , isValidDate, isValidTime } from "../Functions/Utils";
-import type { RequestStatus ,AppointmentType} from "../RequestStatus";
- 
 
-export default class Appointment extends Request {
-    appointmentId: number;
-    appointmentDate: Date;
-    appointmentTime: string;
-    appointmentType: AppointmentType
-    location: string;
-    status: RequestStatus
+export type AppointmentType = 'זום' | 'פרונטלי' | string;
 
-    constructor(
-        studentId: number,
-        requestId: number,
-        requestText: string,
-        requestDate: Date,
-        reqStatus: RequestStatus,
-        appointmentId: number,
-        appointmentDate: Date,
-        appointmentTime: string,
-        appointmentType: AppointmentType,
-        location: string,
-        status:RequestStatus
-    ) {
-        super(studentId, requestId, requestText, requestDate, reqStatus);
-        this.appointmentId = appointmentId;
-        this.appointmentDate = appointmentDate;
-        this.appointmentTime = appointmentTime;
-        this.appointmentType = appointmentType;
-        this.location = location;
-        this.status = status;
+export interface AppointmentProps {
+  studentId: number;
+  requestId: number;
+  appointmentDate: Date;
+  appointmentTime: string;
+  appointmentType?: AppointmentType;
+  location?: string;
+  status?: string;
+  appointmentId?: number;
 
-       
-    }
-    // Validate the appointment details
-    
- protected validate(): string[] {
-    const errs: string[] = super.validate(); 
-    try { isValidStudentId(this.StudentId); } catch { errs.push("StudentId invalid"); }
-    try { isValidStudentId(this.requestId); } catch { errs.push("RequestId invalid"); }
-    try { validateText(this.requestText); } catch { errs.push("Request text invalid"); }
-    try { isValidDate(this.requestDate); } catch { errs.push("Appointment date invalid"); }
-    try { isValidTime(this.appointmentTime); } catch { errs.push("Appointment time invalid"); }
-
-    return errs;
+  // Extra/legacy fields that might exist in the original constructor:
+  createdAt?: Date;
+  updatedAt?: Date;
+  notes?: string;
 }
 
+export default class Appointment {
+  studentId: number;
+  requestId: number;
+  appointmentDate: Date;
+  appointmentTime: string;
+  appointmentType: AppointmentType;
+  location: string;
+  status: string;
+  appointmentId: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+  notes?: string;
+
+  // Use an object for safer construction and optional fields
+  constructor({
+    studentId,
+    requestId,
+    appointmentDate,
+    appointmentTime,
+    appointmentType = 'פרונטלי',
+    location = '',
+    status = 'מתוכננת',
+    appointmentId,
+    createdAt,
+    updatedAt,
+    notes,
+  }: AppointmentProps) {
+    this.studentId = studentId;
+    this.requestId = requestId;
+    this.appointmentDate = appointmentDate;
+    this.appointmentTime = appointmentTime;
+    this.appointmentType = appointmentType;
+    this.location = location;
+    this.status = status;
+    this.appointmentId = appointmentId ?? Date.now(); // default id
+    this.createdAt = createdAt ?? new Date();
+    this.updatedAt = updatedAt ?? new Date();
+    this.notes = notes;
+  }
+
+  // Helper to revive a plain object (e.g., from localStorage) into a proper instance
+  static fromPlain(obj: any): Appointment {
+    return new Appointment({
+      studentId: Number(obj.studentId),
+      requestId: Number(obj.requestId),
+      appointmentDate: new Date(obj.appointmentDate),
+      appointmentTime: String(obj.appointmentTime),
+      appointmentType: obj.appointmentType,
+      location: obj.location,
+      status: obj.status,
+      appointmentId: obj.appointmentId ? Number(obj.appointmentId) : undefined,
+      createdAt: obj.createdAt ? new Date(obj.createdAt) : undefined,
+      updatedAt: obj.updatedAt ? new Date(obj.updatedAt) : undefined,
+      notes: obj.notes,
+    });
+  }
 }
