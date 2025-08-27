@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import CareHandler from '../../classCareHandler/CareHandle';
+import SaveSnackbar from '../SaveSnackbar';
 
 type Role = 'מרצה' | 'מזכירות';
 
@@ -31,8 +32,8 @@ export default function CareHandlerForm() {
     responsibility: '',
   });
   const [errors, setErrors] = useState<string[]>([]);
+  const [saved, setSaved] = useState(false);
 
-  // Handles TextField / textarea changes
   const handleTextChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -40,9 +41,8 @@ export default function CareHandlerForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handles MUI <Select> changes
   const handleSelectChange = (e: SelectChangeEvent<Role>) => {
-    const { name, value } = e.target; // value is string
+    const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name as keyof FormState]: value as Role }));
   };
 
@@ -67,9 +67,9 @@ export default function CareHandlerForm() {
     const handlers = JSON.parse(localStorage.getItem(key) || '[]');
     localStorage.setItem(key, JSON.stringify([...handlers, careHandler]));
 
-    alert('גורם מטפל נוסף בהצלחה!');
     setFormData({ handlerId: '', name: '', role: 'מרצה', email: '', responsibility: '' });
     setErrors([]);
+    setSaved(true);
   };
 
   return (
@@ -144,6 +144,8 @@ export default function CareHandlerForm() {
           </Typography>
         )}
       </form>
+
+      <SaveSnackbar open={saved} onClose={() => setSaved(false)} message="גורם מטפל נוסף בהצלחה!" />
     </Box>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography } from '@mui/material';
 import Student from '../../classStudent/Student';
+import SaveSnackbar from '../SaveSnackbar';
 
 export default function StudentForm() {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ export default function StudentForm() {
     major: ''
   });
   const [errors, setErrors] = useState<string[]>([]);
+  const [saved, setSaved] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -36,9 +38,10 @@ export default function StudentForm() {
 
     const students = JSON.parse(localStorage.getItem('students_v1') || '[]');
     localStorage.setItem('students_v1', JSON.stringify([...students, student]));
-    alert('סטודנט נוסף בהצלחה!');
+
     setFormData({ studentId: '', firstName: '', lastName: '', email: '', mobile: '', major: '' });
     setErrors([]);
+    setSaved(true);
   };
 
   return (
@@ -58,6 +61,8 @@ export default function StudentForm() {
           </Typography>
         )}
       </form>
+
+      <SaveSnackbar open={saved} onClose={() => setSaved(false)} message="סטודנט נוסף בהצלחה!" />
     </Box>
   );
 }

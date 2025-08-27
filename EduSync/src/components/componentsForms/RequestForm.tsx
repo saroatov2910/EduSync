@@ -9,11 +9,11 @@ import {
   InputLabel,
   FormControl,
 } from '@mui/material';
-// Import SelectChangeEvent as a type-only import (for projects with verbatimModuleSyntax)
 import type { SelectChangeEvent } from '@mui/material/Select';
 
 import Request from '../../classRequest/Request';
 import CareHandler from '../../classCareHandler/CareHandle';
+import SaveSnackbar from '../SaveSnackbar';
 
 // Narrow local UI state for the select values
 type UiRequestTopic = 'General' | 'Academic' | 'Administrative';
@@ -36,20 +36,17 @@ export default function RequestForm() {
   const [file, setFile] = useState<File | null>(null);
   const [handlers, setHandlers] = useState<CareHandler[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    // Load handlers from localStorage and revive to CareHandler instances if your class exposes a static 'from'
-    const saved = JSON.parse(localStorage.getItem('care_handlers_v1') || '[]');
-    // If your class exposes a static 'from' helper:
+    const savedHandlers = JSON.parse(localStorage.getItem('care_handlers_v1') || '[]');
     if (typeof (CareHandler as any).from === 'function') {
-      setHandlers(saved.map((CareHandler as any).from));
+      setHandlers(savedHandlers.map((CareHandler as any).from));
     } else {
-      // Fallback: keep as plain objects (adjust rendering accordingly)
-      setHandlers(saved);
+      setHandlers(savedHandlers);
     }
   }, []);
 
-  // Generic handler for TextField and TextArea
   const handleTextChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -57,7 +54,6 @@ export default function RequestForm() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Select-specific handlers (fixes MUI Select typing errors)
   const handleTopicChange = (e: SelectChangeEvent<UiRequestTopic>) => {
     setFormData(prev => ({ ...prev, requestTopic: e.target.value as UiRequestTopic }));
   };
@@ -73,8 +69,6 @@ export default function RequestForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Build the Request model. If RequestProps.requestTopic is a different type
-    // (e.g., an enum or a different union), the cast below prevents TS error.
     const request = new Request({
       studentId: Number(formData.studentId),
       firstName: '',
@@ -83,14 +77,13 @@ export default function RequestForm() {
       mobile: '',
       major: '',
       requestId: Math.floor(Math.random() * 1000),
-      requestTopic: formData.requestTopic as any, // Cast to the Request model's expected type
+      requestTopic: formData.requestTopic as any,
       requestText: formData.requestText,
       requestDate: new Date(),
-      reqStatus: 'Open' as any, // Adjust if you have a specific ReqStatus type
+      reqStatus: 'Open' as any,
       handlerId: Number(formData.handlerId),
     });
 
-    // Validate if your model exposes a validate() method
     const validationErrors =
       typeof (request as any).validate === 'function' ? (request as any).validate() : [];
 
@@ -105,10 +98,10 @@ export default function RequestForm() {
       JSON.stringify([...requests, { ...request, file: file?.name ?? null }])
     );
 
-    alert('בקשה נוספה בהצלחה!');
     setFormData({ studentId: '', requestTopic: 'General', requestText: '', handlerId: '' });
     setFile(null);
     setErrors([]);
+    setSaved(true);
   };
 
   return (
@@ -181,6 +174,8 @@ export default function RequestForm() {
           </Typography>
         )}
       </form>
+
+      <SaveSnackbar open={saved} onClose={() => setSaved(false)} message="בקשה נשמרה בהצלחה!" />
     </Box>
   );
 }

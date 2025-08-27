@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import Appointment from '../../classAppointment/Appointment';
+import SaveSnackbar from '../SaveSnackbar';
 
 // Narrow string unions for better typing
 type AppointmentType = 'פרונטלי' | 'זום';
@@ -29,7 +30,6 @@ interface FormState {
 export default function AppointmentForm() {
   const { id } = useParams<{ id: string }>();
 
-  // Initialize state with explicit generic to avoid unnecessary assertions.
   const [formData, setFormData] = useState<FormState>({
     requestId: '',
     appointmentDate: '',
@@ -40,9 +40,9 @@ export default function AppointmentForm() {
   });
 
   const [errors, setErrors] = useState<string[]>([]);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    // Load existing appointment for edit mode
     if (!id) return;
     const appointments = JSON.parse(localStorage.getItem('appointments') || '[]') as any[];
     const found = appointments.find((a) => Number(a.appointmentId) === Number(id));
@@ -58,7 +58,6 @@ export default function AppointmentForm() {
     }
   }, [id]);
 
-  // Text inputs (TextField): name + value come from e.target
   const handleTextChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -66,13 +65,11 @@ export default function AppointmentForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Select inputs (MUI Select): use SelectChangeEvent
   const handleSelectChange = (e: SelectChangeEvent) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name as keyof FormState]: value as string }));
   };
 
-  // Simple inline validation (since Appointment class does not expose validate())
   const validateForm = (): string[] => {
     const v: string[] = [];
     if (!formData.requestId.trim()) v.push('Request ID is required');
@@ -92,7 +89,7 @@ export default function AppointmentForm() {
     }
 
     const appointment = new Appointment({
-      studentId: 0, // not managed in this form
+      studentId: 0,
       requestId: Number(formData.requestId),
       appointmentDate: new Date(formData.appointmentDate),
       appointmentTime: formData.appointmentTime,
@@ -109,13 +106,12 @@ export default function AppointmentForm() {
         Number(a.appointmentId) === Number(id) ? appointment : a
       );
       localStorage.setItem('appointments', JSON.stringify(updated));
-      alert('פגישה עודכנה!');
     } else {
       localStorage.setItem('appointments', JSON.stringify([...stored, appointment]));
-      alert('פגישה נוספה!');
     }
 
     setErrors([]);
+    setSaved(true);
   };
 
   return (
@@ -142,7 +138,6 @@ export default function AppointmentForm() {
           required
           fullWidth
           margin="normal"
-          // Use standard props, avoid deprecated InputLabelProps
           InputLabelProps={{ shrink: true }}
         />
 
@@ -209,6 +204,12 @@ export default function AppointmentForm() {
           </Typography>
         )}
       </form>
+
+      <SaveSnackbar
+        open={saved}
+        onClose={() => setSaved(false)}
+        message={id ? 'פגישה עודכנה בהצלחה!' : 'פגישה נוספה בהצלחה!'}
+      />
     </Box>
   );
 }

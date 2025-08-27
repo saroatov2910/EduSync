@@ -13,17 +13,18 @@ import type { SelectChangeEvent } from '@mui/material/Select';
 
 import Feedback from '../../classFeedback/Feedback';
 import type { FeedbackProps } from '../../classFeedback/Feedback';
+import SaveSnackbar from '../SaveSnackbar';
 
 export default function FeedbackForm() {
   const [formData, setFormData] = useState({
     studentId: '',
     comment: '',
-    grade: 1, // keep as number
+    grade: 1,
   });
 
   const [errors, setErrors] = useState<string[]>([]);
+  const [saved, setSaved] = useState(false);
 
-  // Handle text inputs (studentId, comment)
   const handleTextChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -31,7 +32,6 @@ export default function FeedbackForm() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Handle grade select (MUI SelectChangeEvent<number>)
   const handleGradeChange = (e: SelectChangeEvent<number>) => {
     const value = Number(e.target.value);
     setFormData(prev => ({ ...prev, grade: value }));
@@ -45,7 +45,6 @@ export default function FeedbackForm() {
       return;
     }
 
-    // Build props for Feedback class (keep fields aligned with your model)
     const feedbackProps: FeedbackProps = {
       studentId: Number(formData.studentId),
       firstName: '',
@@ -60,7 +59,7 @@ export default function FeedbackForm() {
       reqStatus: 'Open' as any,
       handlerId: 1,
       feedbackId: Math.floor(Math.random() * 1000),
-      grade: formData.grade as any, // keep as any if your model expects a different enum/type
+      grade: formData.grade as any,
       comment: formData.comment,
       createdBy: 'Student' as any,
       feedbackDate: new Date(),
@@ -75,9 +74,10 @@ export default function FeedbackForm() {
 
     const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
     localStorage.setItem('feedbacks', JSON.stringify([...feedbacks, feedbackProps]));
-    alert('משוב נוסף בהצלחה!');
+
     setFormData({ studentId: '', comment: '', grade: 1 });
     setErrors([]);
+    setSaved(true);
   };
 
   return (
@@ -129,6 +129,8 @@ export default function FeedbackForm() {
           </Typography>
         )}
       </form>
+
+      <SaveSnackbar open={saved} onClose={() => setSaved(false)} message="משוב נוסף בהצלחה!" />
     </Box>
   );
 }
