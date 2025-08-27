@@ -1,77 +1,93 @@
-import React, { useEffect, useMemo, useState } from "react";
-import CareHandler,  {type Role}  from "../classCareHandler/CareHandle";
-import "../cssRules/Body.css";
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  Container, Typography, Button,
+  Table, TableBody, TableCell, TableHead, TableRow,
+  TableContainer, Paper, Stack
+} from '@mui/material';
+import { Link } from 'react-router-dom';
+import Snackbar from '../components/Snackbar';
+import CareHandler from '../classCareHandler/CareHandle';
 
-const LS_HANDLERS = "care_handlers_v1";
+const LS_KEY = 'care_handlers_v1';
 
-const CareHandlerTable: React.FC = () => {
-  const [handlers, setHandlers] = useState<CareHandler[]>([]);
+export default function CareHandlerManagement() {
+  const [rows, setRows] = useState<CareHandler[]>([]);
+  const [snack, setSnack] = useState<string | null>(null);
 
-  // load once
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(LS_HANDLERS);
-      if (raw) {
-        const arr = JSON.parse(raw);
-        if (Array.isArray(arr)) setHandlers(arr.map(CareHandler.from));
-      }
-    } catch (e) {
-      console.error("failed to load handlers", e);
-    }
+      const raw = localStorage.getItem(LS_KEY);
+      if (!raw) return setRows([]);
+      const arr = JSON.parse(raw);
+      setRows(Array.isArray(arr) ? arr.map(CareHandler.from) : []);
+    } catch { setRows([]); }
   }, []);
 
-  const existingIds = useMemo(() => new Set(handlers.map(h => h.handlerId)), [handlers]);
+  const existingIds = useMemo(() => new Set(rows.map(h => h.handlerId)), [rows]);
 
   const addRandom = () => {
     const h = CareHandler.random(existingIds);
     const errs = h.validate();
-    if (errs.length) return alert("שגיאות:\n" + errs.join("\n"));
-    setHandlers(prev => [...prev, h]);
+    if (errs.length) return setSnack(errs.join(', '));
+    const next = [...rows, h];
+    setRows(next);
+    localStorage.setItem(LS_KEY, JSON.stringify(next));
+    setSnack('גורם מטפל אקראי נוסף');
   };
 
-  const save = () => {
-    try {
-      localStorage.setItem(LS_HANDLERS, JSON.stringify(handlers));
-      alert("נשמר ל-localStorage");
-    } catch {
-      alert("שגיאה בשמירה");
-    }
+  const handleDelete = (id: number) => {
+    const next = rows.filter(h => h.handlerId !== id);
+    setRows(next);
+    localStorage.setItem(LS_KEY, JSON.stringify(next));
+    setSnack(גורם מטפל ${id} נמחק);
   };
 
   return (
-    <>
-      <div className="actions">
-        <button onClick={addRandom}>הוסף גורם מטפל אקראי</button>
-        <button onClick={save}>שמור ל-localStorage</button>
-      </div>
+    <Container sx={{ direction: 'rtl', p: 2 }}>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+        <Typography variant="h5">ניהול גורמים מטפלים</Typography>
+        <Stack direction="row" spacing={1}>
+          <Button onClick={addRandom} variant="outlined">הוסף אקראי</Button>
+          <Button component={Link} to="/forms#carehandler-form" variant="contained">הוסף חדש</Button>
+        </Stack>
+      </Stack>
 
-      <table border={1}>
-        <thead>
-          <tr>
-            <th>handlerId</th>
-            <th>name</th>
-            <th>role</th>
-            <th>email</th>
-            <th>responsibility</th>
-          </tr>
-        </thead>
-        <tbody>
-          {handlers.map(h => (
-            <tr key={h.handlerId}>
-              <td>{h.handlerId}</td>
-              <td>{h.name}</td>
-              <td>{h.role}</td>
-              <td>{h.email}</td>
-              <td>{h.responsibility}</td>
-            </tr>
-          ))}
-          {handlers.length === 0 && (
-            <tr><td colSpan={5}>אין נתונים</td></tr>
-          )}
-        </tbody>
-      </table>
-    </>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>מס׳ מזהה</TableCell>
+              <TableCell>שם</TableCell>
+              <TableCell>תפקיד</TableCell>
+              <TableCell>דוא״ל</TableCell>
+              <TableCell>תחום אחריות</TableCell>
+              <TableCell>פעולות</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows.map(h => (
+              <TableRow key={h.handlerId}>
+                <TableCell>{h.handlerId}</TableCell>
+                <TableCell>{h.name}</TableCell>
+                <TableCell>{h.role}</TableCell>
+                <TableCell>{h.email}</TableCell>
+                <TableCell>{h.responsibility}</TableCell>
+                <TableCell>
+                  <Stack direction="row" spacing={1}>
+                    <Button component={Link} to="/forms#carehandler-form" variant="outlined" size="small">ערוך</Button>
+                    <Button onClick={() => handleDelete(h.handlerId)} color="error" variant="outlined" size="small">מחק</Button>
+                  </Stack>
+                </TableCell>
+              </TableRow>
+            ))}
+            {rows.length === 0 && (
+              <TableRow><TableCell align="center" colSpan={6}>אין נתונים</TableCell></TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      <Snackbar open={!!snack} onClose={() => setSnack(null)} message={snack || ''} severity="success" />
+    </Container>
   );
-};
-
-export default CareHandlerTable;
+}

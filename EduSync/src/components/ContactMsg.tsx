@@ -1,126 +1,115 @@
-// src/components/ContactMsg.tsx
-import React, { useState, useEffect } from 'react';
-import ContactMsg from '../classContactMsg/ContactMsg';
-import type { createdBy } from '../RequestStatus';
-import '../cssRules/Body.css';
+import React, { useEffect, useState } from 'react';
+import {
+  Container, Typography, Button,
+  Table, TableBody, TableCell, TableHead, TableRow,
+  TableContainer, Paper, Stack
+} from '@mui/material';
+import { Link } from 'react-router-dom';
+import Snackbar from '../components/Snackbar';
 
-const ContactMsgTable: React.FC = () => {
-  const [msgs, setMsgs] = useState<ContactMsg[]>([]);
+type Row = {
+  msgId: number;
+  createdBy: string;
+  requestId: number;
+  requestText: string;
+  requestDate: string | Date;
+};
 
-  // Helper: serialize to a plain object for localStorage
-  const toPlain = (m: ContactMsg) => ({
-    msgId: m.msgId,
-    createdBy: m.createdBy,
-    requestId: m.requestId,
-    requestText: m.requestText,
-    requestDate: m.requestDate.toISOString(),
-  });
+const LS_KEY = 'msgs';
+
+export default function ContactMsgManagement() {
+  const [rows, setRows] = useState<Row[]>([]);
+  const [snack, setSnack] = useState<string | null>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem('msgs');
-    if (saved) {
-      try {
-        const arr = JSON.parse(saved) as Array<any>;
-        const parsed = arr.map(
-          (m) =>
-            new ContactMsg({
-              msgId: Number(m.msgId),
-              createdBy: m.createdBy as createdBy,
-              requestId: Number(m.requestId),
-              requestText: String(m.requestText),
-              requestDate: new Date(m.requestDate),
-            })
-        );
-        setMsgs(parsed);
-      } catch {
-        // If parsing fails, start with a couple of defaults
-        setMsgs([
-          new ContactMsg({
-            msgId: 1,
-            createdBy: 'Student' as createdBy, // adjust to your actual union if different
-            requestId: 101,
-            requestText: 'הודעה לדוגמה 1',
-            requestDate: new Date(),
-          }),
-          new ContactMsg({
-            msgId: 2,
-            createdBy: 'Student' as createdBy,
-            requestId: 102,
-            requestText: 'הודעה לדוגמה 2',
-            requestDate: new Date(),
-          }),
-        ]);
-      }
-    } else {
-      // Seed with two sample rows if nothing in storage
-      setMsgs([
-        new ContactMsg({
-          msgId: 1,
-          createdBy: 'Student' as createdBy,
-          requestId: 101,
-          requestText: 'הודעה לדוגמה 1',
-          requestDate: new Date(),
-        }),
-        new ContactMsg({
-          msgId: 2,
-          createdBy: 'Student' as createdBy,
-          requestId: 102,
-          requestText: 'הודעה לדוגמה 2',
-          requestDate: new Date(),
-        }),
-      ]);
-    }
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return setRows([]);
+    try {
+      const parsed = JSON.parse(raw) as any[];
+      const normalized: Row[] = parsed.map((m, i) => ({
+        msgId: Number(m.msgId ?? 4000 + i),
+        createdBy: String(m.createdBy ?? 'Student'),
+        requestId: Number(m.requestId ?? 0),
+        requestText: String(m.requestText ?? ''),
+        requestDate: m.requestDate ? new Date(m.requestDate) : new Date(),
+      }));
+      setRows(normalized);
+    } catch { setRows([]); }
   }, []);
 
-  // Add a random message (demo)
-  const addRandomMsg = () => {
-    const newMsg = new ContactMsg({
+  const fmt = (d: string | Date) => {
+    const dt = typeof d === 'string' ? new Date(d) : d;
+    return isNaN(dt.getTime()) ? '' : dt.toLocaleString();
+  };
+
+  const handleDelete = (id: number) => {
+    const next = rows.filter(r => r.msgId !== id);
+    setRows(next);
+    localStorage.setItem(LS_KEY, JSON.stringify(next));
+    setSnack(הודעה ${id} נמחקה);
+  };
+
+  // דמו: הוסף הודעה (אם יש טופס ייעודי – החלף בלינק)
+  const addRandom = () => {
+    const newMsg: Row = {
       msgId: Math.floor(Math.random() * 100000),
-      createdBy: 'Student' as createdBy, // or 'Handler' / any valid value from your RequestStatus.createdBy
+      createdBy: 'Student',
       requestId: 100 + Math.floor(Math.random() * 900),
       requestText: 'הודעה חדשה',
       requestDate: new Date(),
-    });
-    setMsgs((prev) => [...prev, newMsg]);
-  };
-
-  // Persist to localStorage
-  const saveToLocalStorage = () => {
-    localStorage.setItem('msgs', JSON.stringify(msgs.map(toPlain)));
-    alert('הודעות נשמרו!');
+    };
+    const next = [...rows, newMsg];
+    setRows(next);
+    localStorage.setItem(LS_KEY, JSON.stringify(next));
+    setSnack('הודעה נוספה');
   };
 
   return (
-    <div style={{ direction: 'rtl', padding: 16 }}>
-      <button onClick={addRandomMsg}>הוסף הודעה אקראית</button>
-      <button onClick={saveToLocalStorage} style={{ marginInlineStart: 8 }}>
-        שמור ב‑localStorage
-      </button>
+    <Container sx={{ direction: 'rtl', p: 2 }}>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+        <Typography variant="h5">ניהול הודעות משתמש</Typography>
+        <Stack direction="row" spacing={1}>
+          <Button onClick={addRandom} variant="outlined">הוסף הודעה</Button>
+          {/* <Button component={Link} to="/forms#contactmsg-form" variant="contained">הוסף הודעה</Button> */}
+        </Stack>
+      </Stack>
 
-      <table border={1} style={{ marginTop: 16, width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr>
-            <th>msgId</th>
-            <th>createdBy</th>
-            <th>requestId</th>
-            <th>requestText</th>
-            <th>requestDate</th>
-          </tr>
-        </thead>
-        <tbody>
-          {msgs.map((m) => (
-            <tr key={m.msgId}>
-              <td>{m.msgId}</td>
-              <td>{m.createdBy}</td>
-              <td>{m.requestId}</td>
-              <td>{m.requestText}</td>
-              <td>{new Date(m.requestDate).toLocaleString()}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>מס׳ הודעה</TableCell>
+              <TableCell>נוצר ע״י</TableCell>
+              <TableCell>מס׳ בקשה</TableCell>
+              <TableCell>תוכן ההודעה</TableCell>
+              <TableCell>תאריך</TableCell>
+              <TableCell>פעולות</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows.map((m) => (
+              <TableRow key={m.msgId}>
+                <TableCell>{m.msgId}</TableCell>
+                <TableCell>{m.createdBy}</TableCell>
+                <TableCell>{m.requestId}</TableCell>
+                <TableCell>{m.requestText}</TableCell>
+                <TableCell>{fmt(m.requestDate)}</TableCell>
+                <TableCell>
+                  <Stack direction="row" spacing={1}>
+                    <Button variant="outlined" size="small" component={Link} to="/forms#request-form">ערוך</Button>
+                    <Button variant="outlined" size="small" color="error" onClick={() => handleDelete(m.msgId)}>מחק</Button>
+                  </Stack>
+                </TableCell>
+              </TableRow>
+            ))}
+            {rows.length === 0 && (
+              <TableRow><TableCell colSpan={6} align="center">אין הודעות להצגה</TableCell></TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      <Snackbar open={!!snack} onClose={() => setSnack(null)} message={snack || ''} />
+    </Container>
   );
-};
-
-export default ContactMsgTable;
+}

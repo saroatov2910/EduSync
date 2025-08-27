@@ -1,78 +1,84 @@
-import React, { useEffect, useState, useMemo } from "react";
-import Student from "../classStudent/Student";
-import "../cssRules/Body.css";
+import React, { useEffect, useState } from 'react';
+import {
+  Container, Typography, Button,
+  Table, TableBody, TableCell, TableHead, TableRow,
+  TableContainer, Paper, Stack
+} from '@mui/material';
+import { Link } from 'react-router-dom';
+import Snackbar from '../components/Snackbar';
 
-const LS_STUDENTS = "students_v1";
+type Row = {
+  StudentId: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  mobile: string;
+  major: string;
+};
 
-const StudentTable: React.FC = () => {
-  const [students, setStudents] = useState<Student[]>([]);
+const LS_KEY = 'students_v1';
+
+export default function StudentManagement() {
+  const [rows, setRows] = useState<Row[]>([]);
+  const [snack, setSnack] = useState<string | null>(null);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem("students_v1");
-      if (!raw) return;
-      const arr = JSON.parse(raw);
-      if (Array.isArray(arr)) setStudents(arr.map(Student.from));
-    } catch (e) {
-      console.error("failed to load students", e);
-    }
+    try { setRows(JSON.parse(localStorage.getItem(LS_KEY) || '[]')); }
+    catch { setRows([]); }
   }, []);
-  
 
-  const existingIds = useMemo(() => new Set(students.map(s => s.StudentId)), [students]);
-
-  const addRandom = () => {
-    const s = Student.random(existingIds);
-    const errs = s.validate();
-    if (errs.length) return alert("שגיאות:\n" + errs.join("\n"));
-    setStudents(prev => [...prev, s]);
-  };
-
-  const save = () => {
-    try {
-      localStorage.setItem(LS_STUDENTS, JSON.stringify(students));
-      alert("נשמר ל-localStorage");
-    } catch {
-      alert("שגיאה בשמירה");
-    }
+  const handleDelete = (studentId: number) => {
+    const next = rows.filter(r => r.StudentId !== studentId);
+    setRows(next);
+    localStorage.setItem(LS_KEY, JSON.stringify(next));
+    setSnack(סטודנט ${studentId} נמחק);
   };
 
   return (
-    <>
-      <div className="actions">
-        <button onClick={addRandom}>הוסף סטודנט אקראי</button>
-        <button onClick={save}>שמור ל-localStorage</button>
-      </div>
+    <Container sx={{ direction: 'rtl', p: 2 }}>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+        <Typography variant="h5">ניהול סטודנטים</Typography>
+        <Button component={Link} to="/forms#student-form" variant="contained">הוסף סטודנט</Button>
+      </Stack>
 
-      <table border={1}>
-        <thead>
-          <tr>
-            <th>StudentId</th>
-            <th>firstName</th>
-            <th>lastName</th>
-            <th>email</th>
-            <th>mobile</th>
-            <th>major</th>
-          </tr>
-        </thead>
-        <tbody>
-          {students.map(s => (
-            <tr key={s.StudentId}>
-              <td>{s.StudentId}</td>
-              <td>{s.firstName}</td>
-              <td>{s.lastName}</td>
-              <td>{s.email}</td>
-              <td>{s.mobile}</td>
-              <td>{s.major}</td>
-            </tr>
-          ))}
-          {students.length === 0 && (
-            <tr><td colSpan={6}>אין נתונים</td></tr>
-          )}
-        </tbody>
-      </table>
-    </>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>מס׳ סטודנט</TableCell>
+              <TableCell>שם פרטי</TableCell>
+              <TableCell>שם משפחה</TableCell>
+              <TableCell>דוא״ל</TableCell>
+              <TableCell>נייד</TableCell>
+              <TableCell>חוג</TableCell>
+              <TableCell>פעולות</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows.map((s) => (
+              <TableRow key={s.StudentId}>
+                <TableCell>{s.StudentId}</TableCell>
+                <TableCell>{s.firstName}</TableCell>
+                <TableCell>{s.lastName}</TableCell>
+                <TableCell>{s.email}</TableCell>
+                <TableCell>{s.mobile}</TableCell>
+                <TableCell>{s.major}</TableCell>
+                <TableCell>
+                  <Stack direction="row" spacing={1}>
+                    <Button variant="outlined" size="small" component={Link} to="/forms#student-form">ערוך</Button>
+                    <Button variant="outlined" size="small" color="error" onClick={() => handleDelete(s.StudentId)}>מחק</Button>
+                  </Stack>
+                </TableCell>
+              </TableRow>
+            ))}
+            {rows.length === 0 && (
+              <TableRow><TableCell align="center" colSpan={7}>אין נתונים</TableCell></TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      <Snackbar open={!!snack} onClose={() => setSnack(null)} message={snack || ''} />
+    </Container>
   );
-};
-
-export default StudentTable;
+}

@@ -1,32 +1,29 @@
 import React from 'react';
-import { Snackbar, Alert } from '@mui/material';
+import { Snackbar as MUISnackbar, Alert } from '@mui/material';
 
-export default function SaveSnackbar({
+export default function Snackbar({
   open,
   onClose,
-  message = 'נשמר בהצלחה!',
+  message = 'בוצע בהצלחה!',
   duration = 2000,
+  severity = 'success',
 }: {
   open: boolean;
   onClose: () => void;
   message?: string;
   duration?: number;
+  severity?: 'success' | 'info' | 'warning' | 'error';
 }) {
   return (
-    <Snackbar
+    <MUISnackbar
       open={open}
       autoHideDuration={duration}
       onClose={onClose}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
     >
-      <Alert
-        onClose={onClose}
-        severity="success"
-        variant="filled"
-        sx={{ width: '100%' }}
-      >
+      <Alert onClose={onClose} severity={severity} variant="filled" sx={{ width: '100%' }}>
         {message}
       </Alert>
-    </Snackbar>
+    </MUISnackbar>
   );
 }

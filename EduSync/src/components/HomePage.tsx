@@ -1,154 +1,52 @@
-import React, { useEffect, useState } from 'react'; // Adjusted React import for conciseness
-import { useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Grid, // This now refers to the modern Grid component (previously Grid2 in v6)
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from '@mui/material';
+import React, { useEffect } from 'react';
+import { Container, Typography } from '@mui/material';
 
-interface Row {
-  id: number | string;
-  title: string;
-  date?: string;
-}
-
-export default function Home() {
-  const navigate = useNavigate();
-  const [rows, setRows] = useState<Row[]>([]);
-
+export default function HomePage() {
   useEffect(() => {
-    const fromFeedbacks = safeParse(localStorage.getItem('feedbacks')) as
-      | Array<{ feedbackId?: number; comment?: string; feedbackDate?: string }>
-      | null;
+    // seed אם ריק: לפחות 10 לכל ישות
+    const ensure = (key: string, factory: () => any[]) => {
+      if (!localStorage.getItem(key)) localStorage.setItem(key, JSON.stringify(factory()));
+    };
 
-    if (fromFeedbacks?.length) {
-      setRows(
-        fromFeedbacks.slice(0, 10).map((f, i) => ({
-          id: f.feedbackId ?? i + 1,
-          title: f.comment ?? 'Feedback',
-          date: f.feedbackDate ?? '',
-        })),
-      );
-      return;
-    }
+    ensure('students_v1', () => Array.from({ length: 10 }, (_, i) => ({
+      StudentId: 100000 + i, firstName: Student${i+1}, lastName: 'Demo',
+      email: student${i+1}@example.com, mobile: 05${Math.floor(10000000 + Math.random()*89999999)},
+      major: ['CS','Economics','Biology'][i%3],
+    })));
 
-    const fromStudents = safeParse(localStorage.getItem('students_v1')) as
-      | Array<{ id?: number | string; fullName?: string }>
-      | null;
+    ensure('care_handlers_v1', () => Array.from({ length: 10 }, (_, i) => ({
+      handlerId: 1000 + i, name: Handler ${i+1}, role: i%2 ? 'מזכירות' : 'מרצה',
+      email: handler${i+1}@uni.ac.il, responsibility: ['בדיקת עבודות','פניות סטודנטים','ניהול קורסים'][i%3],
+    })));
 
-    if (fromStudents?.length) {
-      setRows(
-        fromStudents.slice(0, 10).map((s, i) => ({
-          id: s.id ?? i + 1,
-          title: s.fullName ?? 'Student',
-        })),
-      );
-      return;
-    }
+    ensure('requests', () => Array.from({ length: 10 }, (_, i) => ({
+      requestId: 2000 + i, studentId: 100000 + i, requestTopic: ['General','Academic','Administrative'][i%3],
+      requestText: בקשה ${i+1}, requestDate: new Date(), reqStatus: 'Open', handlerId: 1000 + (i%10),
+    })));
 
-    setRows([
-      { id: 1, title: 'Welcome to EduSync', date: new Date().toISOString().slice(0, 10) },
-      { id: 2, title: 'Use the buttons to navigate' },
-      { id: 3, title: 'Load data appears here' },
-    ]);
+    ensure('appointments', () => Array.from({ length: 10 }, (_, i) => ({
+      appointmentId: 3000 + i, studentId: 100000 + i, requestId: 2000 + i,
+      appointmentDate: new Date(Date.now() + i*86400000), appointmentTime: ${10+(i%6)}:30,
+      appointmentType: i%2 ? 'זום' : 'פרונטלי', location: i%2 ? 'https://zoom.us/j/123' : ${101+i},
+      status: 'מתוכננת',
+    })));
+
+    ensure('feedbacks', () => Array.from({ length: 10 }, (_, i) => ({
+      feedbackId: 4000 + i, studentId: 100000 + i, grade: (i%5)+1, comment: הערה ${i+1},
+      createdBy: 'Student', feedbackDate: new Date(), requestId: 2000 + i, requestTopic: 'General',
+      requestText: פידבק ${i+1}, requestDate: new Date(), reqStatus: 'Open', handlerId: 1000 + (i%10),
+      firstName:'', lastName:'', email:'', mobile:'', major:'',
+    })));
+
+    ensure('msgs', () => Array.from({ length: 10 }, (_, i) => ({
+      msgId: 5000 + i, createdBy: 'Student', requestId: 2000 + i, requestText: הודעה ${i+1}, requestDate: new Date(),
+    })));
   }, []);
 
-  function safeParse(value: string | null) {
-    try {
-      return value ? JSON.parse(value) : null;
-    } catch {
-      return null;
-    }
-  }
-
   return (
-    <Box component="main" sx={{ p: 2, direction: 'rtl' }}>
-      <Typography variant="h4" sx={{ mb: 2 }}>
-        דף הבית
-      </Typography>
-      <Grid container spacing={2} sx={{ mb: 3 }}>
-        {/* Updated Grid usage for modern MUI versions (v6/v7+). */}
-        {/* Child Grids automatically act as items. Use 'size' prop for breakpoints. */}
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6">טפסים</Typography>
-              <Typography variant="body2" color="text.secondary">
-                מעבר למסכי הטפסים שהגדרתם בתכנון.
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button onClick={() => navigate('/forms')} variant="contained">
-                מעבר לטפסים
-              </Button>
-            </CardActions>
-          </Card>
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6">ניהול</Typography>
-              <Typography variant="body2" color="text.secondary">
-                ניווט למסכי הניהול (טבלאות/CRUD).
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button onClick={() => navigate('/management')} variant="contained">
-                מעבר לניהול
-              </Button>
-            </CardActions>
-          </Card>
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6">עזרה</Typography>
-              <Typography variant="body2" color="text.secondary">
-                קישורים ומידע מסייע למשתמשים.
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button onClick={() => navigate('/help')} color="secondary" variant="outlined">
-                פתח עזרה
-              </Button>
-            </CardActions>
-          </Card>
-        </Grid>
-      </Grid>
-      <Typography variant="h6" sx={{ mb: 1 }}>
-        עדכונים אחרונים
-      </Typography>
-      <TableContainer component={Paper}>
-        <Table size="small" aria-label="home table">
-          <TableHead>
-            <TableRow>
-              <TableCell>מזהה</TableCell>
-              <TableCell>כותרת</TableCell>
-              <TableCell>תאריך</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((r) => (
-              <TableRow key={r.id}>
-                <TableCell>{r.id}</TableCell>
-                <TableCell>{r.title}</TableCell>
-                <TableCell>{r.date ?? '-'}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Box>
+    <Container sx={{ direction: 'rtl', p: 2 }}>
+      <Typography variant="h4" gutterBottom>דף הבית</Typography>
+      <Typography>ברוכים הבאים! נתוני דמו ייטענו אוטומטית אם ה-localStorage ריק.</Typography>
+    </Container>
   );
 }

@@ -1,143 +1,82 @@
-
-import { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Container,
-  Typography,
+  Container, Typography, Button,
   Table, TableBody, TableCell, TableHead, TableRow,
-  Button
+  TableContainer, Paper, Stack
 } from '@mui/material';
 import { Link } from 'react-router-dom';
+import Snackbar from '../components/Snackbar';
 import Appointment from '../classAppointment/Appointment';
-import '../cssRules/index.css';
 
-const STORAGE_KEY = 'appointments';
+const LS_KEY = 'appointments';
 
-const AppointmentTable: React.FC = () => {
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+export default function AppointmentManagement() {
+  const [rows, setRows] = useState<Appointment[]>([]);
+  const [snack, setSnack] = useState<string | null>(null);
 
   useEffect(() => {
-    // Load from localStorage on mount
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved).map((a: any) => Appointment.fromPlain(a));
-        setAppointments(parsed);
-      } catch {
-        setAppointments([]);
-      }
-    } else {
-      // Seed demo data
-      setAppointments([
-        new Appointment({
-          studentId: 101,
-          requestId: 1,
-          appointmentDate: new Date('2025-08-20'),
-          appointmentTime: '10:30',
-          appointmentType: 'פרונטלי',
-          location: '101',
-          status: 'מתוכננת',
-          appointmentId: 1001,
-        }),
-        new Appointment({
-          studentId: 102,
-          requestId: 2,
-          appointmentDate: new Date('2025-08-21'),
-          appointmentTime: '14:00',
-          appointmentType: 'זום',
-          location: 'https://zoom.us/j/123456789',
-          status: 'מתוכננת',
-          appointmentId: 1002,
-        }),
-      ]);
-    }
+    const saved = localStorage.getItem(LS_KEY);
+    if (!saved) return setRows([]);
+    try {
+      const parsed = JSON.parse(saved).map((a: any) => Appointment.fromPlain(a));
+      setRows(parsed);
+    } catch { setRows([]); }
   }, []);
 
-  // Persist whenever appointments change
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(appointments));
-  }, [appointments]);
-
-  const addRandomAppointment = () => {
-    // Create a new random appointment
-    const newAppointment = new Appointment({
-      studentId: 100 + Math.floor(Math.random() * 100),
-      requestId: Math.floor(Math.random() * 1000),
-      appointmentDate: new Date(),
-      appointmentTime: '12:00',
-      appointmentType: Math.random() > 0.5 ? 'זום' : 'פרונטלי',
-      location: Math.random() > 0.5 ? 'https://zoom.us/j/987654321' : '103',
-      status: 'מתוכננת',
-    });
-
-    setAppointments(prev => [...prev, newAppointment]);
-  };
-
   const handleDelete = (id: number) => {
-    const updated = appointments.filter(a => a.appointmentId !== id);
-    setAppointments(updated);
-    alert('פגישה נמחקה!');
+    const next = rows.filter(a => a.appointmentId !== id);
+    setRows(next);
+    localStorage.setItem(LS_KEY, JSON.stringify(next));
+    setSnack(פגישה ${id} נמחקה);
   };
 
   return (
-    <Container sx={{ direction: 'rtl', padding: '20px' }}>
-      <Typography variant="h4" gutterBottom>
-        פגישות
-      </Typography>
+    <Container sx={{ direction: 'rtl', p: 2 }}>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+        <Typography variant="h5">ניהול פגישות</Typography>
+        <Button component={Link} to="/forms#appointment-form" variant="contained">הוסף פגישה</Button>
+      </Stack>
 
-      <Button onClick={addRandomAppointment} variant="contained" sx={{ mb: 2 }}>
-        הוסף פגישה אקראית
-      </Button>
-
-      <Table>
-        <TableHead>
-          <TableRow>
-            {/* Use MUI TableCell for headers (not raw <th>) */}
-            <TableCell>appointmentId</TableCell>
-            <TableCell>requestId</TableCell>
-            <TableCell>appointmentDate</TableCell>
-            <TableCell>appointmentTime</TableCell>
-            <TableCell>appointmentType</TableCell>
-            <TableCell>location</TableCell>
-            <TableCell>status</TableCell>
-            <TableCell>פעולות</TableCell>
-          </TableRow>
-        </TableHead>
-
-        <TableBody>
-          {appointments.map(a => (
-            <TableRow key={a.appointmentId}>
-              <TableCell>{a.appointmentId}</TableCell>
-              <TableCell>{a.requestId}</TableCell>
-              <TableCell>{new Date(a.appointmentDate).toLocaleDateString()}</TableCell>
-              <TableCell>{a.appointmentTime}</TableCell>
-              <TableCell>{a.appointmentType}</TableCell>
-              <TableCell>{a.location}</TableCell>
-              <TableCell>{a.status}</TableCell>
-              <TableCell>
-                <Button
-                  component={Link}
-                  to={`/forms/appointment/${a.appointmentId}`}
-                  sx={{ mr: 1 }}
-                  variant="outlined"
-                  size="small"
-                >
-                  ערוך
-                </Button>
-                <Button
-                  color="error"
-                  onClick={() => handleDelete(a.appointmentId)}
-                  variant="outlined"
-                  size="small"
-                >
-                  מחק
-                </Button>
-              </TableCell>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>מס׳ פגישה</TableCell>
+              <TableCell>מס׳ בקשה</TableCell>
+              <TableCell>תאריך</TableCell>
+              <TableCell>שעה</TableCell>
+              <TableCell>סוג</TableCell>
+              <TableCell>מיקום</TableCell>
+              <TableCell>סטטוס</TableCell>
+              <TableCell>פעולות</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHead>
+          <TableBody>
+            {rows.map(a => (
+              <TableRow key={a.appointmentId}>
+                <TableCell>{a.appointmentId}</TableCell>
+                <TableCell>{a.requestId}</TableCell>
+                <TableCell>{new Date(a.appointmentDate).toLocaleDateString()}</TableCell>
+                <TableCell>{a.appointmentTime}</TableCell>
+                <TableCell>{a.appointmentType}</TableCell>
+                <TableCell>{a.location}</TableCell>
+                <TableCell>{a.status}</TableCell>
+                <TableCell>
+                  <Stack direction="row" spacing={1}>
+                    <Button variant="outlined" size="small" component={Link} to={/forms/appointment/${a.appointmentId}}>ערוך</Button>
+                    <Button variant="outlined" size="small" color="error" onClick={() => handleDelete(a.appointmentId)}>מחק</Button>
+                  </Stack>
+                </TableCell>
+              </TableRow>
+            ))}
+            {rows.length === 0 && (
+              <TableRow><TableCell align="center" colSpan={8}>אין נתונים</TableCell></TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      <Snackbar open={!!snack} onClose={() => setSnack(null)} message={snack || ''} />
     </Container>
   );
-};
-
-export default AppointmentTable;
+}
