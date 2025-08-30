@@ -17,7 +17,7 @@ export default function Management() {
 
   return (
     <Container sx={{ direction: 'rtl', p: 2 }}>
-      <Typography variant="h5" sx={{ mb: 2 }}>מסכי ניהול</Typography>
+      <Typography variant="h4" sx={{ mb: 2 }}>מסכי ניהול</Typography>
 
       {/* במקום Grid/Unstable_Grid2: CSS Grid פשוט דרך Box */}
       <Box

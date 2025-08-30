@@ -1,9 +1,6 @@
-// All comments must be in English
 import { Container, Typography, Button, Stack, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 
-// These paths assume this file is in: src/components/componentsForms/Forms.tsx
-// and the other form components are in the same folder.
 import StudentForm from './StudentForm';
 import RequestForm from './RequestForm';
 import AppointmentForm from './AppointmentForm';
@@ -21,7 +18,6 @@ export default function Forms() {
         בחר טופס להוספה או עריכה של נתונים:
       </Typography>
 
-      {/* Buttons row – flex wrap instead of Grid */}
       <Box
         sx={{
           display: 'flex',
@@ -29,47 +25,39 @@ export default function Forms() {
           gap: 2,
           mb: 3,
         }}
+        aria-label="קישורים לטפסים"
       >
         <Button component={Link} to="#student-form" variant="contained" sx={{ flex: '1 1 220px' }}>
           טופס סטודנט
         </Button>
-
         <Button component={Link} to="#request-form" variant="contained" sx={{ flex: '1 1 220px' }}>
           טופס בקשה
         </Button>
-
         <Button component={Link} to="#appointment-form" variant="contained" sx={{ flex: '1 1 220px' }}>
           טופס פגישה
         </Button>
-
         <Button component={Link} to="#feedback-form" variant="contained" sx={{ flex: '1 1 220px' }}>
           טופס משוב
         </Button>
-
         <Button component={Link} to="#carehandler-form" variant="contained" sx={{ flex: '1 1 220px' }}>
           טופס גורם מטפל
         </Button>
       </Box>
 
-      {/* Anchor targets for the buttons above */}
       <Stack spacing={6}>
-        <div id="student-form">
+        <div id="student-form" aria-label="טופס סטודנט">
           <StudentForm />
         </div>
-
-        <div id="request-form">
+        <div id="request-form" aria-label="טופס בקשה">
           <RequestForm />
         </div>
-
-        <div id="appointment-form">
+        <div id="appointment-form" aria-label="טופס פגישה">
           <AppointmentForm />
         </div>
-
-        <div id="feedback-form">
+        <div id="feedback-form" aria-label="טופס משוב">
           <FeedbackForm />
         </div>
-
-        <div id="carehandler-form">
+        <div id="carehandler-form" aria-label="טופס גורם מטפל">
           <CareHandlerForm />
         </div>
       </Stack>

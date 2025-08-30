@@ -1,4 +1,3 @@
-// src/components/Request.tsx
 import { useEffect, useMemo, useState } from 'react';
 import {
   Container, Typography, Button,
@@ -7,6 +6,7 @@ import {
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import Snackbar from '../components/Snackbar';
+import { safeParse , readLS , writeLS } from '../Functions/Utils'; 
 
 type Row = {
   requestId: number;
@@ -26,22 +26,17 @@ export default function RequestManagement() {
 
   useEffect(() => {
     const raw = localStorage.getItem(LS_KEY);
-    if (!raw) return setRows([]);
-    try {
-      const parsed = JSON.parse(raw) as any[];
-      const normalized: Row[] = parsed.map((r, i) => ({
-        requestId: Number(r.requestId ?? 1000 + i),
-        studentId: Number(r.studentId ?? r.StudentId ?? 0),
-        requestTopic: String(r.requestTopic ?? 'General'),
-        requestText: String(r.requestText ?? ''),
-        requestDate: r.requestDate ? new Date(r.requestDate) : new Date(),
-        reqStatus: String(r.reqStatus ?? 'Open'),
-        handlerId: Number(r.handlerId ?? 0),
-      }));
-      setRows(normalized);
-    } catch {
-      setRows([]);
-    }
+    const parsed = safeParse<any[]>(raw, []);
+    const normalized: Row[] = parsed.map((r, i) => ({
+      requestId: Number(r.requestId ?? 1000 + i),
+      studentId: Number(r.studentId ?? r.StudentId ?? 0),
+      requestTopic: String(r.requestTopic ?? 'General'),
+      requestText: String(r.requestText ?? ''),
+      requestDate: r.requestDate ? new Date(r.requestDate) : new Date(),
+      reqStatus: String(r.reqStatus ?? 'Open'),
+      handlerId: Number(r.handlerId ?? 0),
+    }));
+    setRows(normalized);
   }, []);
 
   const fmt = (d: string | Date) => {
@@ -53,7 +48,6 @@ export default function RequestManagement() {
     const next = rows.filter(r => r.requestId !== id);
     setRows(next);
     localStorage.setItem(LS_KEY, JSON.stringify(next));
-    // ✅ חשוב: טקסט בתוך backticks
     setSnack(`בקשה ${id} נמחקה`);
   };
 
@@ -68,8 +62,15 @@ export default function RequestManagement() {
   return (
     <Container sx={{ direction: 'rtl', p: 2 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
-        <Typography variant="h5">ניהול בקשות</Typography>
-        <Button component={Link} to="/forms#request-form" variant="contained">הוסף בקשה חדשה</Button>
+        <Typography variant="h4">ניהול בקשות</Typography>
+        <Button
+          component={Link}
+          to="/forms#request-form"
+          variant="contained"
+          aria-label="הוסף בקשה חדשה"
+        >
+          הוסף בקשה חדשה
+        </Button>
       </Stack>
 
       <Typography variant="body2" sx={{ mb: 1 }}>
@@ -102,8 +103,24 @@ export default function RequestManagement() {
                 <TableCell>{r.handlerId}</TableCell>
                 <TableCell>
                   <Stack direction="row" spacing={1}>
-                    <Button variant="outlined" size="small" component={Link} to="/forms#request-form">ערוך</Button>
-                    <Button variant="outlined" size="small" color="error" onClick={() => handleDelete(r.requestId)}>מחק</Button>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      component={Link}
+                      to="/forms#request-form"
+                      aria-label={`ערוך בקשה ${r.requestId}`}
+                    >
+                      ערוך
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      color="error"
+                      onClick={() => handleDelete(r.requestId)}
+                      aria-label={`מחק בקשה ${r.requestId}`}
+                    >
+                      מחק
+                    </Button>
                   </Stack>
                 </TableCell>
               </TableRow>

@@ -1,4 +1,3 @@
-
 export type AppointmentType = 'זום' | 'פרונטלי' | string;
 
 export interface AppointmentProps {

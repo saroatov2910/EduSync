@@ -1,3 +1,4 @@
+import { safeParse , readLS , writeLS } from '../Functions/Utils'; 
 import React, { useEffect, useState } from 'react';
 import {
   Container, Typography, Button,
@@ -23,18 +24,15 @@ export default function ContactMsgManagement() {
 
   useEffect(() => {
     const raw = localStorage.getItem(LS_KEY);
-    if (!raw) return setRows([]);
-    try {
-      const parsed = JSON.parse(raw) as any[];
-      const normalized: Row[] = parsed.map((m, i) => ({
-        msgId: Number(m.msgId ?? 4000 + i),
-        createdBy: String(m.createdBy ?? 'Student'),
-        requestId: Number(m.requestId ?? 0),
-        requestText: String(m.requestText ?? ''),
-        requestDate: m.requestDate ? new Date(m.requestDate) : new Date(),
-      }));
-      setRows(normalized);
-    } catch { setRows([]); }
+    const parsed = safeParse<any[]>(raw, []);
+    const normalized: Row[] = parsed.map((m, i) => ({
+      msgId: Number(m.msgId ?? 4000 + i),
+      createdBy: String(m.createdBy ?? 'Student'),
+      requestId: Number(m.requestId ?? 0),
+      requestText: String(m.requestText ?? ''),
+      requestDate: m.requestDate ? new Date(m.requestDate) : new Date(),
+    }));
+    setRows(normalized);
   }, []);
 
   const fmt = (d: string | Date) => {
@@ -46,10 +44,9 @@ export default function ContactMsgManagement() {
     const next = rows.filter(r => r.msgId !== id);
     setRows(next);
     localStorage.setItem(LS_KEY, JSON.stringify(next));
-    setSnack('הודעה ${id} נמחקה');
+    setSnack(`הודעה ${id} נמחקה`);
   };
 
-  // דמו: הוסף הודעה (אם יש טופס ייעודי – החלף בלינק)
   const addRandom = () => {
     const newMsg: Row = {
       msgId: Math.floor(Math.random() * 100000),
@@ -67,9 +64,9 @@ export default function ContactMsgManagement() {
   return (
     <Container sx={{ direction: 'rtl', p: 2 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-        <Typography variant="h5">ניהול הודעות משתמש</Typography>
+        <Typography variant="h4">ניהול הודעות משתמש</Typography>
         <Stack direction="row" spacing={1}>
-          <Button onClick={addRandom} variant="outlined">הוסף הודעה</Button>
+          <Button onClick={addRandom} variant="outlined" aria-label="הוסף הודעה">הוסף הודעה</Button>
           {/* <Button component={Link} to="/forms#contactmsg-form" variant="contained">הוסף הודעה</Button> */}
         </Stack>
       </Stack>
@@ -96,8 +93,8 @@ export default function ContactMsgManagement() {
                 <TableCell>{fmt(m.requestDate)}</TableCell>
                 <TableCell>
                   <Stack direction="row" spacing={1}>
-                    <Button variant="outlined" size="small" component={Link} to="/forms#request-form">ערוך</Button>
-                    <Button variant="outlined" size="small" color="error" onClick={() => handleDelete(m.msgId)}>מחק</Button>
+                    <Button variant="outlined" size="small" component={Link} to="/forms#request-form" aria-label={`ערוך הודעה ${m.msgId}`}>ערוך</Button>
+                    <Button variant="outlined" size="small" color="error" onClick={() => handleDelete(m.msgId)} aria-label={`מחק הודעה ${m.msgId}`}>מחק</Button>
                   </Stack>
                 </TableCell>
               </TableRow>

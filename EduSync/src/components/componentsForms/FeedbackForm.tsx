@@ -10,7 +10,7 @@ import {
   InputLabel,
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
-
+import { safeParse , readLS , writeLS } from '../../Functions/Utils'; 
 import Feedback from '../../classFeedback/Feedback';
 import type { FeedbackProps } from '../../classFeedback/Feedback';
 import SaveSnackbar from '../Snackbar';
@@ -72,8 +72,8 @@ export default function FeedbackForm() {
       return;
     }
 
-    const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
-    localStorage.setItem('feedbacks', JSON.stringify([...feedbacks, feedbackProps]));
+    const feedbacks = readLS<any[]>('feedbacks', []);
+    writeLS('feedbacks', [...feedbacks, feedbackProps]);
 
     setFormData({ studentId: '', comment: '', grade: 1 });
     setErrors([]);
@@ -82,8 +82,8 @@ export default function FeedbackForm() {
 
   return (
     <Box sx={{ direction: 'rtl', p: 2 }}>
-      <Typography variant="h5">טופס משוב</Typography>
-      <form onSubmit={handleSubmit}>
+      <Typography variant="h4" gutterBottom>טופס משוב</Typography>
+      <form onSubmit={handleSubmit} aria-label="טופס הזנת משוב">
         <TextField
           label="מספר סטודנט"
           name="studentId"
@@ -92,6 +92,7 @@ export default function FeedbackForm() {
           required
           fullWidth
           margin="normal"
+          inputProps={{ inputMode: 'numeric', 'aria-label': 'מספר סטודנט' }}
         />
         <TextField
           label="הערות"
@@ -103,6 +104,7 @@ export default function FeedbackForm() {
           multiline
           rows={4}
           margin="normal"
+          inputProps={{ 'aria-label': 'הערות משוב' }}
         />
         <FormControl fullWidth margin="normal">
           <InputLabel>ציון</InputLabel>
@@ -112,6 +114,7 @@ export default function FeedbackForm() {
             onChange={handleGradeChange}
             required
             label="ציון"
+            aria-label="בחר ציון למשוב"
           >
             {[1, 2, 3, 4, 5].map(g => (
               <MenuItem key={g} value={g}>
@@ -120,7 +123,7 @@ export default function FeedbackForm() {
             ))}
           </Select>
         </FormControl>
-        <Button type="submit" variant="contained" sx={{ mt: 2 }}>
+        <Button type="submit" variant="contained" sx={{ mt: 2 }} aria-label="שמור משוב">
           שלח
         </Button>
         {errors.length > 0 && (
@@ -130,7 +133,7 @@ export default function FeedbackForm() {
         )}
       </form>
 
-      <SaveSnackbar open={saved} onClose={() => setSaved(false)} message="משוב נוסף בהצלחה!" />
+      <SaveSnackbar open={saved} onClose={() => setSaved(false)} message={`משוב נוסף בהצלחה!`} />
     </Box>
   );
 }

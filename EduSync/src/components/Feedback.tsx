@@ -1,3 +1,4 @@
+import { safeParse , readLS , writeLS } from '../Functions/Utils'; 
 import React, { useEffect, useState } from 'react';
 import {
   Container, Typography, Button,
@@ -17,8 +18,7 @@ export default function FeedbackManagement() {
 
   useEffect(() => {
     const saved = localStorage.getItem(LS_KEY);
-    if (!saved) return setRows([]);
-    const parsed = (JSON.parse(saved) as any[]).map(
+    const parsed = safeParse<any[]>(saved, []).map(
       (f) =>
         new Feedback({
           studentId: Number(f.studentId),
@@ -47,7 +47,7 @@ export default function FeedbackManagement() {
     const next = rows.filter((f) => f.feedbackId !== id);
     setRows(next);
     localStorage.setItem(LS_KEY, JSON.stringify(next));
-    setSnack('משוב ${id} נמחק');
+    setSnack(`משוב ${id} נמחק`);
   };
 
   const saveToLocalStorage = () => {
@@ -58,10 +58,10 @@ export default function FeedbackManagement() {
   return (
     <Container sx={{ direction: 'rtl', p: 2 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-        <Typography variant="h5">ניהול משובים</Typography>
+        <Typography variant="h4">ניהול משובים</Typography>
         <Stack direction="row" spacing={1}>
-          <Button onClick={saveToLocalStorage} variant="outlined">שמור</Button>
-          <Button component={Link} to="/forms#feedback-form" variant="contained">הוסף משוב</Button>
+          <Button onClick={saveToLocalStorage} variant="outlined" aria-label="שמור משובים">שמור</Button>
+          <Button component={Link} to="/forms#feedback-form" variant="contained" aria-label="הוסף משוב">הוסף משוב</Button>
         </Stack>
       </Stack>
 
@@ -82,15 +82,15 @@ export default function FeedbackManagement() {
             {rows.map((f) => (
               <TableRow key={f.feedbackId}>
                 <TableCell>{f.feedbackId}</TableCell>
-                <TableCell>{f.StudentId}</TableCell>
+                <TableCell>{(f as any).StudentId ?? (f as any).studentId}</TableCell>
                 <TableCell>{f.grade}</TableCell>
                 <TableCell>{f.comment}</TableCell>
                 <TableCell>{f.createdBy}</TableCell>
                 <TableCell>{new Date(f.feedbackDate).toLocaleDateString()}</TableCell>
                 <TableCell>
                   <Stack direction="row" spacing={1}>
-                    <Button component={Link} to="/forms#feedback-form" variant="outlined" size="small">ערוך</Button>
-                    <Button color="error" onClick={() => handleDelete(f.feedbackId)} variant="outlined" size="small">מחק</Button>
+                    <Button component={Link} to="/forms#feedback-form" variant="outlined" size="small" aria-label={`ערוך משוב ${f.feedbackId}`}>ערוך</Button>
+                    <Button color="error" onClick={() => handleDelete(f.feedbackId)} variant="outlined" size="small" aria-label={`מחק משוב ${f.feedbackId}`}>מחק</Button>
                   </Stack>
                 </TableCell>
               </TableRow>

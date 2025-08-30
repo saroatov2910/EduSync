@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { TextField, Button, Box, Typography } from '@mui/material';
 import Student from '../../classStudent/Student';
 import SaveSnackbar from '../Snackbar';
+import { safeParse , readLS , writeLS } from '../../Functions/Utils'; 
 
 export default function StudentForm() {
   const [formData, setFormData] = useState({
@@ -35,9 +36,9 @@ export default function StudentForm() {
       setErrors(validationErrors);
       return;
     }
-
-    const students = JSON.parse(localStorage.getItem('students_v1') || '[]');
-    localStorage.setItem('students_v1', JSON.stringify([...students, student]));
+    
+    const students = readLS('students_v1', [] as any[]);
+    writeLS('students_v1', [...students, student]);
 
     setFormData({ studentId: '', firstName: '', lastName: '', email: '', mobile: '', major: '' });
     setErrors([]);
@@ -46,15 +47,15 @@ export default function StudentForm() {
 
   return (
     <Box sx={{ direction: 'rtl', p: 2 }}>
-      <Typography variant="h5">טופס סטודנט</Typography>
-      <form onSubmit={handleSubmit}>
-        <TextField label="מספר סטודנט" name="studentId" value={formData.studentId} onChange={handleChange} required fullWidth margin="normal" />
-        <TextField label="שם פרטי" name="firstName" value={formData.firstName} onChange={handleChange} required fullWidth margin="normal" />
-        <TextField label="שם משפחה" name="lastName" value={formData.lastName} onChange={handleChange} required fullWidth margin="normal" />
-        <TextField label="דוא״ל" name="email" type="email" value={formData.email} onChange={handleChange} required fullWidth margin="normal" />
-        <TextField label="נייד" name="mobile" value={formData.mobile} onChange={handleChange} required fullWidth margin="normal" />
-        <TextField label="חוג" name="major" value={formData.major} onChange={handleChange} required fullWidth margin="normal" />
-        <Button type="submit" variant="contained" sx={{ mt: 2 }}>שלח</Button>
+      <Typography variant="h4" gutterBottom>טופס סטודנט</Typography>
+      <form onSubmit={handleSubmit} aria-label="טופס הזנת סטודנט">
+        <TextField label="מספר סטודנט" name="studentId" value={formData.studentId} onChange={handleChange} required fullWidth margin="normal" inputProps={{ inputMode: 'numeric', 'aria-label': 'מספר סטודנט' }} />
+        <TextField label="שם פרטי" name="firstName" value={formData.firstName} onChange={handleChange} required fullWidth margin="normal" inputProps={{ 'aria-label': 'שם פרטי' }} />
+        <TextField label="שם משפחה" name="lastName" value={formData.lastName} onChange={handleChange} required fullWidth margin="normal" inputProps={{ 'aria-label': 'שם משפחה' }} />
+        <TextField label="דוא״ל" name="email" type="email" value={formData.email} onChange={handleChange} required fullWidth margin="normal" inputProps={{ 'aria-label': 'דוא״ל' }} />
+        <TextField label="נייד" name="mobile" value={formData.mobile} onChange={handleChange} required fullWidth margin="normal" inputProps={{ 'aria-label': 'נייד' }} />
+        <TextField label="חוג" name="major" value={formData.major} onChange={handleChange} required fullWidth margin="normal" inputProps={{ 'aria-label': 'חוג' }} />
+        <Button type="submit" variant="contained" sx={{ mt: 2 }} aria-label="שמור סטודנט">שלח</Button>
         {errors.length > 0 && (
           <Typography color="error" sx={{ mt: 2 }}>
             {errors.join(', ')}
@@ -62,7 +63,7 @@ export default function StudentForm() {
         )}
       </form>
 
-      <SaveSnackbar open={saved} onClose={() => setSaved(false)} message="סטודנט נוסף בהצלחה!" />
+      <SaveSnackbar open={saved} onClose={() => setSaved(false)} message={`סטודנט נוסף בהצלחה!`} />
     </Box>
   );
 }

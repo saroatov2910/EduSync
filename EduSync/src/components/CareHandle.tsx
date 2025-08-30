@@ -1,3 +1,4 @@
+import { safeParse , readLS , writeLS } from '../Functions/Utils'; 
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   Container, Typography, Button,
@@ -15,12 +16,9 @@ export default function CareHandlerManagement() {
   const [snack, setSnack] = useState<string | null>(null);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(LS_KEY);
-      if (!raw) return setRows([]);
-      const arr = JSON.parse(raw);
-      setRows(Array.isArray(arr) ? arr.map(CareHandler.from) : []);
-    } catch { setRows([]); }
+    const raw = localStorage.getItem(LS_KEY);
+    const arr = safeParse<any[]>(raw, []);
+    setRows(Array.isArray(arr) ? arr.map(CareHandler.from) : []);
   }, []);
 
   const existingIds = useMemo(() => new Set(rows.map(h => h.handlerId)), [rows]);
@@ -39,16 +37,16 @@ export default function CareHandlerManagement() {
     const next = rows.filter(h => h.handlerId !== id);
     setRows(next);
     localStorage.setItem(LS_KEY, JSON.stringify(next));
-    setSnack('גורם מטפל ${id} נמחק');
+    setSnack(`גורם מטפל ${id} נמחק`);
   };
 
   return (
     <Container sx={{ direction: 'rtl', p: 2 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-        <Typography variant="h5">ניהול גורמים מטפלים</Typography>
+        <Typography variant="h4">ניהול גורמים מטפלים</Typography>
         <Stack direction="row" spacing={1}>
-          <Button onClick={addRandom} variant="outlined">הוסף אקראי</Button>
-          <Button component={Link} to="/forms#carehandler-form" variant="contained">הוסף חדש</Button>
+          <Button onClick={addRandom} variant="outlined" aria-label="הוסף גורם מטפל אקראי">הוסף אקראי</Button>
+          <Button component={Link} to="/forms#carehandler-form" variant="contained" aria-label="הוסף גורם מטפל">הוסף חדש</Button>
         </Stack>
       </Stack>
 
@@ -74,8 +72,8 @@ export default function CareHandlerManagement() {
                 <TableCell>{h.responsibility}</TableCell>
                 <TableCell>
                   <Stack direction="row" spacing={1}>
-                    <Button component={Link} to="/forms#carehandler-form" variant="outlined" size="small">ערוך</Button>
-                    <Button onClick={() => handleDelete(h.handlerId)} color="error" variant="outlined" size="small">מחק</Button>
+                    <Button component={Link} to="/forms#carehandler-form" variant="outlined" size="small" aria-label={`ערוך גורם ${h.handlerId}`}>ערוך</Button>
+                    <Button onClick={() => handleDelete(h.handlerId)} color="error" variant="outlined" size="small" aria-label={`מחק גורם ${h.handlerId}`}>מחק</Button>
                   </Stack>
                 </TableCell>
               </TableRow>

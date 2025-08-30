@@ -5,8 +5,8 @@ function Body() {
   const navigate = useNavigate();
 
   return (
-    <div className="body">
-      <div className="rule">
+    <main className="body">
+      <section className="rule">
         <div className="msButtonMenuFont">
           <div className="ButtonMenuLinkCircle" onClick={() => navigate("/student")}>
             <div className="ButtonMenuFont">סטודנטים</div>
@@ -22,8 +22,8 @@ function Body() {
             <div className="ButtonMenuFont">פגישות</div>
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }
 

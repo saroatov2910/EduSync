@@ -7,6 +7,7 @@ import {
 import { Link } from 'react-router-dom';
 import Snackbar from '../components/Snackbar';
 import Appointment from '../classAppointment/Appointment';
+import { safeParse , readLS , writeLS } from '../Functions/Utils'; 
 
 const LS_KEY = 'appointments';
 
@@ -16,16 +17,12 @@ export default function AppointmentManagement() {
 
   useEffect(() => {
     const saved = localStorage.getItem(LS_KEY);
-    if (!saved) return setRows([]);
-    try {
-      const parsed = JSON.parse(saved).map((a: any) =>
-        // אם אין לך fromPlain, אפשר להחליף כאן ל-Object.assign(new Appointment(), a)
-        Appointment.fromPlain ? Appointment.fromPlain(a) : Object.assign(new (Appointment as any)(), a)
-      );
-      setRows(parsed);
-    } catch {
-      setRows([]);
-    }
+    const parsed = safeParse<any[]>(saved, []).map((a) =>
+      (Appointment as any).fromPlain
+        ? (Appointment as any).fromPlain(a)
+        : Object.assign(new (Appointment as any)(), a)
+    );
+    setRows(parsed);
   }, []);
 
   const handleDelete = (id: number) => {
@@ -38,8 +35,8 @@ export default function AppointmentManagement() {
   return (
     <Container sx={{ direction: 'rtl', p: 2 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-        <Typography variant="h5">ניהול פגישות</Typography>
-        <Button component={Link} to="/forms#appointment-form" variant="contained">הוסף פגישה</Button>
+        <Typography variant="h4">ניהול פגישות</Typography>
+        <Button component={Link} to="/forms#appointment-form" variant="contained" aria-label="הוסף פגישה">הוסף פגישה</Button>
       </Stack>
 
       <TableContainer component={Paper}>
@@ -73,6 +70,7 @@ export default function AppointmentManagement() {
                       size="small"
                       component={Link}
                       to={`/forms/appointment/${a.appointmentId}`}
+                      aria-label={`ערוך פגישה ${a.appointmentId}`}
                     >
                       ערוך
                     </Button>
@@ -81,6 +79,7 @@ export default function AppointmentManagement() {
                       size="small"
                       color="error"
                       onClick={() => handleDelete(a.appointmentId)}
+                      aria-label={`מחק פגישה ${a.appointmentId}`}
                     >
                       מחק
                     </Button>

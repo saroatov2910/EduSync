@@ -43,7 +43,7 @@ export default function StudentManagement() {
   return (
     <Container sx={{ direction: 'rtl', p: 2 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-        <Typography variant="h5">ניהול סטודנטים</Typography>
+        <Typography variant="h4">ניהול סטודנטים</Typography>
         <Button component={Link} to="/forms#student-form" variant="contained">הוסף סטודנט</Button>
       </Stack>
 

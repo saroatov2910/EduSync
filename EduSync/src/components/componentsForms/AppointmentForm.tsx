@@ -13,6 +13,7 @@ import {
 import type { SelectChangeEvent } from '@mui/material/Select';
 import Appointment from '../../classAppointment/Appointment';
 import SaveSnackbar from '../Snackbar';
+import { safeParse , readLS , writeLS } from '../../Functions/Utils'; 
 
 // Narrow string unions for better typing
 type AppointmentType = 'פרונטלי' | 'זום';
@@ -26,6 +27,7 @@ interface FormState {
   location: string;
   status: AppointmentStatus;
 }
+
 export default function AppointmentForm() {
   const { id } = useParams<{ id: string }>();
 
@@ -37,12 +39,13 @@ export default function AppointmentForm() {
     location: '',
     status: 'מתוכננת',
   });
+
   const [errors, setErrors] = useState<string[]>([]);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     if (!id) return;
-    const appointments = JSON.parse(localStorage.getItem('appointments') || '[]') as any[];
+    const appointments = readLS<any[]>('appointments', []);
     const found = appointments.find((a) => Number(a.appointmentId) === Number(id));
     if (found) {
       setFormData({
@@ -55,16 +58,19 @@ export default function AppointmentForm() {
       });
     }
   }, [id]);
+
   const handleTextChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
   const handleSelectChange = (e: SelectChangeEvent) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name as keyof FormState]: value as string }));
   };
+
   const validateForm = (): string[] => {
     const v: string[] = [];
     if (!formData.requestId.trim()) v.push('Request ID is required');
@@ -73,6 +79,7 @@ export default function AppointmentForm() {
     if (!formData.location.trim()) v.push('Location is required');
     return v;
   };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -81,6 +88,7 @@ export default function AppointmentForm() {
       setErrors(errs);
       return;
     }
+
     const appointment = new Appointment({
       studentId: 0,
       requestId: Number(formData.requestId),
@@ -92,23 +100,26 @@ export default function AppointmentForm() {
       appointmentId: id ? Number(id) : undefined,
     });
 
-    const stored = JSON.parse(localStorage.getItem('appointments') || '[]') as any[];
+    const stored = readLS<any[]>('appointments', []);
+
     if (id) {
       const updated = stored.map((a: any) =>
         Number(a.appointmentId) === Number(id) ? appointment : a
       );
-      localStorage.setItem('appointments', JSON.stringify(updated));
+      writeLS('appointments', updated);
     } else {
-      localStorage.setItem('appointments', JSON.stringify([...stored, appointment]));
+      writeLS('appointments', [...stored, appointment]);
     }
+
     setErrors([]);
     setSaved(true);
   };
+
   return (
     <Box sx={{ direction: 'rtl', p: 2 }}>
-      <Typography variant="h5">{id ? 'ערוך פגישה' : 'טופס פגישה'}</Typography>
+      <Typography variant="h4" gutterBottom>{id ? 'ערוך פגישה' : 'טופס פגישה'}</Typography>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} aria-label="טופס הזנת פגישה">
         <TextField
           label="מספר בקשה"
           name="requestId"
@@ -117,7 +128,9 @@ export default function AppointmentForm() {
           required
           fullWidth
           margin="normal"
+          inputProps={{ inputMode: 'numeric', 'aria-label': 'מספר בקשה' }}
         />
+
         <TextField
           label="תאריך"
           name="appointmentDate"
@@ -128,7 +141,9 @@ export default function AppointmentForm() {
           fullWidth
           margin="normal"
           InputLabelProps={{ shrink: true }}
+          inputProps={{ 'aria-label': 'תאריך פגישה' }}
         />
+
         <TextField
           label="שעה"
           name="appointmentTime"
@@ -139,6 +154,7 @@ export default function AppointmentForm() {
           fullWidth
           margin="normal"
           InputLabelProps={{ shrink: true }}
+          inputProps={{ 'aria-label': 'שעת פגישה' }}
         />
 
         <FormControl fullWidth margin="normal">
@@ -150,11 +166,13 @@ export default function AppointmentForm() {
             value={formData.appointmentType}
             onChange={handleSelectChange}
             required
+            aria-label="בחר סוג פגישה"
           >
             <MenuItem value="פרונטלי">פרונטלי</MenuItem>
             <MenuItem value="זום">זום</MenuItem>
           </Select>
         </FormControl>
+
         <TextField
           label="מיקום"
           name="location"
@@ -163,7 +181,9 @@ export default function AppointmentForm() {
           required
           fullWidth
           margin="normal"
+          inputProps={{ 'aria-label': 'מיקום הפגישה' }}
         />
+
         <FormControl fullWidth margin="normal">
           <InputLabel id="status-label">סטטוס</InputLabel>
           <Select
@@ -173,25 +193,29 @@ export default function AppointmentForm() {
             value={formData.status}
             onChange={handleSelectChange}
             required
+            aria-label="בחר סטטוס פגישה"
           >
             <MenuItem value="מתוכננת">מתוכננת</MenuItem>
             <MenuItem value="מתקיימת">מתקיימת</MenuItem>
             <MenuItem value="בוטלה">בוטלה</MenuItem>
           </Select>
         </FormControl>
-        <Button type="submit" variant="contained" sx={{ mt: 2 }}>
+
+        <Button type="submit" variant="contained" sx={{ mt: 2 }} aria-label="שמור פגישה">
           שלח
         </Button>
+
         {errors.length > 0 && (
           <Typography color="error" sx={{ mt: 2 }}>
             {errors.join(', ')}
           </Typography>
         )}
       </form>
+
       <SaveSnackbar
         open={saved}
         onClose={() => setSaved(false)}
-        message={id ? 'פגישה עודכנה בהצלחה!' : 'פגישה נוספה בהצלחה!'}
+        message={id ? `פגישה עודכנה בהצלחה!` : `פגישה נוספה בהצלחה!`}
       />
     </Box>
   );

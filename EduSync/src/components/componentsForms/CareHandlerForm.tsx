@@ -12,6 +12,7 @@ import {
 import type { SelectChangeEvent } from '@mui/material/Select';
 import CareHandler from '../../classCareHandler/CareHandle';
 import SaveSnackbar from '../Snackbar';
+import { safeParse , readLS , writeLS } from '../../Functions/Utils'; 
 
 type Role = 'מרצה' | 'מזכירות';
 
@@ -46,26 +47,35 @@ export default function CareHandlerForm() {
     setFormData((prev) => ({ ...prev, [name as keyof FormState]: value as Role }));
   };
 
+  const validate = (): string[] => {
+    const v: string[] = [];
+    if (!formData.handlerId.trim()) v.push('מספר מזהה נדרש');
+    if (!formData.name.trim()) v.push('שם נדרש');
+    if (!formData.email.trim()) v.push('דוא״ל נדרש');
+    if (!formData.responsibility.trim()) v.push('תחום אחריות נדרש');
+    return v;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const careHandler = new CareHandler(
-      Number(formData.handlerId),
-      formData.name,
-      formData.role,
-      formData.email,
-      formData.responsibility
-    );
-
-    const validationErrors = careHandler.validate?.() ?? [];
-    if (validationErrors.length) {
-      setErrors(validationErrors);
+    const v = validate();
+    if (v.length) {
+      setErrors(v);
       return;
     }
 
     const key = 'care_handlers_v1';
-    const handlers = JSON.parse(localStorage.getItem(key) || '[]');
-    localStorage.setItem(key, JSON.stringify([...handlers, careHandler]));
+    const handlers = readLS<any[]>(key, []);
+    const newHandler = {
+      handlerId: Number(formData.handlerId),
+      name: formData.name,
+      role: formData.role,
+      email: formData.email,
+      responsibility: formData.responsibility,
+    };
+
+    writeLS(key, [...handlers, newHandler]);
 
     setFormData({ handlerId: '', name: '', role: 'מרצה', email: '', responsibility: '' });
     setErrors([]);
@@ -74,9 +84,9 @@ export default function CareHandlerForm() {
 
   return (
     <Box sx={{ direction: 'rtl', p: 2 }}>
-      <Typography variant="h5">טופס גורם מטפל</Typography>
+      <Typography variant="h4" gutterBottom>טופס גורם מטפל</Typography>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} aria-label="טופס הזנת גורם מטפל">
         <TextField
           label="מספר מזהה"
           name="handlerId"
@@ -85,6 +95,7 @@ export default function CareHandlerForm() {
           required
           fullWidth
           margin="normal"
+          inputProps={{ inputMode: 'numeric', 'aria-label': 'מספר מזהה' }}
         />
 
         <TextField
@@ -95,6 +106,7 @@ export default function CareHandlerForm() {
           required
           fullWidth
           margin="normal"
+          inputProps={{ 'aria-label': 'שם' }}
         />
 
         <FormControl fullWidth margin="normal">
@@ -107,6 +119,7 @@ export default function CareHandlerForm() {
             value={formData.role}
             onChange={handleSelectChange}
             required
+            aria-label="בחר תפקיד"
           >
             <MenuItem value="מרצה">מרצה</MenuItem>
             <MenuItem value="מזכירות">מזכירות</MenuItem>
@@ -122,6 +135,7 @@ export default function CareHandlerForm() {
           required
           fullWidth
           margin="normal"
+          inputProps={{ 'aria-label': 'דוא״ל' }}
         />
 
         <TextField
@@ -132,9 +146,10 @@ export default function CareHandlerForm() {
           required
           fullWidth
           margin="normal"
+          inputProps={{ 'aria-label': 'תחום אחריות' }}
         />
 
-        <Button type="submit" variant="contained" sx={{ mt: 2 }}>
+        <Button type="submit" variant="contained" sx={{ mt: 2 }} aria-label="שמור גורם מטפל">
           שלח
         </Button>
 
@@ -145,7 +160,7 @@ export default function CareHandlerForm() {
         )}
       </form>
 
-      <SaveSnackbar open={saved} onClose={() => setSaved(false)} message="גורם מטפל נוסף בהצלחה!" />
+      <SaveSnackbar open={saved} onClose={() => setSaved(false)} message={`גורם מטפל נוסף בהצלחה!`} />
     </Box>
   );
 }

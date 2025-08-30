@@ -40,68 +40,95 @@ export default function HeaderRoot() {
   };
 
   const drawer = (
-    <Box role="presentation" sx={{ width: 250, textAlign: 'right', direction: 'rtl' }}>
-      <Typography variant="h6" sx={{ p: 2 }}>
-        EduSync
-      </Typography>
-      <Divider />
-      <List>
-        {navItems.map(item => (
-          <ListItem key={item.to} disablePadding>
-            <ListItemText
-              primary={item.label}
-              onClick={() => handleNavigation(item.to)}
-              sx={{ textAlign: 'right', p: 2, cursor: 'pointer', color: isActive(item.to) ? 'primary.main' : 'text.primary' }}
-            />
-          </ListItem>
-        ))}
-      </List>
-    </Box>
+    <header>
+      <Box
+        role="presentation"
+        sx={{ width: 250, textAlign: 'right', direction: 'rtl' }}
+        aria-label="תפריט צד ניווט"
+      >
+        <Typography variant="h6" sx={{ p: 2 }}>
+          EduSync
+        </Typography>
+        <Divider />
+        <List>
+          {navItems.map(item => (
+            <ListItem key={item.to} disablePadding>
+              <ListItemText
+                primary={item.label}
+                onClick={() => handleNavigation(item.to)}
+                sx={{
+                  textAlign: 'right',
+                  p: 2,
+                  cursor: 'pointer',
+                  color: isActive(item.to) ? 'primary.main' : 'text.primary'
+                }}
+                aria-label={`נווט אל ${item.label}`}
+              />
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+    </header>
   );
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <AppBar position="static" color="default" elevation={0} sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Toolbar sx={{ gap: 1, direction: 'rtl' }}>
-          <IconButton
-            color="inherit"
-            edge="start"
-            onClick={toggleDrawer}
-            sx={{ ml: 1, display: { xs: 'inline-flex', sm: 'none' } }}
-            aria-label="פתח תפריט"
-          >
-            <MenuIcon />
-          </IconButton>
+    <header>
+      <Box sx={{ display: 'flex' }}>
+        <AppBar
+          position="static"
+          color="default"
+          elevation={0}
+          sx={{ borderBottom: 1, borderColor: 'divider' }}
+        >
+          <Toolbar sx={{ gap: 1, direction: 'rtl' }}>
+            <IconButton
+              color="inherit"
+              edge="start"
+              onClick={toggleDrawer}
+              sx={{ ml: 1, display: { xs: 'inline-flex', sm: 'none' } }}
+              aria-label="פתח תפריט ניווט"
+            >
+              <MenuIcon />
+            </IconButton>
 
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            EduSync
-          </Typography>
+            <Button
+              onClick={() => navigate('/')}
+              sx={{ textTransform: 'none' }}
+              aria-label="חזור לעמוד הבית"
+            >
+              <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                EduSync
+              </Typography>
+            </Button>
 
-          <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 0.5, flexWrap: 'wrap' }}>
-            {navItems.map(item => (
-              <Button
-                key={item.to}
-                onClick={() => navigate(item.to)}
-                sx={{
-                  fontSize: 16,
-                  color: isActive(item.to) ? 'primary.main' : 'text.primary',
-                }}
-              >
-                {item.label}
-              </Button>
-            ))}
-          </Box>
-        </Toolbar>
-      </AppBar>
+            <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 0.5, flexWrap: 'wrap' }}>
+              {navItems.map(item => (
+                <Button
+                  key={item.to}
+                  onClick={() => navigate(item.to)}
+                  sx={{
+                    fontSize: 16,
+                    color: isActive(item.to) ? 'primary.main' : 'text.primary',
+                  }}
+                  aria-label={`נווט אל ${item.label}`}
+                >
+                  {item.label}
+                </Button>
+              ))}
+            </Box>
+          </Toolbar>
+        </AppBar>
 
-      <Drawer
-        anchor="right"
-        open={mobileOpen}
-        onClose={toggleDrawer}
-        sx={{ display: { xs: 'block', sm: 'none' } }}
-      >
-        {drawer}
-      </Drawer>
-    </Box>
+        <Drawer
+          anchor="right"
+          open={mobileOpen}
+          onClose={toggleDrawer}
+          sx={{ display: { xs: 'block', sm: 'none' } }}
+          aria-label="מגירת ניווט"
+        >
+          {drawer}
+        </Drawer>
+      </Box>
+    </header>
   );
 }

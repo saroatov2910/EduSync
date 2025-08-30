@@ -1,4 +1,3 @@
-// Student.ts
 import { isValidStudentId, validateText, isValidEmail, isValidMobile } from '../Functions/Utils';
 
 export interface StudentProps {

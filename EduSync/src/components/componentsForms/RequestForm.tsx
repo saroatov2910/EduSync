@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { safeParse , readLS , writeLS } from '../../Functions/Utils'; 
 import {
   TextField,
   Button,
@@ -39,11 +40,11 @@ export default function RequestForm() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const savedHandlers = JSON.parse(localStorage.getItem('care_handlers_v1') || '[]');
+    const savedHandlers = readLS<any[]>('care_handlers_v1', []);
     if (typeof (CareHandler as any).from === 'function') {
       setHandlers(savedHandlers.map((CareHandler as any).from));
     } else {
-      setHandlers(savedHandlers);
+      setHandlers(savedHandlers as any);
     }
   }, []);
 
@@ -92,11 +93,8 @@ export default function RequestForm() {
       return;
     }
 
-    const requests = JSON.parse(localStorage.getItem('requests') || '[]');
-    localStorage.setItem(
-      'requests',
-      JSON.stringify([...requests, { ...request, file: file?.name ?? null }])
-    );
+    const requests = readLS<any[]>('requests', []);
+    writeLS('requests', [...requests, { ...request, file: file?.name ?? null }]);
 
     setFormData({ studentId: '', requestTopic: 'General', requestText: '', handlerId: '' });
     setFile(null);
@@ -106,8 +104,8 @@ export default function RequestForm() {
 
   return (
     <Box sx={{ direction: 'rtl', p: 2 }}>
-      <Typography variant="h5">טופס בקשה</Typography>
-      <form onSubmit={handleSubmit}>
+      <Typography variant="h4" gutterBottom>טופס בקשה</Typography>
+      <form onSubmit={handleSubmit} aria-label="טופס הזנת בקשה">
         <TextField
           label="מספר סטודנט"
           name="studentId"
@@ -116,6 +114,7 @@ export default function RequestForm() {
           required
           fullWidth
           margin="normal"
+          inputProps={{ inputMode: 'numeric', 'aria-label': 'מספר סטודנט' }}
         />
 
         <FormControl fullWidth margin="normal">
@@ -126,6 +125,7 @@ export default function RequestForm() {
             onChange={handleTopicChange}
             label="נושא הבקשה"
             required
+            aria-label="בחר נושא בקשה"
           >
             <MenuItem value="General">כללי</MenuItem>
             <MenuItem value="Academic">אקדמי</MenuItem>
@@ -143,6 +143,7 @@ export default function RequestForm() {
           multiline
           rows={4}
           margin="normal"
+          inputProps={{ 'aria-label': 'תיאור הבקשה' }}
         />
 
         <FormControl fullWidth margin="normal">
@@ -153,6 +154,7 @@ export default function RequestForm() {
             onChange={handleHandlerChange}
             label="גורם מטפל"
             required
+            aria-label="בחר גורם מטפל"
           >
             {handlers.map((h: any) => (
               <MenuItem key={h.handlerId} value={String(h.handlerId)}>
@@ -162,9 +164,9 @@ export default function RequestForm() {
           </Select>
         </FormControl>
 
-        <input type="file" onChange={handleFileChange} accept=".pdf,.doc,.docx" />
+        <input type="file" onChange={handleFileChange} accept=".pdf,.doc,.docx" aria-label="צרף קובץ לבקשה" />
 
-        <Button type="submit" variant="contained" sx={{ mt: 2 }}>
+        <Button type="submit" variant="contained" sx={{ mt: 2 }} aria-label="שמור בקשה">
           שלח
         </Button>
 
@@ -175,7 +177,7 @@ export default function RequestForm() {
         )}
       </form>
 
-      <SaveSnackbar open={saved} onClose={() => setSaved(false)} message="בקשה נשמרה בהצלחה!" />
+      <SaveSnackbar open={saved} onClose={() => setSaved(false)} message={`בקשה נשמרה בהצלחה!`} />
     </Box>
   );
 }

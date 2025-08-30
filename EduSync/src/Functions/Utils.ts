@@ -93,3 +93,18 @@ export function trim(str: string): string {
     return str.trim();
 }
 
+export function safeParse<T = unknown>(raw: string | null, fallback: T): T {
+  try {
+    return raw ? (JSON.parse(raw) as T) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+export function readLS<T = unknown>(key: string, fallback: T): T {
+  return safeParse<T>(localStorage.getItem(key), fallback);
+}
+
+
+export function writeLS<T = unknown>(key: string, value: T) {
+  localStorage.setItem(key, JSON.stringify(value));
+}

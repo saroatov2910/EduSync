@@ -1,4 +1,3 @@
-// src/models/studentsData.ts
 import Student from './Student';
 
 const studentsRaw = [

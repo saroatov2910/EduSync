@@ -1,11 +1,14 @@
 import React from 'react'
+import { Typography } from '@mui/material'
 import '../../cssRules/Footer.css'
 
 function Footer() {
   return (
-    <div className='footer'>
-    <h5>f</h5>
-    </div>
+    <footer className='footer'>
+      <Typography variant="body2" align="center">
+        © 2025 EduSync – כל הזכויות שמורות
+      </Typography>
+    </footer>
   )
 }
 
