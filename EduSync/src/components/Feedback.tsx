@@ -47,7 +47,7 @@ export default function FeedbackManagement() {
     const next = rows.filter((f) => f.feedbackId !== id);
     setRows(next);
     localStorage.setItem(LS_KEY, JSON.stringify(next));
-    setSnack(משוב ${id} נמחק);
+    setSnack('משוב ${id} נמחק');
   };
 
   const saveToLocalStorage = () => {

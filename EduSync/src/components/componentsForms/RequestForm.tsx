@@ -13,7 +13,7 @@ import type { SelectChangeEvent } from '@mui/material/Select';
 
 import Request from '../../classRequest/Request';
 import CareHandler from '../../classCareHandler/CareHandle';
-import SaveSnackbar from '../SaveSnackbar';
+import SaveSnackbar from '../Snackbar';
 
 // Narrow local UI state for the select values
 type UiRequestTopic = 'General' | 'Academic' | 'Administrative';

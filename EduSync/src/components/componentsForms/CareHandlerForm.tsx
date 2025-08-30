@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import CareHandler from '../../classCareHandler/CareHandle';
-import SaveSnackbar from '../SaveSnackbar';
+import SaveSnackbar from '../Snackbar';
 
 type Role = 'מרצה' | 'מזכירות';
 

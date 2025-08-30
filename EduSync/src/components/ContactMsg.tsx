@@ -46,7 +46,7 @@ export default function ContactMsgManagement() {
     const next = rows.filter(r => r.msgId !== id);
     setRows(next);
     localStorage.setItem(LS_KEY, JSON.stringify(next));
-    setSnack(הודעה ${id} נמחקה);
+    setSnack('הודעה ${id} נמחקה');
   };
 
   // דמו: הוסף הודעה (אם יש טופס ייעודי – החלף בלינק)

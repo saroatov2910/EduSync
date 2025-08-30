@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
+// src/components/Request.tsx
+import { useEffect, useMemo, useState } from 'react';
 import {
   Container, Typography, Button,
   Table, TableBody, TableCell, TableHead, TableRow,
@@ -38,7 +39,9 @@ export default function RequestManagement() {
         handlerId: Number(r.handlerId ?? 0),
       }));
       setRows(normalized);
-    } catch { setRows([]); }
+    } catch {
+      setRows([]);
+    }
   }, []);
 
   const fmt = (d: string | Date) => {
@@ -50,7 +53,8 @@ export default function RequestManagement() {
     const next = rows.filter(r => r.requestId !== id);
     setRows(next);
     localStorage.setItem(LS_KEY, JSON.stringify(next));
-    setSnack(בקשה ${id} נמחקה);
+    // ✅ חשוב: טקסט בתוך backticks
+    setSnack(`בקשה ${id} נמחקה`);
   };
 
   const totals = useMemo(() => ({
@@ -69,7 +73,7 @@ export default function RequestManagement() {
       </Stack>
 
       <Typography variant="body2" sx={{ mb: 1 }}>
-        סה״כ: {totals.count} | {Object.entries(totals.byTopic).map(([k,v]) => ${k}: ${v}).join(' | ') || '-'}
+        סה״כ: {totals.count} | {Object.entries(totals.byTopic).map(([k, v]) => `${k}: ${v}`).join(' | ') || '-'}
       </Typography>
 
       <TableContainer component={Paper}>

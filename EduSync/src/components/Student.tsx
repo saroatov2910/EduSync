@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+// src/components/Student.tsx
+import { useEffect, useState } from 'react';
 import {
   Container, Typography, Button,
   Table, TableBody, TableCell, TableHead, TableRow,
@@ -23,15 +24,20 @@ export default function StudentManagement() {
   const [snack, setSnack] = useState<string | null>(null);
 
   useEffect(() => {
-    try { setRows(JSON.parse(localStorage.getItem(LS_KEY) || '[]')); }
-    catch { setRows([]); }
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      setRows(raw ? (JSON.parse(raw) as Row[]) : []);
+    } catch {
+      setRows([]);
+    }
   }, []);
 
   const handleDelete = (studentId: number) => {
     const next = rows.filter(r => r.StudentId !== studentId);
     setRows(next);
     localStorage.setItem(LS_KEY, JSON.stringify(next));
-    setSnack(סטודנט ${studentId} נמחק);
+    // ✅ חשוב: טקסט בתוך backticks/גרשיים
+    setSnack(`סטודנט ${studentId} נמחק`);
   };
 
   return (

@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import Appointment from '../../classAppointment/Appointment';
-import SaveSnackbar from '../SaveSnackbar';
+import SaveSnackbar from '../Snackbar';
 
 // Narrow string unions for better typing
 type AppointmentType = 'פרונטלי' | 'זום';
@@ -26,7 +26,6 @@ interface FormState {
   location: string;
   status: AppointmentStatus;
 }
-
 export default function AppointmentForm() {
   const { id } = useParams<{ id: string }>();
 
@@ -38,7 +37,6 @@ export default function AppointmentForm() {
     location: '',
     status: 'מתוכננת',
   });
-
   const [errors, setErrors] = useState<string[]>([]);
   const [saved, setSaved] = useState(false);
 
@@ -57,19 +55,16 @@ export default function AppointmentForm() {
       });
     }
   }, [id]);
-
   const handleTextChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleSelectChange = (e: SelectChangeEvent) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name as keyof FormState]: value as string }));
   };
-
   const validateForm = (): string[] => {
     const v: string[] = [];
     if (!formData.requestId.trim()) v.push('Request ID is required');
@@ -78,7 +73,6 @@ export default function AppointmentForm() {
     if (!formData.location.trim()) v.push('Location is required');
     return v;
   };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -87,7 +81,6 @@ export default function AppointmentForm() {
       setErrors(errs);
       return;
     }
-
     const appointment = new Appointment({
       studentId: 0,
       requestId: Number(formData.requestId),
@@ -100,7 +93,6 @@ export default function AppointmentForm() {
     });
 
     const stored = JSON.parse(localStorage.getItem('appointments') || '[]') as any[];
-
     if (id) {
       const updated = stored.map((a: any) =>
         Number(a.appointmentId) === Number(id) ? appointment : a
@@ -109,11 +101,9 @@ export default function AppointmentForm() {
     } else {
       localStorage.setItem('appointments', JSON.stringify([...stored, appointment]));
     }
-
     setErrors([]);
     setSaved(true);
   };
-
   return (
     <Box sx={{ direction: 'rtl', p: 2 }}>
       <Typography variant="h5">{id ? 'ערוך פגישה' : 'טופס פגישה'}</Typography>
@@ -128,7 +118,6 @@ export default function AppointmentForm() {
           fullWidth
           margin="normal"
         />
-
         <TextField
           label="תאריך"
           name="appointmentDate"
@@ -140,7 +129,6 @@ export default function AppointmentForm() {
           margin="normal"
           InputLabelProps={{ shrink: true }}
         />
-
         <TextField
           label="שעה"
           name="appointmentTime"
@@ -167,7 +155,6 @@ export default function AppointmentForm() {
             <MenuItem value="זום">זום</MenuItem>
           </Select>
         </FormControl>
-
         <TextField
           label="מיקום"
           name="location"
@@ -177,7 +164,6 @@ export default function AppointmentForm() {
           fullWidth
           margin="normal"
         />
-
         <FormControl fullWidth margin="normal">
           <InputLabel id="status-label">סטטוס</InputLabel>
           <Select
@@ -193,18 +179,15 @@ export default function AppointmentForm() {
             <MenuItem value="בוטלה">בוטלה</MenuItem>
           </Select>
         </FormControl>
-
         <Button type="submit" variant="contained" sx={{ mt: 2 }}>
           שלח
         </Button>
-
         {errors.length > 0 && (
           <Typography color="error" sx={{ mt: 2 }}>
             {errors.join(', ')}
           </Typography>
         )}
       </form>
-
       <SaveSnackbar
         open={saved}
         onClose={() => setSaved(false)}

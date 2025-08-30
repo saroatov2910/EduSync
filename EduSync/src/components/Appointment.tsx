@@ -18,16 +18,21 @@ export default function AppointmentManagement() {
     const saved = localStorage.getItem(LS_KEY);
     if (!saved) return setRows([]);
     try {
-      const parsed = JSON.parse(saved).map((a: any) => Appointment.fromPlain(a));
+      const parsed = JSON.parse(saved).map((a: any) =>
+        // אם אין לך fromPlain, אפשר להחליף כאן ל-Object.assign(new Appointment(), a)
+        Appointment.fromPlain ? Appointment.fromPlain(a) : Object.assign(new (Appointment as any)(), a)
+      );
       setRows(parsed);
-    } catch { setRows([]); }
+    } catch {
+      setRows([]);
+    }
   }, []);
 
   const handleDelete = (id: number) => {
     const next = rows.filter(a => a.appointmentId !== id);
     setRows(next);
     localStorage.setItem(LS_KEY, JSON.stringify(next));
-    setSnack(פגישה ${id} נמחקה);
+    setSnack(`פגישה ${id} נמחקה`);
   };
 
   return (
@@ -56,21 +61,37 @@ export default function AppointmentManagement() {
               <TableRow key={a.appointmentId}>
                 <TableCell>{a.appointmentId}</TableCell>
                 <TableCell>{a.requestId}</TableCell>
-                <TableCell>{new Date(a.appointmentDate).toLocaleDateString()}</TableCell>
+                <TableCell>{new Date(a.appointmentDate as any).toLocaleDateString()}</TableCell>
                 <TableCell>{a.appointmentTime}</TableCell>
                 <TableCell>{a.appointmentType}</TableCell>
                 <TableCell>{a.location}</TableCell>
                 <TableCell>{a.status}</TableCell>
                 <TableCell>
                   <Stack direction="row" spacing={1}>
-                    <Button variant="outlined" size="small" component={Link} to={/forms/appointment/${a.appointmentId}}>ערוך</Button>
-                    <Button variant="outlined" size="small" color="error" onClick={() => handleDelete(a.appointmentId)}>מחק</Button>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      component={Link}
+                      to={`/forms/appointment/${a.appointmentId}`}
+                    >
+                      ערוך
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      color="error"
+                      onClick={() => handleDelete(a.appointmentId)}
+                    >
+                      מחק
+                    </Button>
                   </Stack>
                 </TableCell>
               </TableRow>
             ))}
             {rows.length === 0 && (
-              <TableRow><TableCell align="center" colSpan={8}>אין נתונים</TableCell></TableRow>
+              <TableRow>
+                <TableCell align="center" colSpan={8}>אין נתונים</TableCell>
+              </TableRow>
             )}
           </TableBody>
         </Table>

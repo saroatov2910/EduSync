@@ -39,7 +39,7 @@ export default function CareHandlerManagement() {
     const next = rows.filter(h => h.handlerId !== id);
     setRows(next);
     localStorage.setItem(LS_KEY, JSON.stringify(next));
-    setSnack(גורם מטפל ${id} נמחק);
+    setSnack('גורם מטפל ${id} נמחק');
   };
 
   return (

@@ -34,7 +34,6 @@ export default function App() {
           <Route path="/management" element={<Management />} />
           <Route path="/forms/appointment/:id" element={<AppointmentForm />} />
           <Route path="/user/requests" element={<UserRequests />} />
-
         </Routes>
       </main>
       <Footer />

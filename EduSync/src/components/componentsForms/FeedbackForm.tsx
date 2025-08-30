@@ -13,7 +13,7 @@ import type { SelectChangeEvent } from '@mui/material/Select';
 
 import Feedback from '../../classFeedback/Feedback';
 import type { FeedbackProps } from '../../classFeedback/Feedback';
-import SaveSnackbar from '../SaveSnackbar';
+import SaveSnackbar from '../Snackbar';
 
 export default function FeedbackForm() {
   const [formData, setFormData] = useState({
