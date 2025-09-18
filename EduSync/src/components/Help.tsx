@@ -1,22 +1,41 @@
 import React from 'react';
 import { Container, Typography, Box, CardMedia } from '@mui/material';
+import '../cssRules/HelpStyles.css';
 
-const Help: React.FC = () => {
+const help_component: React.FC = () => {
+  
+  const Display_Help_Instructions = () => {
+    const help_title_text = "הוראות שימוש מפורטות";
+    const instruction_array = [
+      "נווט ל\"טפסים\" דרך התפריט.",
+      "בחר \"טופס בקשה\".",
+      "מלא את שדות מספר הסטודנט, נושא הבקשה, תיאור, ובחר גורם מטפל.",
+      "הוסף קובץ במידת הצורך ולחץ \"שלח\"."
+    ];
+    
+    return (
+      <>
+        <Typography variant="body1" paragraph>
+          זהו עמוד העזרה של מערכת EduSync. כאן תוכלו למצוא מידע שימושי והנחיות לשימוש במערכת.
+        </Typography>
+        <Typography variant="h6">יצירת פנייה חדשה</Typography>
+        <ol className="help_instruction_list">
+          {instruction_array.map((instruction, index) => (
+            <li key={index}>{instruction}</li>
+          ))}
+        </ol>
+      </>
+    );
+  };
+
   return (
-    <Container sx={{ direction: 'rtl', padding: '20px' }}>
-      <Typography variant="h4" gutterBottom>
+    <Container className="HelpContainer" sx={{ direction: 'rtl', padding: '20px' }}>
+      <Typography variant="h4" className="helpTitleStyle" gutterBottom>
         עזרה
       </Typography>
-      <Typography variant="body1" paragraph>
-        זהו עמוד העזרה של מערכת EduSync. כאן תוכלו למצוא מידע שימושי והנחיות לשימוש במערכת.
-      </Typography>
-      <Typography variant="h6">יצירת פנייה חדשה</Typography>
-      <ol>
-        <li>נווט ל"טפסים" דרך התפריט.</li>
-        <li>בחר "טופס בקשה".</li>
-        <li>מלא את שדות מספר הסטודנט, נושא הבקשה, תיאור, ובחר גורם מטפל.</li>
-        <li>הוסף קובץ במידת הצורך ולחץ "שלח".</li>
-      </ol>
+      <div className="Help_Text_Content">
+        {Display_Help_Instructions()}
+      </div>
       <CardMedia
         component="img"
         image="/assets/request-form-demo.jpg"
@@ -45,4 +64,4 @@ const Help: React.FC = () => {
   );
 };
 
-export default Help;
+export default help_component;
