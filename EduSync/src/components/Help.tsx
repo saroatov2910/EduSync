@@ -2,11 +2,11 @@ import React from 'react';
 import { Container, Typography, Box, CardMedia } from '@mui/material';
 import '../cssRules/HelpStyles.css';
 
-const help_component: React.FC = () => {
+const Help: React.FC = () => {
   
-  const Display_Help_Instructions = () => {
-    const help_title_text = "הוראות שימוש מפורטות";
-    const instruction_array = [
+  const displayHelpInstructions = () => {
+    const helpTitleText = "הוראות שימוש מפורטות";
+    const instructionArray = [
       "נווט ל\"טפסים\" דרך התפריט.",
       "בחר \"טופס בקשה\".",
       "מלא את שדות מספר הסטודנט, נושא הבקשה, תיאור, ובחר גורם מטפל.",
@@ -19,8 +19,8 @@ const help_component: React.FC = () => {
           זהו עמוד העזרה של מערכת EduSync. כאן תוכלו למצוא מידע שימושי והנחיות לשימוש במערכת.
         </Typography>
         <Typography variant="h6">יצירת פנייה חדשה</Typography>
-        <ol className="help_instruction_list">
-          {instruction_array.map((instruction, index) => (
+        <ol className="help-instruction-list">
+          {instructionArray.map((instruction, index) => (
             <li key={index}>{instruction}</li>
           ))}
         </ol>
@@ -29,12 +29,12 @@ const help_component: React.FC = () => {
   };
 
   return (
-    <Container className="HelpContainer" sx={{ direction: 'rtl', padding: '20px' }}>
-      <Typography variant="h4" className="helpTitleStyle" gutterBottom>
+    <Container className="help-container" sx={{ direction: 'rtl', padding: '20px' }}>
+      <Typography variant="h4" className="help-title-style" gutterBottom>
         עזרה
       </Typography>
-      <div className="Help_Text_Content">
-        {Display_Help_Instructions()}
+      <div className="help-text-content">
+        {displayHelpInstructions()}
       </div>
       <CardMedia
         component="img"
@@ -64,4 +64,4 @@ const help_component: React.FC = () => {
   );
 };
 
-export default help_component;
+export default Help;

@@ -1,37 +1,32 @@
-/* הפרות מכוונות של CSS naming conventions */
+/* CSS מתוקן עם lowercase-hyphen naming convention */
 
-/* הפרה 3: CSS class עם PascalCase */
-.HelpContainer {
+.help-container {
   background-color: #f5f5f5;
   padding: 20px;
   border-radius: 8px;
   margin: 10px 0;
 }
 
-/* הפרה 4: CSS class עם camelCase */
-.helpTitleStyle {
+.help-title-style {
   color: #2c3e50;
   font-weight: bold;
   margin-bottom: 15px;
   font-size: 24px;
 }
 
-/* הפרה 5: CSS class עם snake_case */
-.help_instruction_list {
+.help-instruction-list {
   list-style-type: decimal;
   padding-right: 20px;
   line-height: 1.8;
 }
 
-/* הפרה 6: CSS class עם Pascal_Snake_Case */
-.Help_Text_Content {
+.help-text-content {
   line-height: 1.6;
   color: #34495e;
   margin: 15px 0;
 }
 
-/* הפרה 7: CSS class עם UPPER_CASE */
-.HELP_SECTION {
+.help-section {
   border: 1px solid #ddd;
   padding: 15px;
   margin: 10px 0;
