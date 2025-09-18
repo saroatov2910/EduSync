@@ -1,0 +1,32 @@
+/* הפרות מכוונות של CSS naming conventions */
+
+/* הפרה 4: CSS class שאינו ב-lowercase-hyphen */
+.Help_Container {
+  background-color: #f5f5f5;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+/* הפרה 5: CSS class עם camelCase במקום lowercase-hyphen */
+.helpTitleStyle {
+  color: #2c3e50;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+/* הפרה 6: CSS class עם PascalCase */
+.HelpInstructionList {
+  list-style-type: decimal;
+  padding-right: 20px;
+}
+
+/* הפרה 7: CSS class עם snake_case */
+.help_text_content {
+  line-height: 1.6;
+  color: #34495e;
+}
+
+/* CSS נכון לדוגמה */
+.help-container-correct {
+  margin: 10px 0;
+}
