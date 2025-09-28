@@ -2,7 +2,6 @@ import HeaderRoot from './components/layout/HeaderRoot';
 import Footer from './components/layout/Footer';
 import { Routes, Route } from 'react-router-dom';
 
-// Pages
 import HomePage from './components/HomePage';
 import AppointmentTable from './components/Appointment';
 import CareHandleTable from './components/CareHandle';
@@ -15,12 +14,16 @@ import Forms from './components/componentsForms/Forms';
 import Management from './components/Management';
 import AppointmentForm from './components/componentsForms/AppointmentForm';
 import UserRequests from './components/UserRequests';
+import Notifications from './components/Notifications';
 
 export default function App() {
+  const currentHandlerId = '***LOGGED_IN_HANDLER_ID***'; // replace with actual auth UID
+
   return (
     <>
       <HeaderRoot />
-      <main style={{padding: 16}}>
+      <main style={{ padding: 16 }}>
+        {currentHandlerId && <Notifications handlerId={currentHandlerId} />}
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/appointment" element={<AppointmentTable />} />

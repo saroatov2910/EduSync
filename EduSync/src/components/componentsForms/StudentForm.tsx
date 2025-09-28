@@ -1,159 +1,43 @@
-import React, { useState } from 'react';
-import { TextField, Button, Box, Typography } from '@mui/material';
-import Student from '../../classStudent/Student';
-import SaveSnackbar from '../Snackbar';
-import { safeParse, readLS, writeLS } from '../../Functions/Utils';
-import { db } from '../../firebase';
-import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Box, TextField, Button } from '@mui/material';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from '../../firebase'; // adjust your firebase import
+
+interface StudentFormData {
+  name: string;
+  age?: number;
+}
 
 export default function StudentForm() {
-  const [formData, setFormData] = useState({
-    studentId: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    mobile: '',
-    major: ''
-  });
-  const [errors, setErrors] = useState<string[]>([]);
-  const [saved, setSaved] = useState(false);
-  const navigate = useNavigate();
+  const [formData, setFormData] = useState<StudentFormData>({ name: '', age: undefined });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: name === 'age' ? Number(value) : value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const student = new Student({
-      StudentId: Number(formData.studentId),
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      email: formData.email,
-      mobile: formData.mobile,
-      major: formData.major
-    });
-
-    const validationErrors = student.validate();
-    if (validationErrors.length) {
-      setErrors(validationErrors);
-      return;
-    }
-
+  const handleSubmit = async () => {
+    setLoading(true);
     try {
-      // Check for duplicate StudentId in Firestore
-      const studentsCollection = collection(db, 'students');
-      const q = query(studentsCollection, where('StudentId', '==', student.StudentId));
-      const existingDocs = await getDocs(q);
-      if (!existingDocs.empty) {
-        setErrors(['מס׳ סטודנט כבר קיים']);
-        return;
-      }
-
-      // Save to Firestore
-      await addDoc(studentsCollection, {
-        StudentId: student.StudentId,
-        firstName: student.firstName,
-        lastName: student.lastName,
-        email: student.email,
-        mobile: student.mobile,
-        major: student.major
-      });
-
-      // Save to localStorage
-      const students = readLS('students_v1', [] as any[]);
-      if (!students.some((s: any) => s.StudentId === student.StudentId)) {
-        writeLS('students_v1', [...students, student]);
-      }
-
-      // Reset form and redirect
-      setFormData({ studentId: '', firstName: '', lastName: '', email: '', mobile: '', major: '' });
-      setErrors([]);
-      setSaved(true);
-      setTimeout(() => navigate('/students'), 1000);
-    } catch (error) {
-      console.error('Error adding student:', error);
-      setErrors(['שגיאה בשמירת סטודנט']);
+      const saveStudent = httpsCallable(functions, 'saveStudent');
+      await saveStudent(formData);
+      alert('Student saved!');
+      setFormData({ name: '', age: undefined });
+    } catch (err) {
+      console.error(err);
+      alert('Error saving student');
     }
+    setLoading(false);
   };
 
   return (
-    <Box sx={{ direction: 'rtl', p: 2 }}>
-      <Typography variant="h4" gutterBottom>טופס סטודנט</Typography>
-      <form onSubmit={handleSubmit} aria-label="טופס הזנת סטודנט">
-        <TextField
-          label="מספר סטודנט"
-          name="studentId"
-          value={formData.studentId}
-          onChange={handleChange}
-          required
-          fullWidth
-          margin="normal"
-          inputProps={{ inputMode: 'numeric', 'aria-label': 'מספר סטודנט' }}
-        />
-        <TextField
-          label="שם פרטי"
-          name="firstName"
-          value={formData.firstName}
-          onChange={handleChange}
-          required
-          fullWidth
-          margin="normal"
-          inputProps={{ 'aria-label': 'שם פרטי' }}
-        />
-        <TextField
-          label="שם משפחה"
-          name="lastName"
-          value={formData.lastName}
-          onChange={handleChange}
-          required
-          fullWidth
-          margin="normal"
-          inputProps={{ 'aria-label': 'שם משפחה' }}
-        />
-        <TextField
-          label="דוא״ל"
-          name="email"
-          type="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          fullWidth
-          margin="normal"
-          inputProps={{ 'aria-label': 'דוא״ל' }}
-        />
-        <TextField
-          label="נייד"
-          name="mobile"
-          value={formData.mobile}
-          onChange={handleChange}
-          required
-          fullWidth
-          margin="normal"
-          inputProps={{ 'aria-label': 'נייד' }}
-        />
-        <TextField
-          label="חוג"
-          name="major"
-          value={formData.major}
-          onChange={handleChange}
-          required
-          fullWidth
-          margin="normal"
-          inputProps={{ 'aria-label': 'חוג' }}
-        />
-        <Button type="submit" variant="contained" sx={{ mt: 2 }} aria-label="שמור סטודנט">
-          שלח
-        </Button>
-        {errors.length > 0 && (
-          <Typography color="error" sx={{ mt: 2 }}>
-            {errors.join(', ')}
-          </Typography>
-        )}
-      </form>
-
-      <SaveSnackbar open={saved} onClose={() => setSaved(false)} message={`סטודנט נוסף בהצלחה!`} />
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <TextField label="Name" name="name" value={formData.name} onChange={handleChange} />
+      <TextField label="Age" name="age" type="number" value={formData.age || ''} onChange={handleChange} />
+      <Button variant="contained" onClick={handleSubmit} disabled={loading}>
+        Save Student
+      </Button>
     </Box>
   );
 }

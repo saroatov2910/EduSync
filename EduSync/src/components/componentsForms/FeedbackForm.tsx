@@ -1,139 +1,43 @@
-import React, { useState } from 'react';
-import {
-  TextField,
-  Button,
-  Box,
-  Typography,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-} from '@mui/material';
-import type { SelectChangeEvent } from '@mui/material/Select';
-import { safeParse , readLS , writeLS } from '../../Functions/Utils'; 
-import Feedback from '../../classFeedback/Feedback';
-import type { FeedbackProps } from '../../classFeedback/Feedback';
-import SaveSnackbar from '../Snackbar';
+import { useState } from 'react';
+import { Box, TextField, Button } from '@mui/material';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from '../../firebase'; // adjust your firebase import
+
+interface FeedbackFormData {
+  text: string;
+  studentId?: string;
+}
 
 export default function FeedbackForm() {
-  const [formData, setFormData] = useState({
-    studentId: '',
-    comment: '',
-    grade: 1,
-  });
+  const [formData, setFormData] = useState<FeedbackFormData>({ text: '', studentId: '' });
+  const [loading, setLoading] = useState(false);
 
-  const [errors, setErrors] = useState<string[]>([]);
-  const [saved, setSaved] = useState(false);
-
-  const handleTextChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleGradeChange = (e: SelectChangeEvent<number>) => {
-    const value = Number(e.target.value);
-    setFormData(prev => ({ ...prev, grade: value }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (formData.comment.length > 300) {
-      setErrors(['הערות חייבות להיות עד 300 תווים']);
-      return;
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      const saveFeedback = httpsCallable(functions, 'saveFeedback');
+      await saveFeedback(formData);
+      alert('Feedback saved!');
+      setFormData({ text: '', studentId: '' });
+    } catch (err) {
+      console.error(err);
+      alert('Error saving feedback');
     }
-
-    const feedbackProps: FeedbackProps = {
-      studentId: Number(formData.studentId),
-      firstName: '',
-      lastName: '',
-      email: '',
-      mobile: '',
-      major: '',
-      requestId: Math.floor(Math.random() * 1000),
-      requestTopic: 'General' as any,
-      requestText: formData.comment,
-      requestDate: new Date(),
-      reqStatus: 'Open' as any,
-      handlerId: 1,
-      feedbackId: Math.floor(Math.random() * 1000),
-      grade: formData.grade as any,
-      comment: formData.comment,
-      createdBy: 'Student' as any,
-      feedbackDate: new Date(),
-    };
-
-    const feedback = new Feedback(feedbackProps);
-    const validationErrors = (feedback as any).validate?.() ?? [];
-    if (validationErrors.length) {
-      setErrors(validationErrors);
-      return;
-    }
-
-    const feedbacks = readLS<any[]>('feedbacks', []);
-    writeLS('feedbacks', [...feedbacks, feedbackProps]);
-
-    setFormData({ studentId: '', comment: '', grade: 1 });
-    setErrors([]);
-    setSaved(true);
+    setLoading(false);
   };
 
   return (
-    <Box sx={{ direction: 'rtl', p: 2 }}>
-      <Typography variant="h4" gutterBottom>טופס משוב</Typography>
-      <form onSubmit={handleSubmit} aria-label="טופס הזנת משוב">
-        <TextField
-          label="מספר סטודנט"
-          name="studentId"
-          value={formData.studentId}
-          onChange={handleTextChange}
-          required
-          fullWidth
-          margin="normal"
-          inputProps={{ inputMode: 'numeric', 'aria-label': 'מספר סטודנט' }}
-        />
-        <TextField
-          label="הערות"
-          name="comment"
-          value={formData.comment}
-          onChange={handleTextChange}
-          required
-          fullWidth
-          multiline
-          rows={4}
-          margin="normal"
-          inputProps={{ 'aria-label': 'הערות משוב' }}
-        />
-        <FormControl fullWidth margin="normal">
-          <InputLabel>ציון</InputLabel>
-          <Select<number>
-            name="grade"
-            value={formData.grade}
-            onChange={handleGradeChange}
-            required
-            label="ציון"
-            aria-label="בחר ציון למשוב"
-          >
-            {[1, 2, 3, 4, 5].map(g => (
-              <MenuItem key={g} value={g}>
-                {g}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <Button type="submit" variant="contained" sx={{ mt: 2 }} aria-label="שמור משוב">
-          שלח
-        </Button>
-        {errors.length > 0 && (
-          <Typography color="error" sx={{ mt: 2 }}>
-            {errors.join(', ')}
-          </Typography>
-        )}
-      </form>
-
-      <SaveSnackbar open={saved} onClose={() => setSaved(false)} message={`משוב נוסף בהצלחה!`} />
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <TextField label="Feedback" name="text" value={formData.text} onChange={handleChange} />
+      <TextField label="Student ID" name="studentId" value={formData.studentId} onChange={handleChange} />
+      <Button variant="contained" onClick={handleSubmit} disabled={loading}>
+        Save Feedback
+      </Button>
     </Box>
   );
 }
