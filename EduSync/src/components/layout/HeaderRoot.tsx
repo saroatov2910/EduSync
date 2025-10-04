@@ -1,17 +1,22 @@
-import * as React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
+import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
+import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
+import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import Divider from '@mui/material/Divider';
+import Toolbar from '@mui/material/Toolbar';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
+import { useTheme } from '@mui/material/styles';
+import * as React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useThemeMode } from '../../theme/useThemeMode';
 
 type NavItem = { label: string; to: string };
 
@@ -71,6 +76,10 @@ export default function HeaderRoot() {
     </header>
   );
 
+  const { toggleMode } = useThemeMode();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
   return (
     <header>
       <Box sx={{ display: 'flex' }}>
@@ -116,6 +125,14 @@ export default function HeaderRoot() {
                 </Button>
               ))}
             </Box>
+
+            <Box sx={{ flexGrow: 1 }} />
+
+            <Tooltip title={isDark ? 'מצב בהיר' : 'מצב כהה'}>
+              <IconButton onClick={toggleMode} aria-label="החלף מצב תצוגה" color="inherit">
+                {isDark ? <LightModeOutlinedIcon /> : <DarkModeOutlinedIcon />}
+              </IconButton>
+            </Tooltip>
           </Toolbar>
         </AppBar>
 
