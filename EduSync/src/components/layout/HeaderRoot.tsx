@@ -46,11 +46,7 @@ export default function HeaderRoot() {
 
   const drawer = (
     <header>
-      <Box
-        role="presentation"
-        sx={{ width: 250, textAlign: 'right', direction: 'rtl' }}
-        aria-label="תפריט צד ניווט"
-      >
+      <Box role="presentation" sx={{ width: 250, textAlign: 'right', direction: 'rtl' }} aria-label="תפריט צד ניווט">
         <Typography variant="h6" sx={{ p: 2 }}>
           EduSync
         </Typography>
@@ -83,12 +79,8 @@ export default function HeaderRoot() {
   return (
     <header>
       <Box sx={{ display: 'flex' }}>
-        <AppBar
-          position="static"
-          color="default"
-          elevation={0}
-          sx={{ borderBottom: 1, borderColor: 'divider' }}
-        >
+        {/* שינוי כאן: color="primary" כדי שהבר יהיה ירוק המותג */}
+        <AppBar position="static" color="primary" elevation={0}>
           <Toolbar sx={{ gap: 1, direction: 'rtl' }}>
             <IconButton
               color="inherit"
@@ -100,12 +92,8 @@ export default function HeaderRoot() {
               <MenuIcon />
             </IconButton>
 
-            <Button
-              onClick={() => navigate('/')}
-              sx={{ textTransform: 'none' }}
-              aria-label="חזור לעמוד הבית"
-            >
-              <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            <Button onClick={() => navigate('/')} sx={{ textTransform: 'none', color: 'inherit' }} aria-label="חזור לעמוד הבית">
+              <Typography variant="h6" sx={{ flexGrow: 1, color: 'inherit' }}>
                 EduSync
               </Typography>
             </Button>
@@ -115,10 +103,7 @@ export default function HeaderRoot() {
                 <Button
                   key={item.to}
                   onClick={() => navigate(item.to)}
-                  sx={{
-                    fontSize: 16,
-                    color: isActive(item.to) ? 'primary.main' : 'text.primary',
-                  }}
+                  sx={{ fontSize: 16, color: 'inherit' }}
                   aria-label={`נווט אל ${item.label}`}
                 >
                   {item.label}
@@ -136,13 +121,7 @@ export default function HeaderRoot() {
           </Toolbar>
         </AppBar>
 
-        <Drawer
-          anchor="right"
-          open={mobileOpen}
-          onClose={toggleDrawer}
-          sx={{ display: { xs: 'block', sm: 'none' } }}
-          aria-label="מגירת ניווט"
-        >
+        <Drawer anchor="right" open={mobileOpen} onClose={toggleDrawer} sx={{ display: { xs: 'block', sm: 'none' } }} aria-label="מגירת ניווט">
           {drawer}
         </Drawer>
       </Box>
