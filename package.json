@@ -7,7 +7,11 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tsc:time": "time tsc -b --noEmit --diagnostics && echo \"✅ TS build finished\"",
+    "tsc:time": "time npx tsc -b EduSync/tsconfig.app.json EduSync/tsconfig.node.json --noEmit --diagnostics && echo \"✅ TS build finished\""
+
+    
   },
   "repository": {
     "type": "git",
