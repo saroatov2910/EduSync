@@ -39,18 +39,23 @@ const navItems: NavItem[] = [
   { label: 'פידבק', to: '/feedback' },
 ];
 
-export default function HeaderRoot() {
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
+ export default function HeaderRoot() {
+   const [mobileOpen, setMobileOpen] = React.useState(false);
+   const [aiOpen, setAiOpen]         = React.useState(false);
+   const navigate                    = useNavigate();
+   const location                    = useLocation();
 
-  const toggleDrawer = () => setMobileOpen(prev => !prev);
-  const isActive = (to: string) => location.pathname === to;
+   const toggleDrawer = () => setMobileOpen(prev => !prev);
+   const isActive     = (to: string) => location.pathname === to;
 
-  const handleNavigation = (url: string) => {
-    navigate(url);
-    setMobileOpen(false);
-  };
+   const handleNavigation = (url: string) => {
+     navigate(url);
+     setMobileOpen(false);
+   };
+const openAiDialog  = () => setAiOpen(true);
+const closeAiDialog = () => setAiOpen(false);
+
+
 
   const drawer = (
     <header>
