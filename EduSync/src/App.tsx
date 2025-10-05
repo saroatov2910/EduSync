@@ -1,15 +1,9 @@
-<<<<<<< Updated upstream
-=======
-import { Routes, Route } from 'react-router-dom';
->>>>>>> Stashed changes
-import HeaderRoot from './components/layout/HeaderRoot';
-import Footer from './components/layout/Footer';
 import { Routes, Route } from 'react-router-dom';
 
-<<<<<<< Updated upstream
-=======
-// Pages
->>>>>>> Stashed changes
+import HeaderRoot from './components/layout/HeaderRoot';
+import Footer from './components/layout/Footer';
+import Notifications from './components/Notifications';
+
 import HomePage from './components/HomePage';
 import AppointmentTable from './components/Appointment';
 import CareHandleTable from './components/CareHandle';
@@ -22,7 +16,6 @@ import Forms from './components/componentsForms/Forms';
 import Management from './components/Management';
 import AppointmentForm from './components/componentsForms/AppointmentForm';
 import UserRequests from './components/UserRequests';
-import Notifications from './components/Notifications';
 
 export default function App() {
   const currentHandlerId = '***LOGGED_IN_HANDLER_ID***'; // replace with actual auth UID
@@ -30,6 +23,7 @@ export default function App() {
   return (
     <>
       <HeaderRoot />
+
       <main style={{ padding: 16 }}>
         {currentHandlerId && <Notifications handlerId={currentHandlerId} />}
         <Routes>
@@ -40,13 +34,14 @@ export default function App() {
           <Route path="/request" element={<RequestTable />} />
           <Route path="/student" element={<StudentTable />} />
           <Route path="/help" element={<HelpPage />} />
-          <Route path="/feedback" element={<FeedbackPage />} /> 
+          <Route path="/feedback" element={<FeedbackPage />} />
           <Route path="/forms" element={<Forms />} />
           <Route path="/management" element={<Management />} />
           <Route path="/forms/appointment/:id" element={<AppointmentForm />} />
           <Route path="/user/requests" element={<UserRequests />} />
         </Routes>
       </main>
+
       <Footer />
     </>
   );
