@@ -17,6 +17,14 @@ import { useTheme } from '@mui/material/styles';
 import * as React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useThemeMode } from '../../theme/useThemeMode';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import AiIcon from '../icons/AiIcon';
+import ChatBot from '../ChatBot';
+
+
+
 
 type NavItem = { label: string; to: string };
 
@@ -79,7 +87,7 @@ export default function HeaderRoot() {
   return (
     <header>
       <Box sx={{ display: 'flex' }}>
-        {/* שינוי כאן: color="primary" כדי שהבר יהיה ירוק המותג */}
+
         <AppBar position="static" color="primary" elevation={0}>
           <Toolbar sx={{ gap: 1, direction: 'rtl' }}>
             <IconButton
