@@ -1,7 +1,15 @@
+<<<<<<< Updated upstream
+=======
+import { Routes, Route } from 'react-router-dom';
+>>>>>>> Stashed changes
 import HeaderRoot from './components/layout/HeaderRoot';
 import Footer from './components/layout/Footer';
 import { Routes, Route } from 'react-router-dom';
 
+<<<<<<< Updated upstream
+=======
+// Pages
+>>>>>>> Stashed changes
 import HomePage from './components/HomePage';
 import AppointmentTable from './components/Appointment';
 import CareHandleTable from './components/CareHandle';
