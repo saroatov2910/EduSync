@@ -9,7 +9,8 @@ import {
   List,
   ListItem,
   Button,
-  Tooltip
+  Tooltip,
+  CircularProgress
 } from '@mui/material';
 import AiIcon from './icons/AiIcon';
 import '../cssRules/Body.css';
@@ -25,8 +26,12 @@ export default function ChatBot() {
 
   useEffect(() => {
     (async () => {
-      const p = await pipeline('text-generation', 'gpt2', { quantized: true });
-      setChat(p);
+      try {
+        const p = await pipeline('text-generation', 'gpt2', { quantized: true });
+        setChat(p);
+      } catch (e) {
+        console.error('ChatBot init error:', e);
+      }
     })();
   }, []);
 
@@ -34,11 +39,29 @@ export default function ChatBot() {
     if (!input.trim() || !chat) return;
     setMessages(prev => [...prev, { role: 'user', content: input }]);
     setInput('');
-    const out = await chat(input, { max_length: 64 });
-    const reply = Array.isArray(out)
-      ? (out[0].generated_texts?.[0] ?? '')
-      : (out.generated_texts?.[0] ?? '');
-    setMessages(prev => [...prev, { role: 'assistant', content: reply }]);
+
+    try {
+      const infStart = performance.now();
+      const out = await chat(input, { max_new_tokens: 64 });
+      console.log(`Inference took ${(performance.now() - infStart).toFixed(1)} ms`);
+
+      // normalize to array
+      const results = Array.isArray(out) ? out : [out];
+
+      // cast to any to access generated_text / generated_texts
+      const first = results[0] as any;
+      const reply = first.generated_text
+        ?? first.generated_texts?.[0]
+        ?? '';
+
+      setMessages(prev => [...prev, { role: 'assistant', content: reply }]);
+    } catch (error) {
+      console.error('ChatBot send error:', error);
+      setMessages(prev => [
+        ...prev,
+        { role: 'assistant', content: 'Error generating response.' }
+      ]);
+    }
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -77,9 +100,17 @@ export default function ChatBot() {
                 value={input}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
+                disabled={!chat}
               />
               <Button variant="contained" onClick={send} disabled={!chat}>
-                {chat ? 'שלח' : 'טוען…'}
+                {chat ? (
+                  'שלח'
+                ) : (
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <CircularProgress size={16} sx={{ mr: 1 }} />
+                    טוען…
+                  </Box>
+                )}
               </Button>
             </Box>
           </Box>
